@@ -1,2 +1,1 @@
-# list_chuc_nang
-list_chuc_nang_HE186124
+use case diagram
