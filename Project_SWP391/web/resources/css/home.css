@@ -1,0 +1,182 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Sep 25, 2025, 7:55:42 AM
+    Author     : ASUS
+*/
+
+:root {
+  --bg: #0f172a; /* dark navy */
+  --muted: #94a3b8;
+  --accent: #06b6d4; /* teal */
+  --card: #0b1220;
+  --glass: rgba(255, 255, 255, 0.03);
+  --radius: 12px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+/* NAVBAR */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), #4f46e5);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #06121a;
+}
+.brand h1 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+.brand p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.navlinks {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.navlinks a {
+  color: inherit;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.navlinks a:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.cta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+/* Mobile */
+.hamburger {
+  display: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+}
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  padding: 12px 20px;
+  gap: 8px;
+}
+.mobile-menu a {
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Footer */
+footer {
+  margin-top: 48px;
+  padding: 40px 20px;
+  background: #f8fafc;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.footer-grid h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+}
+.footer-grid a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  margin: 6px 0;
+  font-size: 14px;
+}
+.small {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 18px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .navlinks {
+    display: none;
+  }
+  .hamburger {
+    display: inline-block;
+  }
+  .mobile-menu {
+    display: flex;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .brand h1 {
+    font-size: 15px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small helpers */
+.divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 18px 0;
+  border-radius: 4px;
+}
