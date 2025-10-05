@@ -1,72 +1,54 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import dal.UserDBContext_HE181624_DuongLT;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import model.AuthUser_HE186124_DuongLT;
 
-/**
- *
- * @author ASUS
- */
 public class login_servlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
+        req.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html;charset=UTF-8");
+
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+
+        UserDBContext_HE181624_DuongLT db = new UserDBContext_HE181624_DuongLT();
+        AuthUser_HE186124_DuongLT users = db.getLogin(email, password);
+
+        HttpSession session = req.getSession();
+
+        if (users != null) {
+            // Đăng nhập thành công
+            session.setAttribute("users", users);
+
+            // Lấy lại URL người dùng muốn truy cập trước đó
+            String redirectURL = (String) session.getAttribute("redirectAfterLogin");
+            if (redirectURL != null) {
+                session.removeAttribute("redirectAfterLogin");
+                resp.sendRedirect(redirectURL);
+            } else {
+                // Nếu không có URL trước đó thì về home
+                resp.sendRedirect(req.getContextPath() + "/index.htm");
+            }
+        } else {
+            // Sai thông tin đăng nhập
+            req.setAttribute("error", "Sai email hoặc mật khẩu!");
+            req.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(req, resp);
+        }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(request, response);
+        req.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(req, resp);
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
