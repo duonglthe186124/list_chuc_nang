@@ -8,7 +8,7 @@ package dal;
  *
  * @author Ha Trung KI
  */
-import dal.DBContext;
+import util.DBContext;
 import java.sql.*;
 
 public class QualityDAO extends DBContext {

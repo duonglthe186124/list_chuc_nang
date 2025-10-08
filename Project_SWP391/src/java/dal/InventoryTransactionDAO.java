@@ -9,7 +9,7 @@ package dal;
  * @author Ha Trung KI
  */
 
-import dal.DBContext;
+import util.DBContext;
 import java.sql.*;
 
 public class InventoryTransactionDAO extends DBContext {

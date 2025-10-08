@@ -9,7 +9,7 @@ package dal;
  * @author Ha Trung KI
  */
 
-import dal.DBContext;
+import util.DBContext;
 import java.sql.*;
 import model.Inventory_records;
 public class AuditDAO extends DBContext {

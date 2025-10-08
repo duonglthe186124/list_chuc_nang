@@ -12,7 +12,7 @@ package dal;
 import java.sql.*;
 import java.util.*;
 import model.Inventory_transactions;
-import dal.DBContext;
+import util.DBContext;
 
 public class FilterDAO extends DBContext {
 
