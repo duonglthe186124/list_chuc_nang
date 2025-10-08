@@ -15,33 +15,24 @@ import model.AuthUser_HE186124_DuongLT;
  *
  * @author hoang
  */
-public class Add_new_product extends BaseAuthController {
+public class Delete_product extends BaseAuthController{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp, AuthUser_HE186124_DuongLT user) throws ServletException, IOException {
-      
         if (user.getRoleId() != 2) {
             req.setAttribute("errorMessage", "You do not have permission to access this page.");
             req.getRequestDispatcher("/WEB-INF/view/error.jsp").forward(req, resp);
-            return;
 
         }
-
-        // Nếu roleId == 2 → cho phép vào trang thêm sản phẩm
-        req.getRequestDispatcher("/WEB-INF/task_view/add_product_screen.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp, AuthUser_HE186124_DuongLT user) throws ServletException, IOException {
-        
         if (user.getRoleId() != 2) {
             req.setAttribute("errorMessage", "You do not have permission to access this page.");
             req.getRequestDispatcher("/WEB-INF/view/error.jsp").forward(req, resp);
-            return; 
+            
         }
-
-        // Nếu roleId == 2 → cho phép vào trang thêm sản phẩm
-        req.getRequestDispatcher("/WEB-INF/task_view/add_product_screen.jsp").forward(req, resp);
     }
-
+    
 }
