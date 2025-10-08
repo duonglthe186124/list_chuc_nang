@@ -29,11 +29,11 @@ public class Outbound_inventory {
         this.outbound_id = outbound_id;
     }
 
-    public String getOubound_code() {
+    public String getOutbound_code() {
         return oubound_code;
     }
 
-    public void setOubound_code(String oubound_code) {
+    public void setOutbound_code(String oubound_code) {
         this.oubound_code = oubound_code;
     }
 
