@@ -11,6 +11,11 @@
         "Helvetica Neue", Arial;
 }
 
+form
+{
+    display: contents;
+}
+
 /* LAYOUT: sidebar + main using grid */
 .layout {
     display: grid;
@@ -50,7 +55,7 @@
     background: #fff;
     text-align: left;
     cursor: pointer;
-    font-size: 13;
+    font-size: 13px;
 }
 
 button.menu-item a {
@@ -86,7 +91,7 @@ button.menu-item a:visited {
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
-    flex-direction: space-between;
+    flex-direction: row;
 }
 
 .search-input {

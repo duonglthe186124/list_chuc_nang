@@ -150,7 +150,7 @@
 
                 <div class="sidebar-menu">
                     <button class="menu-item">
-                        <a href="managements.html">Overview</a>
+                        Overview
                     </button>
                     <button class="menu-item active">Transaction history</button>
                     <button class="menu-item">Purchase Order History</button>
@@ -166,11 +166,11 @@
                     <h1>Overview</h1>
                 </div>
 
-                <div id="main-content">
+                <form action="${pageContext.request.contextPath}/inbound/transaction" method="get">
                     <div class="transaction-actions">
                         <div class="search-bar-container">
-                            <input type="text" placeholder="Search" class="search-input" />
-                            <button class="search-btn">
+                            <input type="text" name="searchInput" value="${param.searchInput}" placeholder="Search" class="search-input" />
+                            <button type="submit" class="search-btn">
                                 <svg
                                     width="18"
                                     height="18"
@@ -197,16 +197,21 @@
                                 </svg>
                             </button>
                         </div>
-                        <select class="filter-dropdown">
-                            <option>All</option>
+                        <select name="txType" class="filter-dropdown">
+                            <option value="" ${txType == ""? 'selected' : ''}>All</option>
+                            <option value="Inbound" ${txType == "Inbound"? 'selected' : ''}>Inbound</option>
+                            <option value="Outbound" ${txType == "Outbound"? 'selected' : ''}>Outbound</option>
+                            <option value="Moving" ${txType == "Moving"? 'selected' : ''}>Moving</option>
+                            <option value="Destroy" ${txType == "Destroy"? 'selected' : ''}>Destroy</option>
                         </select>
-                        <button class="filter-btn">Filter</button>
+                        <button type="submit" class="filter-btn">Filter</button>
                         <div class="items-per-page">
                             <span>Number of fields</span>
-                            <select id="page-size" class="filter-dropdown">
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
+
+                            <select id="page-size" class="filter-dropdown" name="pageSize" onchange="this.form.submit()">
+                                <option value="10" ${pageSize == 10? 'selected' : ''}>10</option>
+                                <option value="20" ${pageSize == 20? 'selected' : ''}>20</option>
+                                <option value="50" ${pageSize == 50? 'selected' : ''}>50</option>
                             </select>
                         </div>
                     </div>
@@ -232,12 +237,12 @@
                     </div>
 
                     <div id="pagination" class="pagination">
-                        <span>Page</span>
+                        <span id="pagination-info"></span>
                         <span class="go-to-text">Go to</span>
-                        <input type="number" class="page-input" />
-                        <button class="go-btn">Go</button>
+                        <input type="number" name="pageInput" class="page-input" />
+                        <button type="submit" class="go-btn">Go</button>
                     </div>
-                </div>
+                </form>
             </main>
         </div>
 
@@ -318,46 +323,48 @@
             <c:forEach var="l" items="${tx_list}">
             data.push({
                 tx_id: ${l.tx_id},
-                product_id: ${l.product_id},
+                product_name: "${l.product_name}",
                 qty: ${l.qty},
-                unit_id: ${l.unit_id},
-                transaction: "${l.tx_type}",
-                from_location: "${empty l.from_location ? l.related_inbound_id : l.from_location}",
-                to_location: "${empty l.to_location ? l.related_outbound_id :  l.to_location}",
-                employee_id: ${l.employee_id},
-                tx_date: "${l.tx_date}" // yyyy-MM-dd
-            });
+                unit_name: "${l.unit_name}",
+                tx_type: "${l.tx_type}",
+                from_code: "${l.from_code}",
+                to_code: "${l.to_code}",
+                employee_code: "${l.employee_code}",
+                tx_date: "${l.tx_date}"
+            }
+            );
             </c:forEach>
 
-            let current_page = 1;
+            let pageNo = parseInt("${pageNo != null ? pageNo - 1 : 0}");
+            let pageSize = parseInt("${pageSize != null ? pageSize : 1}");
+            let current_page = pageNo + 1;
+            let index = (pageNo) * pageSize + 1;
+
             function renderTable(page) {
                 const pageSize = parseInt(document.getElementById("page-size").value);
                 const tbody = document.querySelector("#table-body");
                 tbody.innerHTML = "";
-                const start = (page - 1) * pageSize;
-                const end = start + pageSize;
-                const pageData = data.slice(start, end);
-                pageData.forEach((row) => {
+                data.forEach((row) => {
                     tbody.innerHTML += `
-            <tr>
-              <td>` + row.tx_id + `</td>
-              <td>` + row.product_id + `</td>
-              <td>` + row.qty + `</td>
-              <td>` + row.unit_id + `</td>
-              <td>` + row.transaction + `</td>
-              <td>` + row.from_location + `</td>
-              <td>` + row.to_location + `</td>
-              <td>` + row.employee_id + `</td>
-              <td>` + row.tx_date + `</td>
-              <td><a href="#" class="action-view">View</a></td>
-              </tr>
-          `;
+                        <tr>
+                            <td>` + index++ + `</td>
+                            <td>` + row.product_name + `</td>
+                            <td>` + row.qty + `</td>
+                            <td>` + row.unit_name + `</td>
+                            <td>` + row.tx_type + `</td>
+                            <td>` + row.from_code + `</td>
+                            <td>` + row.to_code + `</td>
+                            <td>` + row.employee_code + `</td>
+                            <td>` + row.tx_date + `</td>
+                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=${row.tx_id}" class="action-view">View</a></td>
+                        </tr>`;
                 });
+
                 renderPagination(page, pageSize);
             }
 
             function renderPagination(currentPage, pageSize) {
-                const totalPages = Math.ceil(data.length / pageSize);
+                const totalPages = Math.ceil(${totalLines} / pageSize);
                 const container = document.getElementById("pagination");
                 // Xóa các nút trang cũ, chỉ giữ lại phần "Page" và "Go to"
                 container.querySelectorAll(".page-btn").forEach((b) => b.remove());
@@ -365,56 +372,74 @@
                 const maxButtons = 10;
                 const startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
                 const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
                 for (let i = startPage; i <= endPage; i++) {
                     const btn = document.createElement("button");
                     btn.className = "page-btn";
+                    btn.name = "pageNo";
                     btn.textContent = i;
-                    if (i === currentPage)
+                    btn.value = i;
+                    if (i === currentPage) {
                         btn.classList.add("active");
-                    btn.onclick = () => renderTable(i);
+                    }
+                    btn.onclick = () => {
+                        this.form.submit();
+                    };
                     container.insertBefore(btn, container.querySelector(".go-to-text"));
                 }
+                
+                const info = document.querySelector("#pagination-info");
+                info.innerHTML = `Page ` + currentPage + ` of ` + totalPages;
 
                 // Thêm Prev / Next (nếu cần)
-                if (currentPage > 1) {
-                    const prev = document.createElement("button");
-                    prev.className = "page-btn";
-                    prev.textContent = "Prev";
-                    prev.onclick = () => renderTable(currentPage - 1);
-                    container.insertBefore(prev, container.querySelector(".page-btn"));
-                }
-
-                if (currentPage < totalPages) {
-                    const next = document.createElement("button");
-                    next.className = "page-btn";
-                    next.textContent = "Next";
-                    next.onclick = () => renderTable(currentPage + 1);
-                    container.insertBefore(next, container.querySelector(".go-to-text"));
-                }
-
-                // Gán sự kiện nút Go
-                const goBtn = container.querySelector(".go-btn");
-                const pageInput = container.querySelector(".page-input");
-                goBtn.onclick = () => {
-                    const val = parseInt(pageInput.value);
-                    if (!isNaN(val) && val >= 1 && val <= totalPages) {
-                        renderTable(val);
-                        pageInput.value = "";
-                    } else {
-                        alert('Trang không hợp lệ (1 - ' + totalPages + ')');
-                    }
-                };
+//                if (currentPage > 1) {
+//                    const prev = document.createElement("button");
+//                    prev.className = "page-btn";
+//                    prev.textContent = "Prev";
+//                    prev.onclick = () => renderTable(currentPage - 1);
+//                    container.insertBefore(prev, container.querySelector(".page-btn"));
+//                }
+//
+//                if (currentPage < totalPages) {
+//                    const next = document.createElement("button");
+//                    next.className = "page-btn";
+//                    next.textContent = "Next";
+//                    next.onclick = () => renderTable(currentPage + 1);
+//                    container.insertBefore(next, container.querySelector(".go-to-text"));
+//                }
             }
-
-            // Khi đổi số phần tử/trang
-            document
-                    .getElementById("page-size")
-                    .addEventListener("change", function () {
-                        currentPage = 1; // quay lại trang đầu
-                        renderTable(currentPage);
-                    });
-            // Load lần đầu
+            
             renderTable(current_page);
         </script>
     </body>
 </html>
+
+<!-- 
+
+    
+
+    // Gán sự kiện nút Go
+    const goBtn = container.querySelector(".go-btn");
+    const pageInput = container.querySelector(".page-input");
+    goBtn.onclick = () => {
+        const val = parseInt(pageInput.value);
+        if (!isNaN(val) && val >= 1 && val <= totalPages) {
+            renderTable(val);
+            pageInput.value = "";
+        } else {
+            alert('Trang không hợp lệ (1 - ' + totalPages + ')');
+        }
+    };
+}
+
+// Khi đổi số phần tử/trang
+document
+        .getElementById("page-size")
+        .addEventListener("change", function () {
+            currentPage = 1; // quay lại trang đầu
+            renderTable(currentPage);
+        });
+// Load lần đầu
+renderTable(current_page);
+</script>
+-->

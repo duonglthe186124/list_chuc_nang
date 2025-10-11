@@ -1,20 +1,21 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
-import dal.TransactionDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import model.Inventory_transactions;
 
-public class inbound_transaction_servlet extends HttpServlet {
-
-    private List<Inventory_transactions> tx_list;
-    private static final TransactionDAO txdao = new TransactionDAO();
+/**
+ *
+ * @author ASUS
+ */
+public class view_tx_history_servlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -27,6 +28,19 @@ public class inbound_transaction_servlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet view_tx_history_servlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet view_tx_history_servlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -41,10 +55,7 @@ public class inbound_transaction_servlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        tx_list = txdao.get_inventory_transactions();
-
-        request.setAttribute("tx_list", tx_list);
-        request.getRequestDispatcher("/WEB-INF/view/transaction_history.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**
@@ -58,7 +69,7 @@ public class inbound_transaction_servlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        processRequest(request, response);
     }
 
     /**
