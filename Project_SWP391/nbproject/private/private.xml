@@ -9,12 +9,16 @@
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Edit_info_product.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Delete_product.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Add_new_product.java</file>
+            <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/PriceRange.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/dal/DBCheck.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/Feature_role.java</file>
+            <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/Product_specs.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/web/WEB-INF/task_view/add_product_screen.jsp</file>
+            <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/dal/ProductSpecsDBContext.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Product_view_detail.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/BaseAuthController.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/login_servlet.java</file>
+            <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/SpecsOptions.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/web/redirect.jsp</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/web/WEB-INF/task_view/order_product.jsp</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/dal/ListProductDBContext.java</file>
@@ -23,6 +27,7 @@
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/Users.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Order_products.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/web/WEB-INF/view/error.jsp</file>
+            <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/Product_units.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Product_screen.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/model/Brands.java</file>
             <file>file:/C:/SWP_Project/SWP_code_productManagement/Project_SWP391/src/java/controller/productsTask/Product_search_filter.java</file>

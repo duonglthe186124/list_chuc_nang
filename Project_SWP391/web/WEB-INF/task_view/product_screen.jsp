@@ -16,105 +16,92 @@
             <button type="submit">Search</button>
         </form>
 
-        <form action="${pageContext.request.contextPath}/products/filter" method="get">
+        <form action="${pageContext.request.contextPath}/products/filter" method="post">
             <label>Price:</label>
             <select name="price">
-                <option value="">-- Select --</option>
-                <option value="1">$0 - $100</option>
-                <option value="2">$100 - $300</option>
-                <option value="3">$300 - $500</option>
-                <option value="4">$500 - $800</option>
-                <option value="5">$800+</option>
+                <option value="">-- Select Price --</option>
+                <c:forEach var="r" items="${priceRanges}">
+                    <c:choose>
+                        <c:when test="${empty r.max}">
+                            <option value="${r.min}-">${r.label}</option>
+                        </c:when>
+                        <c:otherwise>
+                            <option value="${r.min}-${r.max}">${r.label}</option>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
             </select><br>
 
             <label>Brand:</label>
-            <select name="brand">
-                <option value="">-- Select --</option>
-                <option value="1">Apple</option>
-                <option value="2">Samsung</option>
-                <option value="3">Xiaomi</option>
-                <option value="4">Oppo</option>
-                <option value="5">Vivo</option>
-            </select><br>
+            <select name="brand" id="brand">
+                <option value="">-- Select Brand --</option>
+                <c:forEach var="b" items="${brandOptions}">
+                    <option value="${b.brandName}">${b.brandName}</option>
+                </c:forEach>
+            </select>
 
             <label>CPU:</label>
             <select name="cpu">
-                <option value="">-- Select --</option>
-                <option value="1">i3</option>
-                <option value="2">i5</option>
-                <option value="3">i7</option>
-                <option value="4">Ryzen 5</option>
-                <option value="5">Ryzen 7</option>
+                <option value="">-- Select --</option>             
+                <c:forEach var="c" items="${cpuOptions}">
+                    <option value="${c.cpu}">${c.cpu}</option>
+                </c:forEach>
             </select><br>
 
             <label>Memory (RAM):</label>
             <select name="memory">
-                <option value="">-- Select --</option>
-                <option value="1">4GB</option>
-                <option value="2">8GB</option>
-                <option value="3">16GB</option>
-                <option value="4">32GB</option>
-                <option value="5">64GB</option>
+                <option value="">-- Select --</option>               
+                <c:forEach var="m" items="${memoryOptions}">
+                    <option value="${m.memory}">${m.memory}</option>
+                </c:forEach>
             </select><br>
 
             <label>Storage:</label>
             <select name="storage">
                 <option value="">-- Select --</option>
-                <option value="1">64GB</option>
-                <option value="2">128GB</option>
-                <option value="3">256GB</option>
-                <option value="4">512GB</option>
-                <option value="5">1TB</option>
+                <c:forEach var="s" items="${storageOptions}">
+                    <option value="${s.storage}">${s.storage}</option>
+                </c:forEach>
             </select><br>
 
             <label>Color:</label>
             <select name="color">
                 <option value="">-- Select --</option>
-                <option value="1">Black</option>
-                <option value="2">White</option>
-                <option value="3">Blue</option>
-                <option value="4">Red</option>
-                <option value="5">Green</option>
+                <c:forEach var="co" items="${colorOptions}">
+                    <option value="${co.color}">${co.color}</option>
+                </c:forEach>
             </select><br>
 
             <label>Battery Capacity:</label>
             <select name="battery">
                 <option value="">-- Select --</option>
-                <option value="1">3000mAh</option>
-                <option value="2">4000mAh</option>
-                <option value="3">5000mAh</option>
-                <option value="4">6000mAh</option>
-                <option value="5">7000mAh</option>
+                <c:forEach var="ba" items="${batteryOptions}">
+                    <option value="${ba.battery}">${ba.battery} mAh</option>
+                </c:forEach>
             </select><br>
 
             <label>Screen Size:</label>
             <select name="screen_size">
                 <option value="">-- Select --</option>
-                <option value="1">5 inch</option>
-                <option value="2">6 inch</option>
-                <option value="3">6.5 inch</option>
-                <option value="4">7 inch</option>
-                <option value="5">8 inch</option>
+                <c:forEach var="ss" items="${ScreenSizeOptions}">
+                    <option value="${ss.screenSize}">${ss.screenSize}</option>
+                </c:forEach>
             </select><br>
 
             <label>Screen Type:</label>
             <select name="screen_type">
                 <option value="">-- Select --</option>
-                <option value="1">LCD</option>
-                <option value="2">OLED</option>
-                <option value="3">AMOLED</option>
-                <option value="4">Super AMOLED</option>
-                <option value="5">Retina</option>
+                <c:forEach var="st" items="${ScreenTypeOptions}">
+                    <option value="${st.screenType}">${st.screenType}</option>
+                </c:forEach>
             </select><br>
 
             <label>Camera:</label>
             <select name="camera">
                 <option value="">-- Select --</option>
-                <option value="1">8MP</option>
-                <option value="2">12MP</option>
-                <option value="3">48MP</option>
-                <option value="4">64MP</option>
-                <option value="5">108MP</option>
+                <c:forEach var="cam" items="${cameraOptions}">
+                    <option value="${cam.camera}">${cam.camera} MP</option>
+                </c:forEach>
             </select><br><br>
 
             <button type="submit">Apply Filter</button>

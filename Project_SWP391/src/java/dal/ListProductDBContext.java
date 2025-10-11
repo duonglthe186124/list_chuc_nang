@@ -47,7 +47,7 @@ public class ListProductDBContext extends DBContext {
                 p.setBrandName(rs.getString("brand_name"));
                 p.setCpu(rs.getString("cpu"));
                 p.setMemory(rs.getString("memory"));
-                p.setStorage(rs.getString("storage")); // ✅ sửa lại
+                p.setStorage(rs.getString("storage")); // 
                 p.setCamera(rs.getInt("camera"));
                 p.setTypeName(rs.getString("type_name"));
                 p.setQty(rs.getInt("qty"));
@@ -102,5 +102,7 @@ public class ListProductDBContext extends DBContext {
     if (rs.next()) return rs.getInt("total");
     return 0;
 }
+    
+    
 }
 

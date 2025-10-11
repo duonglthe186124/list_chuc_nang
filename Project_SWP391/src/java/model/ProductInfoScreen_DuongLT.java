@@ -20,6 +20,7 @@ public class ProductInfoScreen_DuongLT {
     private String typeName;
     private int qty;
     private String imageUrl;
+    
 
     public ProductInfoScreen_DuongLT() {
     }
