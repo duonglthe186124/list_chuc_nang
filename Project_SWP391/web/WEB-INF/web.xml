@@ -20,10 +20,6 @@
         <servlet-name>register_servlet</servlet-name>
         <servlet-class>controller.register_servlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>UserDAO</servlet-name>
-        <servlet-class>dal.UserDAO</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
@@ -36,10 +32,7 @@
         <servlet-name>register_servlet</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UserDAO</servlet-name>
-        <url-pattern>/UserDAO</url-pattern>
-    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
     </welcome-file-list>

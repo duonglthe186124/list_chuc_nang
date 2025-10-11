@@ -109,3 +109,35 @@ button:hover {
 .login-text a:hover {
   text-decoration: underline;
 }
+
+.form-control.error input {
+    border-color: red;
+}
+
+.error-text {
+    color: red;
+    font-size: 0.9em; /* Nhỏ hơn font chuẩn */
+    margin-top: 5px;
+    display: block; /* Quan trọng: Đảm bảo nó luôn chiếm một dòng */
+}
+
+.btn-remove {
+    margin-top: 6px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 12px;
+    background: #ff7f7f; /* Màu đỏ nhạt */
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    width: fit-content;
+}
+
+.strength-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    margin-top: 10px;
+    width: 0%; /* Bắt đầu bằng 0 */
+    transition: width 0.3s ease, background-color 0.3s ease; /* Thêm transition để đổi màu mượt mà */
+}
