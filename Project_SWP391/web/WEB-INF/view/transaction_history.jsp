@@ -163,7 +163,7 @@
 
             <main class="main">
                 <div class="main-header" id="main-header">
-                    <h1>Overview</h1>
+                    <h1>Transaction history</h1>
                 </div>
 
                 <form action="${pageContext.request.contextPath}/inbound/transaction" method="get">
