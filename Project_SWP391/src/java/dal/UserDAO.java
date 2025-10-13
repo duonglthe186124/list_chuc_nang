@@ -1,63 +1,82 @@
 package dal;
 
 import model.Users;
-import util.DBContext; // Import DBContext từ package util
-import java.sql.Connection;
+import util.DBContext; // Import your DBContext from the util package
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.xml.bind.DatatypeConverter;
 
-// Kế thừa DBContext để sử dụng connection đã được khởi tạo
 public class UserDAO extends DBContext {
 
     /**
-     * @public
-     * Kiểm tra xem Email đã tồn tại trong DB chưa.
-     * @param email Email cần kiểm tra.
-     * @return true nếu Email tồn tại.
+     * Checks if an email already exists in the database.
+     * @param email The email to check.
+     * @return true if the email exists, false otherwise.
      */
-    public boolean isEmailExist(String email) {
-        // Lưu ý: Dùng this.connection vì DBContext của bạn có thuộc tính protected connection
+    public boolean checkEmailExists(String email) {
         String sql = "SELECT COUNT(*) FROM Users WHERE email = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next() && rs.getInt(1) > 0) {
-                    return true;
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi UserDAO -> isEmailExist: " + e.getMessage());
+            System.out.println("Error checking email: " + e.getMessage());
         }
         return false;
     }
 
     /**
-     * @public
-     * Chèn người dùng mới vào DB.
-     * @param user Đối tượng Users chứa thông tin đăng ký.
-     * @return true nếu chèn thành công.
+     * Hashes an input string using the SHA-256 algorithm.
+     * @param password The original password.
+     * @return The hashed string, or null if an error occurs.
      */
-    public boolean insertUser(Users user) {
-        // user_id, is_actived, is_deleted sẽ tự động được gán giá trị mặc định trong DB
-        String sql = "INSERT INTO Users (email, password, fullname, phone, address, sec_address, role_id) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(password.getBytes());
+            byte[] digest = md.digest();
+            return DatatypeConverter.printHexBinary(digest).toUpperCase();
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Error hashing password: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Adds a new user to the database.
+     * @param user The Users object containing the new user's information.
+     * @return true if the user was added successfully, false otherwise.
+     */
+    public boolean addUser(Users user) {
+        String hashedPassword = hashPassword(user.getPassword());
+        if (hashedPassword == null) {
+            return false; // Hashing failed
+        }
+
+        String sql = "INSERT INTO [Users] (email, password, fullname, phone, address, sec_address, role_id, is_actived, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, user.getEmail());
-            ps.setString(2, user.getPassword());       // Mật khẩu đã băm
+            ps.setString(2, hashedPassword); // Save the hashed password
             ps.setString(3, user.getFullname());
             ps.setString(4, user.getPhone());
             ps.setString(5, user.getAddress());
-            ps.setString(6, user.getSec_address());    // Khớp với getter getSec_address()
-            ps.setInt(7, user.getRole_id());           // Khớp với getter getRole_id()
-            
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+            ps.setString(6, user.getSec_address());
+            ps.setInt(7, 3); // Default role_id = 3 (Employee)
+            ps.setBoolean(8, true); // is_actived = true
+            ps.setBoolean(9, false); // is_deleted = false
+
+            return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.err.println("Lỗi UserDAO -> insertUser: " + e.getMessage());
+            System.out.println("Error adding user: " + e.getMessage());
             return false;
         }
     }

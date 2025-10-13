@@ -18,7 +18,7 @@
     </servlet>
     <servlet>
         <servlet-name>register_servlet</servlet-name>
-        <servlet-class>controller.register_servlet</servlet-class>
+        <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -32,7 +32,6 @@
         <servlet-name>register_servlet</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
-
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
     </welcome-file-list>
