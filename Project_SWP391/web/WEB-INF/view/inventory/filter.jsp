@@ -5,56 +5,61 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ include file="../layout/header.jsp" %>
-<%@ include file="../layout/sidebar.jsp" %>
-<!DOCTYPE html>
-<html>
-<div class="main-content">
-    <h2>🔍 Filter Inventory Records</h2>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:include page="/WEB-INF/view/layout/header.jsp"/>
+<jsp:include page="/WEB-INF/view/layout/sidebar.jsp"/>
 
-    <form class="filter-form" method="get" action="filter">
-        <label>Transaction Type:</label>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inventory.css"/>
+
+<div class="content">
+    <h2>Filter Transactions</h2>
+    <form method="post" class="form-grid">
+        <label>Type:</label>
         <select name="txType">
             <option value="">All</option>
-            <option value="inbound">Inbound</option>
-            <option value="outbound">Outbound</option>
-            <option value="move">Move</option>
+            <option>Inbound</option>
+            <option>Outbound</option>
+            <option>Moving</option>
         </select>
 
-        <label>Product ID:</label>
-        <input type="number" name="productId">
-
-        <label>Date Range:</label>
-        <input type="date" name="from"> to 
+        <label>From:</label>
+        <input type="date" name="from">
+        <label>To:</label>
         <input type="date" name="to">
+
+        <label>Product:</label>
+        <select name="productId">
+            <option value="">All</option>
+            <c:forEach var="p" items="${products}">
+                <option value="${p.product_id}">${p.product_name}</option>
+            </c:forEach>
+        </select>
+
+        <label>Employee:</label>
+        <select name="employeeId">
+            <option value="">All</option>
+            <c:forEach var="e" items="${employees}">
+                <option value="${e.employee_id}">${e.fullname}</option>
+            </c:forEach>
+        </select>
 
         <button type="submit">Filter</button>
     </form>
 
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Date</th>
-                <th>Employee</th>
-            </tr>
-        </thead>
+    <h3>Results</h3>
+    <table>
+        <thead><tr><th>ID</th><th>Type</th><th>Product</th><th>Qty</th><th>Date</th><th>Note</th></tr></thead>
         <tbody>
-            <c:forEach var="tx" items="${txList}">
-                <tr>
-                    <td>${tx.tx_id}</td>
-                    <td>${tx.tx_type}</td>
-                    <td>${tx.product_name}</td>
-                    <td>${tx.qty}</td>
-                    <td>${tx.tx_date}</td>
-                    <td>${tx.employee_name}</td>
-                </tr>
-            </c:forEach>
+        <c:forEach var="tx" items="${txList}">
+            <tr>
+                <td>${tx.tx_id}</td>
+                <td>${tx.tx_type}</td>
+                <td>${tx.product_id}</td>
+                <td>${tx.qty}</td>
+                <td>${tx.tx_date}</td>
+                <td>${tx.note}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>
-</html>
-<%@ include file="../layout/footer.jsp" %>

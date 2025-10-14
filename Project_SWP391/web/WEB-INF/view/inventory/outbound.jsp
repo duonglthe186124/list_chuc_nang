@@ -5,47 +5,53 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ include file="../layout/header.jsp" %>
-<%@ include file="../layout/sidebar.jsp" %>
-<!DOCTYPE html>
-<html>
-<div class="main-content">
-    <h2>🚚 Outbound Inventory</h2>
-    <div class="toolbar">
-        <button class="btn-add" onclick="location.href='outbound?action=add'">+ Add Outbound Record</button>
-        <form class="search-box" method="get" action="outbound">
-            <input type="text" name="keyword" placeholder="Search product...">
-            <button type="submit">Search</button>
-        </form>
-    </div>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:include page="/WEB-INF/view/layout/header.jsp"/>
+<jsp:include page="/WEB-INF/view/layout/sidebar.jsp"/>
 
-    <table class="data-table">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inventory.css"/>
+
+<div class="content">
+    <h2>Outbound Inventory</h2>
+    <form method="post" class="form-grid">
+        <label>Product:</label>
+        <select name="productId">
+            <c:forEach var="p" items="${products}">
+                <option value="${p.product_id}">${p.product_name}</option>
+            </c:forEach>
+        </select>
+
+        <label>Location:</label>
+        <select name="locationId">
+            <c:forEach var="l" items="${locations}">
+                <option value="${l.location_id}">${l.code}</option>
+            </c:forEach>
+        </select>
+
+        <label>Quantity:</label>
+        <input type="number" name="qty" min="1">
+
+        <label>Note:</label>
+        <input type="text" name="note">
+
+        <button type="submit">Outbound</button>
+    </form>
+
+    <h3>Inventory Status</h3>
+    <table>
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Date</th>
-                <th>Destination</th>
-                <th>Actions</th>
-            </tr>
+        <tr><th>ID</th><th>Product</th><th>Location</th><th>Qty</th><th>Last Updated</th></tr>
         </thead>
         <tbody>
-            <c:forEach var="outbound" items="${outboundList}">
-                <tr>
-                    <td>${outbound.outbound_id}</td>
-                    <td>${outbound.product_name}</td>
-                    <td>${outbound.qty}</td>
-                    <td>${outbound.date}</td>
-                    <td>${outbound.destination}</td>
-                    <td>
-                        <a href="outbound?action=edit&id=${outbound.outbound_id}" class="btn-edit">Edit</a>
-                        <a href="outbound?action=delete&id=${outbound.outbound_id}" class="btn-delete">Delete</a>
-                    </td>
-                </tr>
-            </c:forEach>
+        <c:forEach var="o" items="${outboundList}">
+            <tr>
+                <td>${o.inventory_id}</td>
+                <td>${o.product_id}</td>
+                <td>${o.location_id}</td>
+                <td>${o.qty}</td>
+                <td>${o.last_update}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>
-</html>
-<%@ include file="../layout/footer.jsp" %>

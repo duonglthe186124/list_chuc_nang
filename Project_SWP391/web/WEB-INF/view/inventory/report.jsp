@@ -5,41 +5,33 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ include file="../layout/header.jsp" %>
-<%@ include file="../layout/sidebar.jsp" %>
-<!DOCTYPE html>
-<html>
-<div class="main-content">
-    <h2>📊 Inventory Reports</h2>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:include page="/WEB-INF/view/layout/header.jsp"/>
+<jsp:include page="/WEB-INF/view/layout/sidebar.jsp"/>
 
-    <div class="report-section">
-        <h3>Overview</h3>
-        <p>Total Products: ${report.totalProducts}</p>
-        <p>Total Inbound: ${report.totalInbound}</p>
-        <p>Total Outbound: ${report.totalOutbound}</p>
-        <p>Current Stock: ${report.currentStock}</p>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inventory.css"/>
+
+<div class="content">
+    <h2>Inventory Report</h2>
+    <div class="report-grid">
+        <div>Total Products: ${report.totalProducts}</div>
+        <div>Current Stock: ${report.currentStock}</div>
+        <div>Total Inbound: ${report.totalInbound}</div>
+        <div>Total Outbound: ${report.totalOutbound}</div>
     </div>
 
-    <div class="report-chart">
-        <canvas id="inventoryChart"></canvas>
-    </div>
+    <table>
+        <thead><tr><th>ID</th><th>Product</th><th>Location</th><th>Qty</th><th>Last Updated</th></tr></thead>
+        <tbody>
+        <c:forEach var="r" items="${inventoryList}">
+            <tr>
+                <td>${r.inventory_id}</td>
+                <td>${r.product_id}</td>
+                <td>${r.location_id}</td>
+                <td>${r.qty}</td>
+                <td>${r.last_update}</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
 </div>
-</html>
-
-<%@ include file="../layout/footer.jsp" %>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const ctx = document.getElementById('inventoryChart');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Inbound', 'Outbound', 'Available'],
-        datasets: [{
-            label: 'Quantity',
-            data: [${report.totalInbound}, ${report.totalOutbound}, ${report.currentStock}],
-            borderWidth: 1
-        }]
-    },
-    options: { scales: { y: { beginAtZero: true } } }
-});
-</script>

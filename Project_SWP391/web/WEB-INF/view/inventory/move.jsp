@@ -5,45 +5,42 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ include file="../layout/header.jsp" %>
-<%@ include file="../layout/sidebar.jsp" %>
-<!DOCTYPE html>
-<html>
-<div class="main-content">
-    <h2>🔄 Move / Transfer Inventory</h2>
-    <div class="toolbar">
-        <button class="btn-add" onclick="location.href='move?action=add'">+ Add Move Record</button>
-    </div>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:include page="/WEB-INF/view/layout/header.jsp"/>
+<jsp:include page="/WEB-INF/view/layout/sidebar.jsp"/>
 
-    <table class="data-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>From Location</th>
-                <th>To Location</th>
-                <th>Qty</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach var="move" items="${moveList}">
-                <tr>
-                    <td>${move.tx_id}</td>
-                    <td>${move.product_name}</td>
-                    <td>${move.from_location_name}</td>
-                    <td>${move.to_location_name}</td>
-                    <td>${move.qty}</td>
-                    <td>${move.tx_date}</td>
-                    <td>
-                        <a href="move?action=edit&id=${move.tx_id}" class="btn-edit">Edit</a>
-                        <a href="move?action=delete&id=${move.tx_id}" class="btn-delete">Delete</a>
-                    </td>
-                </tr>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inventory.css"/>
+
+<div class="content">
+    <h2>Move Inventory</h2>
+    <form method="post" class="form-grid">
+        <label>Product:</label>
+        <select name="productId">
+            <c:forEach var="p" items="${products}">
+                <option value="${p.product_id}">${p.product_name}</option>
             </c:forEach>
-        </tbody>
-    </table>
+        </select>
+
+        <label>From Location:</label>
+        <select name="fromLocation">
+            <c:forEach var="l" items="${locations}">
+                <option value="${l.location_id}">${l.code}</option>
+            </c:forEach>
+        </select>
+
+        <label>To Location:</label>
+        <select name="toLocation">
+            <c:forEach var="l" items="${locations}">
+                <option value="${l.location_id}">${l.code}</option>
+            </c:forEach>
+        </select>
+
+        <label>Quantity:</label>
+        <input type="number" name="qty" min="1">
+
+        <label>Note:</label>
+        <input type="text" name="note">
+
+        <button type="submit">Move</button>
+    </form>
 </div>
-</html>
-<%@ include file="../layout/footer.jsp" %>

@@ -5,49 +5,53 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ include file="../layout/header.jsp" %>
-<%@ include file="../layout/sidebar.jsp" %>
-<!DOCTYPE html>
-<html>
-<div class="main-content">
-    <h2>📦 Inbound Inventory</h2>
-    <div class="toolbar">
-        <button class="btn-add" onclick="location.href='inbound?action=add'">+ Add Inbound Record</button>
-        <form class="search-box" method="get" action="inbound">
-            <input type="text" name="keyword" placeholder="Search product or supplier...">
-            <button type="submit">Search</button>
-        </form>
-    </div>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<jsp:include page="/WEB-INF/view/layout/header.jsp"/>
+<jsp:include page="/WEB-INF/view/layout/sidebar.jsp"/>
 
-    <table class="data-table">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/inventory.css"/>
+
+<div class="content">
+    <h2>Inbound Inventory</h2>
+    <form method="post" class="form-grid">
+        <label>Product:</label>
+        <select name="productId" required>
+            <c:forEach var="p" items="${products}">
+                <option value="${p.product_id}">${p.product_name}</option>
+            </c:forEach>
+        </select>
+
+        <label>Location:</label>
+        <select name="locationId" required>
+            <c:forEach var="l" items="${locations}">
+                <option value="${l.location_id}">${l.code}</option>
+            </c:forEach>
+        </select>
+
+        <label>Quantity:</label>
+        <input type="number" name="qty" min="1" required>
+
+        <label>Note:</label>
+        <input type="text" name="note" placeholder="Optional note">
+
+        <button type="submit">Add Inbound</button>
+    </form>
+
+    <h3>Current Inventory</h3>
+    <table>
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Supplier</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Date</th>
-                <th>Warehouse</th>
-                <th>Actions</th>
-            </tr>
+        <tr><th>ID</th><th>Product</th><th>Location</th><th>Qty</th><th>Last Updated</th></tr>
         </thead>
         <tbody>
-            <c:forEach var="inbound" items="${inboundList}">
-                <tr>
-                    <td>${inbound.inbound_id}</td>
-                    <td>${inbound.supplier_name}</td>
-                    <td>${inbound.product_name}</td>
-                    <td>${inbound.qty}</td>
-                    <td>${inbound.date}</td>
-                    <td>${inbound.location_code}</td>
-                    <td>
-                        <a href="inbound?action=edit&id=${inbound.inbound_id}" class="btn-edit">Edit</a>
-                        <a href="inbound?action=delete&id=${inbound.inbound_id}" class="btn-delete">Delete</a>
-                    </td>
-                </tr>
-            </c:forEach>
+        <c:forEach var="i" items="${inboundList}">
+            <tr>
+                <td>${i.inventory_id}</td>
+                <td>${i.product_id}</td>
+                <td>${i.location_id}</td>
+                <td>${i.qty}</td>
+                <td>${i.last_update}</td>
+            </tr>
+        </c:forEach>
         </tbody>
     </table>
 </div>
-</html>
-<%@ include file="../layout/footer.jsp" %>
