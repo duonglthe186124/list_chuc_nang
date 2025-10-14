@@ -17,12 +17,8 @@
         <servlet-class>controller.login_servlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>transaction_history_servlet</servlet-name>
-        <servlet-class>controller.transaction_history_servlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>view_tx_history_servlet</servlet-name>
-        <servlet-class>controller.view_tx_history_servlet</servlet-class>
+        <servlet-name>register_servlet</servlet-name>
+        <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -33,12 +29,8 @@
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>transaction_history_servlet</servlet-name>
-        <url-pattern>/inbound/transaction</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>view_tx_history_servlet</servlet-name>
-        <url-pattern>/inbound/transaction/view</url-pattern>
+        <servlet-name>register_servlet</servlet-name>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
