@@ -356,7 +356,7 @@
                             <td>` + row.to_code + `</td>
                             <td>` + row.employee_code + `</td>
                             <td>` + row.tx_date + `</td>
-                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=${row.tx_id}" class="action-view">View</a></td>
+                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=` + row.tx_id + `" class="action-view">View</a></td>
                         </tr>`;
                 });
 
