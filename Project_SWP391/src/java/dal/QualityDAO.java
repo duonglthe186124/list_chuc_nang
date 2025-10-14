@@ -10,24 +10,44 @@ package dal;
  */
 import util.DBContext;
 import java.sql.*;
+import java.util.*;
+import model.Quality_controls;
 
 public class QualityDAO extends DBContext {
+    public QualityDAO() { super(); }
 
-    public void insertQualityCheck(int productId, int locationId, int unitId, String state, int inspectorId, String remark) throws SQLException {
-        // If unit_id not used, pass null as unitId
-        String txType = "QUALITY_UNKNOWN";
-        if ("PASS".equalsIgnoreCase(state) || "GOOD".equalsIgnoreCase(state)) txType = "QUALITY_PASS";
-        if ("FAIL".equalsIgnoreCase(state) || "BAD".equalsIgnoreCase(state)) txType = "QUALITY_FAIL";
+    public List<Quality_controls> getAllQC() throws SQLException {
+        if (connection == null) throw new SQLException("DB connection is null.");
+        List<Quality_controls> list = new ArrayList<>();
+        String sql = "SELECT qc_id, unit_id, inbound_line_id, inspector_id, qc_date, state, error, remarks FROM Quality_controls ORDER BY qc_date DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Quality_controls qc = new Quality_controls(
+                    rs.getInt("qc_id"),
+                    rs.getInt("unit_id"),
+                    rs.getInt("inbound_line_id"),
+                    rs.getInt("inspector_id"),
+                    rs.getTimestamp("qc_date"),
+                    rs.getString("state"),
+                    rs.getString("error"),
+                    rs.getString("remarks")
+                );
+                list.add(qc);
+            }
+        }
+        return list;
+    }
 
-        String sql = "INSERT INTO Inventory_transactions (tx_type, product_id, unit_id, qty, from_location, to_location, ref_code, related_inbound_id, related_outbound_id, employee_id, tx_date, note) VALUES (?, ?, ?, ?, ?, NULL, NULL, NULL, NULL, ?, GETDATE(), ?)";
+    public void insertQualityControl(Integer unitId, Integer inboundLineId, int inspectorId, String state, String error, String remarks) throws SQLException {
+        if (connection == null) throw new SQLException("DB connection is null.");
+        String sql = "INSERT INTO Quality_controls (unit_id, inbound_line_id, inspector_id, qc_date, state, error, remarks) VALUES (?, ?, ?, GETDATE(), ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, txType);
-            ps.setInt(2, productId);
-            if (unitId > 0) ps.setInt(3, unitId); else ps.setNull(3, Types.INTEGER);
-            ps.setInt(4, 0); // qty not relevant for QC (or set if QC applied on units)
-            ps.setInt(5, locationId);
-            ps.setInt(6, inspectorId);
-            ps.setString(7, remark);
+            if (unitId != null) ps.setInt(1, unitId); else ps.setNull(1, Types.INTEGER);
+            if (inboundLineId != null) ps.setInt(2, inboundLineId); else ps.setNull(2, Types.INTEGER);
+            ps.setInt(3, inspectorId);
+            ps.setString(4, state);
+            ps.setString(5, error);
+            ps.setString(6, remarks);
             ps.executeUpdate();
         }
     }

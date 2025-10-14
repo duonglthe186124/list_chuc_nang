@@ -15,12 +15,13 @@ import java.util.*;
 import model.Products;
 
 public class ProductDAO extends DBContext {
+    public ProductDAO() { super(); }
 
-    public List<Products> listAll() throws SQLException {
+    public List<Products> getAllProducts() throws SQLException {
+        if (connection == null) throw new SQLException("DB connection is null.");
         List<Products> list = new ArrayList<>();
         String sql = "SELECT product_id, product_name, brand_id, spec_id, type_id, description, created_at FROM Products";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Products p = new Products(
                     rs.getInt("product_id"),

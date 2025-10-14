@@ -8,92 +8,60 @@ package service;
  *
  * @author Ha Trung KI
  */
+
 import util.DBContext;
-import dal.InventoryTransactionDAO;
-import dal.InventoryDAO;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import dal.ProductUnitDAO;
 
-/**
- * InventoryService - thực thi các thao tác phức tạp theo transaction
- * Sử dụng DBContext để lấy connection (shared) và tự commit/rollback
- */
 public class InventoryService extends DBContext {
+    public InventoryService() { super(); }
 
-    private final InventoryDAO inventoryDAO;
-    private final InventoryTransactionDAO txDAO;
-
-    public InventoryService() {
-        super(); // mở connection từ DBContext
-        this.inventoryDAO = new InventoryDAO(); // Note: these DAOs open their own connection normally,
-        this.txDAO = new InventoryTransactionDAO();
-        // BUT for transactional ops we will use the connection from this class directly
-        // (we will not call inventoryDAO methods that open separate connections)
-    }
-
-    /**
-     * Move: giảm kho nguồn, tăng kho đích, ghi transaction MOVE
-     * All in one DB transaction using this.connection
-     *
-     * @param productId
-     * @param fromLocation
-     * @param toLocation
-     * @param qty
-     * @param employeeId
-     * @param note
-     * @return true nếu thành công
-     * @throws java.sql.SQLException
-     */
-    public boolean moveProductAtomic(int productId, int fromLocation, int toLocation, int qty, int employeeId, String note) throws SQLException {
+    // simplified moveProductAtomic signature used by controllers earlier
+    public boolean moveProductAtomic(int productId, int fromLocation, int toLocation, int qty, int unitId, int employeeId, String refCode, String note) throws SQLException {
+        if (connection == null) throw new SQLException("DB connection is null.");
         boolean success = false;
         try {
             connection.setAutoCommit(false);
 
-            // 1) check source qty
-            String checkSql = "SELECT qty, inventory_id FROM Inventory_records WHERE product_id = ? AND location_id = ?";
-            try (var ps = connection.prepareStatement(checkSql)) {
+            String check = "SELECT qty FROM Inventory_records WHERE product_id=? AND location_id=?";
+            try (PreparedStatement ps = connection.prepareStatement(check)) {
                 ps.setInt(1, productId);
                 ps.setInt(2, fromLocation);
-                try (var rs = ps.executeQuery()) {
+                try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next() || rs.getInt("qty") < qty) {
                         connection.rollback();
-                        return false; // not enough stock
+                        return false;
                     }
                 }
             }
 
-            // 2) decrease source
-            String decSql = "UPDATE Inventory_records SET qty = qty - ?, last_update = GETDATE() WHERE product_id = ? AND location_id = ?";
-            try (var ps = connection.prepareStatement(decSql)) {
+            String dec = "UPDATE Inventory_records SET qty = qty - ?, last_updated = GETDATE() WHERE product_id = ? AND location_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(dec)) {
                 ps.setInt(1, qty);
                 ps.setInt(2, productId);
                 ps.setInt(3, fromLocation);
                 ps.executeUpdate();
             }
 
-            // 3) add to destination (if exists update, else insert)
-            String findDest = "SELECT inventory_id FROM Inventory_records WHERE product_id = ? AND location_id = ?";
-            Integer destInventoryId = null;
-            try (var ps = connection.prepareStatement(findDest)) {
+            String selDest = "SELECT inventory_id FROM Inventory_records WHERE product_id = ? AND location_id = ?";
+            Integer destId = null;
+            try (PreparedStatement ps = connection.prepareStatement(selDest)) {
                 ps.setInt(1, productId);
                 ps.setInt(2, toLocation);
-                try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        destInventoryId = rs.getInt("inventory_id");
-                    }
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) destId = rs.getInt("inventory_id");
                 }
             }
-
-            if (destInventoryId != null) {
-                String updDest = "UPDATE Inventory_records SET qty = qty + ?, last_update = GETDATE() WHERE inventory_id = ?";
-                try (var ps = connection.prepareStatement(updDest)) {
+            if (destId != null) {
+                String upd = "UPDATE Inventory_records SET qty = qty + ?, last_updated = GETDATE() WHERE inventory_id = ?";
+                try (PreparedStatement ps = connection.prepareStatement(upd)) {
                     ps.setInt(1, qty);
-                    ps.setInt(2, destInventoryId);
+                    ps.setInt(2, destId);
                     ps.executeUpdate();
                 }
             } else {
-                String insDest = "INSERT INTO Inventory_records (product_id, location_id, qty, last_update) VALUES (?, ?, ?, GETDATE())";
-                try (var ps = connection.prepareStatement(insDest)) {
+                String ins = "INSERT INTO Inventory_records (product_id, location_id, qty, last_updated) VALUES (?, ?, ?, GETDATE())";
+                try (PreparedStatement ps = connection.prepareStatement(ins)) {
                     ps.setInt(1, productId);
                     ps.setInt(2, toLocation);
                     ps.setInt(3, qty);
@@ -101,87 +69,81 @@ public class InventoryService extends DBContext {
                 }
             }
 
-            // 4) ghi transaction vào Inventory_transactions (dùng connection này)
-            String insertTx = "INSERT INTO Inventory_transactions (tx_type, product_id, unit_id, qty, from_location, to_location, ref_code, related_inbound_id, related_outbound_id, employee_id, tx_date, note) VALUES (?, ?, NULL, ?, ?, ?, NULL, NULL, NULL, ?, GETDATE(), ?)";
-            try (var ps = connection.prepareStatement(insertTx)) {
-                ps.setString(1, "MOVE");
+            String insTx = "INSERT INTO Inventory_transactions (tx_type, product_id, unit_id, qty, from_location, to_location, ref_code, related_inbound_id, related_outbound_id, employee_id, txdate, note) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, GETDATE(), ?)";
+            try (PreparedStatement ps = connection.prepareStatement(insTx)) {
+                ps.setString(1, "Moving");
                 ps.setInt(2, productId);
-                ps.setInt(3, qty);
-                ps.setInt(4, fromLocation);
-                ps.setInt(5, toLocation);
-                ps.setObject(6, employeeId);
-                ps.setString(7, note);
+                ps.setInt(3, unitId);
+                ps.setInt(4, qty);
+                ps.setInt(5, fromLocation);
+                ps.setInt(6, toLocation);
+                ps.setString(7, refCode != null ? refCode : "");
+                ps.setInt(8, employeeId);
+                ps.setString(9, note);
                 ps.executeUpdate();
             }
 
             connection.commit();
             success = true;
         } catch (SQLException ex) {
-            try { connection.rollback(); } catch (SQLException e) { /* ignore */ }
+            try { connection.rollback(); } catch (SQLException ignore) {}
             throw ex;
         } finally {
-            try { connection.setAutoCommit(true); } catch (SQLException e) { /* ignore */ }
-            // Do not close connection here because DBContext holds it; but if you want to close, be consistent.
+            try { connection.setAutoCommit(true); } catch (SQLException ignore) {}
         }
         return success;
     }
 
-    /**
-     * Audit: cập nhật tồn theo inventory_id, ghi transaction ADJUST_IN/ADJUST_OUT
-     * @param inventoryId
-     * @param newQty
-     * @param employeeId
-     * @param note
-     * @throws java.sql.SQLException
-     */
     public void auditAdjustAtomic(int inventoryId, int newQty, int employeeId, String note) throws SQLException {
+        if (connection == null) throw new SQLException("DB connection is null.");
         try {
             connection.setAutoCommit(false);
-
-            // get current record
             String sel = "SELECT product_id, location_id, qty FROM Inventory_records WHERE inventory_id = ?";
             int productId, locationId, oldQty;
-            try (var ps = connection.prepareStatement(sel)) {
+            try (PreparedStatement ps = connection.prepareStatement(sel)) {
                 ps.setInt(1, inventoryId);
-                try (var rs = ps.executeQuery()) {
+                try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) {
                         connection.rollback();
-                        throw new SQLException("Inventory record not found id=" + inventoryId);
+                        throw new SQLException("Inventory not found id=" + inventoryId);
                     }
                     productId = rs.getInt("product_id");
                     locationId = rs.getInt("location_id");
                     oldQty = rs.getInt("qty");
                 }
             }
-
             int diff = newQty - oldQty;
             if (diff != 0) {
-                String update = "UPDATE Inventory_records SET qty = ?, last_update = GETDATE() WHERE inventory_id = ?";
-                try (var ps = connection.prepareStatement(update)) {
+                String upd = "UPDATE Inventory_records SET qty = ?, last_updated = GETDATE() WHERE inventory_id = ?";
+                try (PreparedStatement ps = connection.prepareStatement(upd)) {
                     ps.setInt(1, newQty);
                     ps.setInt(2, inventoryId);
                     ps.executeUpdate();
                 }
-
-                String txType = diff > 0 ? "ADJUST_IN" : "ADJUST_OUT";
-                String insertTx = "INSERT INTO Inventory_transactions (tx_type, product_id, unit_id, qty, from_location, to_location, ref_code, related_inbound_id, related_outbound_id, employee_id, tx_date, note) VALUES (?, ?, NULL, ?, ?, NULL, NULL, NULL, NULL, ?, GETDATE(), ?)";
-                try (var ps = connection.prepareStatement(insertTx)) {
+                String txType = diff > 0 ? "Inbound" : "Outbound";
+                int absDiff = Math.abs(diff);
+                ProductUnitDAO udao = new ProductUnitDAO();
+                int unitId = udao.findFirstUnitIdByProduct(productId);
+                if (unitId < 0) unitId = 1;
+                String insTx = "INSERT INTO Inventory_transactions (tx_type, product_id, unit_id, qty, from_location, to_location, ref_code, related_inbound_id, related_outbound_id, employee_id, txdate, note) VALUES (?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?, GETDATE(), ?)";
+                try (PreparedStatement ps = connection.prepareStatement(insTx)) {
                     ps.setString(1, txType);
                     ps.setInt(2, productId);
-                    ps.setInt(3, Math.abs(diff));
-                    ps.setInt(4, locationId); // use from_location to indicate where adjustment happened
-                    ps.setObject(5, employeeId);
-                    ps.setString(6, note);
+                    ps.setInt(3, unitId);
+                    ps.setInt(4, absDiff);
+                    ps.setInt(5, locationId);
+                    ps.setInt(6, locationId);
+                    ps.setInt(7, employeeId);
+                    ps.setString(8, note);
                     ps.executeUpdate();
                 }
             }
-
             connection.commit();
         } catch (SQLException ex) {
-            try { connection.rollback(); } catch (SQLException e) { /* ignore */ }
+            try { connection.rollback(); } catch (SQLException ignore) {}
             throw ex;
         } finally {
-            try { connection.setAutoCommit(true); } catch (SQLException e) { /* ignore */ }
+            try { connection.setAutoCommit(true); } catch (SQLException ignore) {}
         }
     }
 }
