@@ -78,6 +78,20 @@ button.menu-item a:visited {
     background-color: #f0f0f0;
 }
 
+/* MAIN */
+.main {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    min-height: auto;
+}
+
+.main-header h1 {
+    font-size: 24px;
+    margin: 0 0 18px 0;
+}
+
 /* Transaction History Page Styles */
 .transaction-actions {
     display: flex;
