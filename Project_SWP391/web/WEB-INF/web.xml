@@ -55,6 +55,8 @@
     <servlet>
         <servlet-name>ReportController</servlet-name>
         <servlet-class>controller.ReportController</servlet-class>
+        <servlet-name>register_servlet</servlet-name>
+        <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -103,6 +105,8 @@
     <servlet-mapping>
         <servlet-name>ReportController</servlet-name>
         <url-pattern>/ReportController</url-pattern>
+        <servlet-name>register_servlet</servlet-name>
+        <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
