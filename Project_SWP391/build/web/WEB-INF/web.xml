@@ -17,6 +17,7 @@
         <servlet-class>controller.login_servlet</servlet-class>
     </servlet>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <servlet>
         <servlet-name>InventoryController</servlet-name>
         <servlet-class>controller.InventoryController</servlet-class>
@@ -61,6 +62,8 @@
     </servlet>
 =======
 >>>>>>> parent of 42916b1 (Create transaction screen)
+=======
+>>>>>>> parent of 42916b1 (Create transaction screen)
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
@@ -69,6 +72,7 @@
         <servlet-name>login_servlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <servlet-mapping>
         <servlet-name>InventoryController</servlet-name>
@@ -112,6 +116,8 @@
         <servlet-name>register_servlet</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
+=======
+>>>>>>> parent of 42916b1 (Create transaction screen)
 =======
 >>>>>>> parent of 42916b1 (Create transaction screen)
     <welcome-file-list>
