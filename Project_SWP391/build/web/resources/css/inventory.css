@@ -1,0 +1,90 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 14, 2025, 8:35:50 AM
+    Author     : Ha Trung KI
+*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: #f6f8fa;
+}
+.main-header {
+    background-color: #1b263b;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+.sidebar {
+    width: 220px;
+    background-color: #2a3d66;
+    height: 100vh;
+    color: #fff;
+    position: fixed;
+}
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar li a {
+    display: block;
+    padding: 12px 18px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.sidebar li a:hover {
+    background-color: #415a77;
+}
+.content {
+    margin-left: 230px;
+    padding: 20px;
+    width: calc(100% - 250px);
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 10px;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.form-grid button {
+    grid-column: 1 / span 2;
+    padding: 8px;
+    background-color: #1b263b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+th {
+    background-color: #1b263b;
+    color: white;
+}
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background-color: #fff;
+    padding: 10px;
+    margin-bottom: 15px;
+    gap: 10px;
+    border-radius: 6px;
+}
