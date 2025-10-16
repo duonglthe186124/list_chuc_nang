@@ -129,7 +129,6 @@ CREATE TABLE Product_units
 	received_date DATETIME2(0) DEFAULT NULL,
 	current_location_id INT NOT NULL REFERENCES Warehouse_locations(location_id),
 	status NVARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
-	last_tx_id INT DEFAULT NULL,
 	created_by INT DEFAULT NULL,
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	updated_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
@@ -384,6 +383,21 @@ CREATE TABLE Returns (
     qty INT NULL DEFAULT 1,
     reason NVARCHAR(1000) NULL,
     created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME()
+);
+
+CREATE TABLE Quality_Inspections
+(
+  inspection_id    INT IDENTITY(1,1) PRIMARY KEY,
+  inspection_no    NVARCHAR(50) NOT NULL UNIQUE,            
+  unit_id          INT NULL REFERENCES Product_units(unit_id),  
+  product_id       INT NULL REFERENCES Products(product_id),     
+  location_id      INT NULL REFERENCES Warehouse_locations(location_id),
+  inspected_by     INT NULL REFERENCES Employees(employee_id),
+  inspected_at     DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+  status           NVARCHAR(20) NOT NULL DEFAULT 'PENDING', 
+  result           NVARCHAR(200) NULL,                     
+  note             NVARCHAR(1000) NULL,                     
+  CONSTRAINT CHK_QualityStatus CHECK (status IN ('PENDING','PASSED','FAILED','QUARANTINE')),
 );
 
 -- 1. Insert into Roles (10 records)
