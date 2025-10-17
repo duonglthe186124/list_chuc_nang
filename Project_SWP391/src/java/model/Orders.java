@@ -7,18 +7,17 @@ public class Orders {
     private int order_id, user_id;
     private float total_amount;
     private String status;
-    private Date order_date, receive_date;
+    private Date order_date;
 
-    public Orders(int order_id, int user_id, float total_amount, String status, Date order_date, Date receive_date) {
+    public Orders() {
+    }
+
+    public Orders(int order_id, int user_id, float total_amount, String status, Date order_date) {
         this.order_id = order_id;
         this.user_id = user_id;
         this.total_amount = total_amount;
         this.status = status;
         this.order_date = order_date;
-        this.receive_date = receive_date;
-    }
-
-    public Orders() {
     }
 
     public int getOrder_id() {
@@ -59,14 +58,6 @@ public class Orders {
 
     public void setOrder_date(Date order_date) {
         this.order_date = order_date;
-    }
-
-    public Date getReceive_date() {
-        return receive_date;
-    }
-
-    public void setReceive_date(Date receive_date) {
-        this.receive_date = receive_date;
     }
 
 }
