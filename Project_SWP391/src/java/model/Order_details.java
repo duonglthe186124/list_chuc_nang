@@ -2,19 +2,19 @@ package model;
 
 public class Order_details {
 
-    private int order_no, order_id, product_id, qty;
+    private int order_no, order_id, unit_id, qty;
     private float unit_price, line_amount;
 
-    public Order_details() {
-    }
-
-    public Order_details(int order_no, int order_id, int product_id, int qty, float unit_price, float line_amount) {
+    public Order_details(int order_no, int order_id, int unit_id, int qty, float unit_price, float line_amount) {
         this.order_no = order_no;
         this.order_id = order_id;
-        this.product_id = product_id;
+        this.unit_id = unit_id;
         this.qty = qty;
         this.unit_price = unit_price;
         this.line_amount = line_amount;
+    }
+
+    public Order_details() {
     }
 
     public int getOrder_no() {
@@ -33,12 +33,12 @@ public class Order_details {
         this.order_id = order_id;
     }
 
-    public int getProduct_id() {
-        return product_id;
+    public int getUnit_id() {
+        return unit_id;
     }
 
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
+    public void setUnit_id(int unit_id) {
+        this.unit_id = unit_id;
     }
 
     public int getQty() {
