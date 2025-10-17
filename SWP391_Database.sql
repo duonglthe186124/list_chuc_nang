@@ -327,7 +327,6 @@ CREATE TABLE Orders
 	total_amount DECIMAL(18,2) NOT NULL,
 	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
 	order_date DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-	receive_date DATETIME2(0) NULL,
 	CONSTRAINT CHK_Orders_status CHECK (status IN ('PENDING','CONFIRMED','SHIPPED','CANCELLED'))
 )
 
@@ -345,7 +344,6 @@ CREATE TABLE Returns (
     return_id INT IDENTITY(1,1) PRIMARY KEY,
     return_no NVARCHAR(100) NOT NULL UNIQUE,
     order_id INT NOT NULL REFERENCES Orders(order_id),
-    customer_name NVARCHAR(255) NULL,
     created_by INT NOT NULL REFERENCES Users(user_id),       
     created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
     status NVARCHAR(50) NOT NULL DEFAULT 'OPEN',
@@ -356,10 +354,7 @@ CREATE TABLE Return_lines (
     return_line_id INT IDENTITY(1,1) PRIMARY KEY,
     return_id INT NOT NULL REFERENCES Returns(return_id),
     unit_id INT NULL REFERENCES Product_units(unit_id),
-	product_id INT NULL REFERENCES Products(product_id),
-    qty INT NULL DEFAULT 1,
     reason NVARCHAR(1000) NULL,
-    created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME()
 );
 
 CREATE TABLE Quality_Inspections
