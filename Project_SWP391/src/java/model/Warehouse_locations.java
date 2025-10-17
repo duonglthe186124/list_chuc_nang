@@ -1,24 +1,27 @@
 package model;
 
+import java.util.Date;
+
 public class Warehouse_locations {
 
     private int location_id;
-    private String code, area, ailse, slot;
-    private int max_capacity, current_capacity;
+    private String code, area, aisle, slot;
+    private int capacity;
     private String description;
+    private Date created_at;
 
     public Warehouse_locations() {
     }
 
-    public Warehouse_locations(int location_id, String code, String area, String ailse, String slot, int max_capacity, int current_capacity, String description) {
+    public Warehouse_locations(int location_id, String code, String area, String aisle, String slot, int capacity, String description, Date created_at) {
         this.location_id = location_id;
         this.code = code;
         this.area = area;
-        this.ailse = ailse;
+        this.aisle = aisle;
         this.slot = slot;
-        this.max_capacity = max_capacity;
-        this.current_capacity = current_capacity;
+        this.capacity = capacity;
         this.description = description;
+        this.created_at = created_at;
     }
 
     public int getLocation_id() {
@@ -45,12 +48,12 @@ public class Warehouse_locations {
         this.area = area;
     }
 
-    public String getAilse() {
-        return ailse;
+    public String getAisle() {
+        return aisle;
     }
 
-    public void setAilse(String ailse) {
-        this.ailse = ailse;
+    public void setAisle(String aisle) {
+        this.aisle = aisle;
     }
 
     public String getSlot() {
@@ -61,20 +64,12 @@ public class Warehouse_locations {
         this.slot = slot;
     }
 
-    public int getMax_capacity() {
-        return max_capacity;
+    public int getCapacity() {
+        return capacity;
     }
 
-    public void setMax_capacity(int max_capacity) {
-        this.max_capacity = max_capacity;
-    }
-
-    public int getCurrent_capacity() {
-        return current_capacity;
-    }
-
-    public void setCurrent_capacity(int current_capacity) {
-        this.current_capacity = current_capacity;
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public String getDescription() {
@@ -83,6 +78,14 @@ public class Warehouse_locations {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
     }
 
 }
