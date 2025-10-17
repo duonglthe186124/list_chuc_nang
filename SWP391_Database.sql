@@ -44,8 +44,8 @@ CREATE TABLE Users
 	address NVARCHAR(255) NOT NULL,
 	sec_address NVARCHAR(255) NULL,
 	role_id INT NULL REFERENCES Roles(role_id),
-	is_actived BIT DEFAULT 0,
-	is_deleted BIT DEFAULT 0
+	is_actived BIT NOT NULL DEFAULT 0,
+	is_deleted BIT NOT NULL DEFAULT 0
 )
 
 CREATE TABLE Positions
@@ -117,19 +117,35 @@ CREATE TABLE Warehouse_locations
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME()
 )
 
+CREATE TABLE Box_types
+(
+	box_id INT IDENTITY(1,1) PRIMARY KEY,
+	box_code VARCHAR(32) UNIQUE NOT NULL,
+	capacity INT NOT NULL,
+	description NVARCHAR(1000) NULL
+)
+
+
+CREATE TABLE Containers
+(
+	container_id INT IDENTITY(1,1) PRIMARY KEY,
+	container_code VARCHAR(64) NOT NULL UNIQUE,
+	box_type INT NOT NULL REFERENCES Box_types(box_id),
+	location_id INT NOT NULL REFERENCES Warehouse_locations(location_id)
+)
+
 CREATE TABLE Product_units
 (
 	unit_id INT IDENTITY(1,1) PRIMARY KEY,
-	imei NVARCHAR(50) UNIQUE,
+	imei NVARCHAR(50) NULL UNIQUE,
 	serial_number NVARCHAR(100) NULL,
-	warranty_start_date DATETIME2(0) DEFAULT SYSUTCDATETIME(),
-	warranty_end_date DATETIME2(0) DEFAULT SYSUTCDATETIME(),
+	warranty_start DATETIME2(0) DEFAULT SYSUTCDATETIME(),
+	warranty_end DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	product_id INT NOT NULL REFERENCES Products(product_id),
 	purchase_price DECIMAL(18,2) DEFAULT NULL,
 	received_date DATETIME2(0) DEFAULT NULL,
-	current_location_id INT NOT NULL REFERENCES Warehouse_locations(location_id),
+	container_id INT NOT NULL REFERENCES Containers(container_id),
 	status NVARCHAR(50) NOT NULL DEFAULT 'AVAILABLE',
-	created_by INT DEFAULT NULL,
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	updated_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	CONSTRAINT CHK_Product_units_status CHECK (status IN ('AVAILABLE','RESERVED','SOLD','DAMAGED','RETURNED'))
@@ -166,29 +182,25 @@ CREATE TABLE Purchase_order_lines
 	po_id INT NOT NULL REFERENCES Purchase_orders(po_id),
 	product_id INT NOT NULL REFERENCES Products(product_id),
 	unit_price DECIMAL(18,2) NOT NULL,
-	qty INT NOT NULL,
-	line_amount DECIMAL(18,2) NOT NULL
+	qty INT NOT NULL
 )
 
-CREATE TABLE Stock_receipts
+CREATE TABLE Receipts
 (
 	receipts_id INT IDENTITY(1,1) PRIMARY KEY,
 	receipts_no NVARCHAR(50) NOT NULL UNIQUE,
-	supplier_id INT NOT NULL REFERENCES Suppliers(supplier_id),
-	created_by INT NOT NULL REFERENCES Employees(employee_id),
-	requested_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
+	po_id INT NOT NULL REFERENCES Purchase_orders(po_id),
+	received_by INT NOT NULL REFERENCES Employees(employee_id),
 	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
-	approved_by INT DEFAULT NULL,
-	approved_at DATETIME2(0) DEFAULT NULL,
 	note NVARCHAR(MAX) NULL,
-	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
-	CONSTRAINT CHK_Stock_receipts_status CHECK (status IN ('PENDING','RECEIVED','PARTIAL','CANCELLED'))
+	received_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
+	CONSTRAINT CHK_Receipts_status CHECK (status IN ('PENDING','RECEIVED','PARTIAL','CANCELLED'))
 )
 
-CREATE TABLE Stock_receipt_lines
+CREATE TABLE Receipt_lines
 (
 	line_id INT IDENTITY(1,1) PRIMARY KEY,
-	receipt_id INT NOT NULL REFERENCES Stock_receipts(receipts_id),
+	receipt_id INT NOT NULL REFERENCES Receipts(receipts_id),
 	product_id INT NOT NULL REFERENCES Products(product_id),
 	qty_expected INT NOT NULL,
 	qty_received INT DEFAULT 0,
@@ -196,60 +208,38 @@ CREATE TABLE Stock_receipt_lines
 	note NVARCHAR(255) DEFAULT NULL
 )
 
-CREATE TABLE Stock_receipt_units
+CREATE TABLE Receipt_units
 (
 	id INT IDENTITY(1,1) PRIMARY KEY,
-	line_id INT NOT NULL REFERENCES Stock_receipt_lines(line_id),
+	line_id INT NOT NULL REFERENCES Receipt_lines(line_id),
 	unit_id INT NOT NULL REFERENCES Product_units(unit_id) UNIQUE
 )
 
-CREATE TABLE Stock_shipments
+CREATE TABLE Shipments
 (
 	shipment_id INT IDENTITY(1,1) PRIMARY KEY,
 	shipment_no NVARCHAR(50) NOT NULL UNIQUE,
-	customer NVARCHAR(200) NULL,
+	user_id INT NOT NULL REFERENCES Users(user_id),
 	created_by INT NOT NULL REFERENCES Employees(employee_id),
 	requested_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
-	approved_by INT DEFAULT NULL,
-	approved_at DATETIME2(0) DEFAULT NULL,
 	note NVARCHAR(1000) NULL,
-	CONSTRAINT CHK_Stock_shipments_status CHECK (status IN ('PENDING','PICKED','SHIPPED','CANCELLED'))
+	CONSTRAINT CHK_Shipments_status CHECK (status IN ('PENDING','PICKED','SHIPPED','CANCELLED'))
 )
 
-CREATE TABLE Stock_shipment_lines
+CREATE TABLE Shipment_lines
 (
 	line_id INT IDENTITY(1,1) PRIMARY KEY,
-	shipment_id INT NOT NULL REFERENCES Stock_shipments(shipment_id),
+	shipment_id INT NOT NULL REFERENCES Shipments(shipment_id),
 	product_id INT NOT NULL REFERENCES Products(product_id),
 	qty INT NOT NULL
 )
 
-CREATE TABLE Stock_shipment_units
+CREATE TABLE Shipment_units
 (
 	id INT IDENTITY(1,1) PRIMARY KEY,
-	line_id INT NOT NULL REFERENCES Stock_shipment_lines(line_id),
+	line_id INT NOT NULL REFERENCES Shipment_lines(line_id),
 	unit_id INT NOT NULL REFERENCES Product_units(unit_id)
-)
-
-CREATE TABLE Stock_moves
-(
-	move_id INT IDENTITY(1,1) PRIMARY KEY,
-	move_no NVARCHAR(50) UNIQUE,
-	unit_id INT DEFAULT NULL,
-	product_id INT DEFAULT NULL,
-	qty INT DEFAULT NULL,
-	from_location_id INT NULL REFERENCES Warehouse_locations(location_id),
-	to_location_id INT NULL REFERENCES Warehouse_locations(location_id),
-	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
-	created_by INT NULL,
-	approved_by INT NULL,
-	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
-	approved_at DATETIME2(0) DEFAULT NULL,
-	note NVARCHAR(255) NULL,
-	FOREIGN KEY (unit_id) REFERENCES Product_units(unit_id),
-	FOREIGN KEY (product_id) REFERENCES Products(product_id),
-	CONSTRAINT CHK_Stock_moves_status CHECK (status IN ('PENDING','APPROVED','COMPLETED','CANCELLED'))
 )
 
 CREATE TABLE Stock_adjustments
@@ -262,7 +252,7 @@ CREATE TABLE Stock_adjustments
 	qty_after INT NULL,
 	delta INT NULL,
 	reason NVARCHAR(255) NULL,
-	created_by INT NULL,
+	created_by INT NOT NULL REFERENCES Employees(employee_id),
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME()
 )
 
@@ -277,7 +267,8 @@ CREATE TABLE Stock_audit_logs
 	unit_cost DECIMAL(18,2) NULL, 
 	monetary_value DECIMAL(18,2) NULL,
 	detail NVARCHAR(1000) NULL,
-	note NVARCHAR(MAX) NULL
+	note NVARCHAR(MAX) NULL,
+	CONSTRAINT CHK_Audit_log_event_type CHECK (event_type IN ('RECEIPT','SHIPPING','MOVING','QC CHECK','ADJUSTMENT'))
 )
 
 CREATE TABLE Shifts
@@ -350,21 +341,6 @@ CREATE TABLE Order_details
 	line_amount DECIMAL(18,2) NOT NULL
 )
 
-CREATE TABLE Containers (
-    container_id INT IDENTITY(1,1) PRIMARY KEY,
-	container_code NVARCHAR(100) NOT NULL UNIQUE,
-	description NVARCHAR(500) NULL,
-	status NVARCHAR(50) NOT NULL DEFAULT 'SEALED',
-	location_id INT NOT NULL REFERENCES Warehouse_locations(location_id), 
-	created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME()
-);
-
-CREATE TABLE Container_units (
-    container_id INT REFERENCES Containers(container_id),
-    unit_id INT REFERENCES Product_units(unit_id),
-    PRIMARY KEY(container_id, unit_id)
-);
-
 CREATE TABLE Returns (
     return_id INT IDENTITY(1,1) PRIMARY KEY,
     return_no NVARCHAR(100) NOT NULL UNIQUE,
@@ -376,10 +352,11 @@ CREATE TABLE Returns (
 	CONSTRAINT CHK_Returns_status CHECK (status IN ('OPEN','RECEIVED','INSPECTED','RESOLVED'))
 );
 
-  CREATE TABLE Return_lines (
+CREATE TABLE Return_lines (
     return_line_id INT IDENTITY(1,1) PRIMARY KEY,
     return_id INT NOT NULL REFERENCES Returns(return_id),
-    unit_id INT NOT NULL REFERENCES Product_units(unit_id),            
+    unit_id INT NULL REFERENCES Product_units(unit_id),
+	product_id INT NULL REFERENCES Products(product_id),
     qty INT NULL DEFAULT 1,
     reason NVARCHAR(1000) NULL,
     created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME()
@@ -389,466 +366,489 @@ CREATE TABLE Quality_Inspections
 (
   inspection_id    INT IDENTITY(1,1) PRIMARY KEY,
   inspection_no    NVARCHAR(50) NOT NULL UNIQUE,            
-  unit_id          INT NULL REFERENCES Product_units(unit_id),  
-  product_id       INT NULL REFERENCES Products(product_id),     
+  unit_id          INT NULL REFERENCES Product_units(unit_id),   
   location_id      INT NULL REFERENCES Warehouse_locations(location_id),
   inspected_by     INT NULL REFERENCES Employees(employee_id),
   inspected_at     DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
   status           NVARCHAR(20) NOT NULL DEFAULT 'PENDING', 
   result           NVARCHAR(200) NULL,                     
   note             NVARCHAR(1000) NULL,                     
-  CONSTRAINT CHK_QualityStatus CHECK (status IN ('PENDING','PASSED','FAILED','QUARANTINE')),
+  CONSTRAINT CHK_QualityStatus CHECK (status IN ('PENDING','PASSED','FAILED','QUARANTINE'))
 );
 
--- 1. Insert into Roles (10 records)
+USE SWP391_WarehouseManagements
+GO
+
+-- Insert data into Roles
 INSERT INTO Roles (role_name, description) VALUES
-(N'Admin', N'Quản trị viên hệ thống với quyền truy cập đầy đủ'),
-(N'Warehouse Manager', N'Quản lý kho, giám sát hàng tồn kho và vận hành'),
-(N'Inventory Staff', N'Nhân viên kiểm kê hàng hóa'),
-(N'Sales', N'Nhân viên bán hàng, xử lý đơn hàng'),
-(N'Purchasing', N'Nhân viên thu mua, tạo đơn hàng mua'),
-(N'Supervisor', N'Giám sát hoạt động kho'),
-(N'Accountant', N'Nhân viên kế toán, xử lý thanh toán'),
-(N'Customer Support', N'Hỗ trợ khách hàng, xử lý trả hàng'),
-(N'Technician', N'Nhân viên kỹ thuật, bảo trì thiết bị kho'),
-(N'Security', N'Nhân viên bảo vệ kho');
+('Admin', 'System administrator with full access'),
+('Warehouse Manager', 'Manages warehouse operations'),
+('Inventory Staff', 'Handles inventory and stock'),
+('Sales Staff', 'Manages customer orders'),
+('HR Manager', 'Manages employee records and payroll'),
+('Quality Inspector', 'Performs quality checks'),
+('Purchase Manager', 'Handles purchase orders'),
+('Shipment Coordinator', 'Manages shipments'),
+('Employee', 'General employee role'),
+('Guest', 'Limited access for external users');
 
--- 2. Insert into Features (12 records)
+-- Insert data into Features
 INSERT INTO Features (feature_name, description) VALUES
-(N'View Inventory', N'Xem thông tin hàng tồn kho'),
-(N'Manage Inventory', N'Quản lý nhập/xuất hàng tồn kho'),
-(N'Create PO', N'Tạo đơn hàng mua'),
-(N'Approve PO', N'Phê duyệt đơn hàng mua'),
-(N'Manage Users', N'Quản lý tài khoản người dùng'),
-(N'View Reports', N'Xem báo cáo kho và tài chính'),
-(N'Manage Products', N'Quản lý thông tin sản phẩm'),
-(N'Process Returns', N'Xử lý yêu cầu trả hàng'),
-(N'Manage Employees', N'Quản lý thông tin nhân viên'),
-(N'View Audit Logs', N'Xem nhật ký kiểm tra'),
-(N'Manage Shifts', N'Quản lý ca làm việc'),
-(N'View Payroll', N'Xem thông tin lương');
+('Manage Users', 'Manage user accounts'),
+('View Inventory', 'View stock levels'),
+('Update Inventory', 'Update stock quantities'),
+('Create Purchase Order', 'Create new purchase orders'),
+('Manage Shipments', 'Manage shipment processes'),
+('Perform Quality Inspection', 'Conduct quality checks'),
+('Manage Payroll', 'Handle payroll processing'),
+('View Reports', 'Access system reports'),
+('Manage Roles', 'Assign and modify roles'),
+('Track Attendance', 'Record employee attendance');
 
--- 3. Insert into Feature_role (12 records)
+-- Insert data into Feature_role
 INSERT INTO Feature_role (role_id, feature_id) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), -- Admin có quyền truy cập nhiều tính năng
-(2, 1), (2, 2), (2, 6), -- Warehouse Manager
-(3, 1), (3, 2), -- Inventory Staff
-(4, 1), (4, 8); -- Sales
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10),
+(2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
+(3, 2), (3, 3), (3, 6),
+(4, 2), (4, 5),
+(5, 7), (5, 10);
 
--- 4. Insert into Users (15 records)
+-- Insert data into Users
 INSERT INTO Users (email, password, fullname, phone, address, sec_address, role_id, is_actived, is_deleted) VALUES
-(N'admin@warehouse.com', N'hashed_password_1', N'Nguyen Van Admin', N'0123456789', N'123 Hanoi St', NULL, 1, 1, 0),
-(N'manager1@warehouse.com', N'hashed_password_2', N'Tran Thi Manager', N'0987654321', N'456 Saigon St', NULL, 2, 1, 0),
-(N'inventory1@warehouse.com', N'hashed_password_3', N'Le Van Inventory', N'0912345678', N'789 Danang St', NULL, 3, 1, 0),
-(N'sales1@warehouse.com', N'hashed_password_4', N'Pham Thi Sales', N'0934567890', N'101 Cantho St', NULL, 4, 1, 0),
-(N'purchasing1@warehouse.com', N'hashed_password_5', N'Hoang Van Purchasing', N'0945678901', N'202 Hue St', NULL, 5, 1, 0),
-(N'supervisor1@warehouse.com', N'hashed_password_6', N'Vo Thi Supervisor', N'0956789012', N'303 Hanoi St', NULL, 6, 1, 0),
-(N'accountant1@warehouse.com', N'hashed_password_7', N'Nguyen Thi Accountant', N'0967890123', N'404 Saigon St', NULL, 7, 1, 0),
-(N'customer1@warehouse.com', N'hashed_password_8', N'Tran Van Customer', N'0978901234', N'505 Danang St', NULL, 8, 1, 0),
-(N'technician1@warehouse.com', N'hashed_password_9', N'Le Thi Technician', N'0989012345', N'606 Cantho St', NULL, 9, 1, 0),
-(N'security1@warehouse.com', N'hashed_password_10', N'Pham Van Security', N'0990123456', N'707 Hue St', NULL, 10, 1, 0),
-(N'user11@warehouse.com', N'hashed_password_11', N'Nguyen Van A', N'0911112222', N'808 Hanoi St', NULL, 3, 1, 0),
-(N'user12@warehouse.com', N'hashed_password_12', N'Tran Thi B', N'0922223333', N'909 Saigon St', NULL, 4, 1, 0),
-(N'user13@warehouse.com', N'hashed_password_13', N'Le Van C', N'0933334444', N'1010 Danang St', NULL, 5, 1, 0),
-(N'user14@warehouse.com', N'hashed_password_14', N'Pham Thi D', N'0944445555', N'1111 Cantho St', NULL, 6, 1, 0),
-(N'user15@warehouse.com', N'hashed_password_15', N'Hoang Van E', N'0955556666', N'1212 Hue St', NULL, 7, 1, 0);
+('admin@warehouse.com', 'pass123', 'John Admin', '0123456789', '123 Main St', NULL, 1, 1, 0),
+('manager@warehouse.com', 'pass456', 'Jane Manager', '0987654321', '456 Oak Ave', '789 Pine Rd', 2, 1, 0),
+('inventory@warehouse.com', 'pass789', 'Bob Inventory', '0234567890', '789 Elm St', NULL, 3, 1, 0),
+('sales@warehouse.com', 'pass101', 'Alice Sales', '0345678901', '101 Birch Rd', NULL, 4, 1, 0),
+('hr@warehouse.com', 'pass112', 'Tom HR', '0456789012', '202 Cedar Ln', NULL, 5, 1, 0),
+('inspector@warehouse.com', 'pass131', 'Emma Inspector', '0567890123', '303 Maple Dr', NULL, 6, 1, 0),
+('purchase@warehouse.com', 'pass415', 'Mike Purchase', '0678901234', '404 Walnut St', NULL, 7, 1, 0),
+('shipment@warehouse.com', 'pass161', 'Sarah Shipment', '0789012345', '505 Spruce Ave', NULL, 8, 1, 0),
+('employee1@warehouse.com', 'pass718', 'David Employee', '0890123456', '606 Ash St', NULL, 9, 1, 0),
+('guest@warehouse.com', 'pass192', 'Guest User', '0901234567', '707 Willow Rd', NULL, 10, 1, 0);
 
--- 5. Insert into Positions (10 records)
+-- Insert data into Positions
 INSERT INTO Positions (position_name, description) VALUES
-(N'Warehouse Manager', N'Quản lý toàn bộ hoạt động kho'),
-(N'Inventory Clerk', N'Kiểm kê và quản lý hàng tồn'),
-(N'Sales Representative', N'Xử lý đơn hàng bán'),
-(N'Purchasing Officer', N'Quản lý mua hàng'),
-(N'Supervisor', N'Giám sát nhân viên kho'),
-(N'Accountant', N'Xử lý tài chính và lương'),
-(N'Customer Support', N'Hỗ trợ khách hàng'),
-(N'Technician', N'Bảo trì thiết bị kho'),
-(N'Security Guard', N'Bảo vệ kho'),
-(N'Admin', N'Quản trị hệ thống');
+('System Admin', 'Manages IT systems'),
+('Warehouse Supervisor', 'Oversees warehouse operations'),
+('Inventory Clerk', 'Tracks inventory'),
+('Sales Representative', 'Handles sales'),
+('HR Specialist', 'Manages HR tasks'),
+('Quality Control', 'Performs inspections'),
+('Procurement Officer', 'Manages purchases'),
+('Logistics Coordinator', 'Coordinates shipments'),
+('General Worker', 'General warehouse tasks'),
+('Accountant', 'Handles financial records');
 
--- 6. Insert into Employees (10 records)
+-- Insert data into Employees
 INSERT INTO Employees (user_id, employee_code, hire_date, position_id, bank_account, boss_id) VALUES
-(1, N'EMP001', '2023-01-01', 10, N'1234567890', NULL),
-(2, N'EMP002', '2023-02-01', 1, N'2345678901', 1),
-(3, N'EMP003', '2023-03-01', 2, N'3456789012', 2),
-(4, N'EMP004', '2023-04-01', 3, N'4567890123', 2),
-(5, N'EMP005', '2023-05-01', 4, N'5678901234', 2),
-(6, N'EMP006', '2023-06-01', 5, N'6789012345', 2),
-(7, N'EMP007', '2023-07-01', 6, N'7890123456', 1),
-(8, N'EMP008', '2023-08-01', 7, N'8901234567', 2),
-(9, N'EMP009', '2023-09-01', 8, N'9012345678', 2),
-(10, N'EMP010', '2023-10-01', 9, N'0123456789', 2);
+(1, 'EMP001', '2023-01-01', 1, '1234567890', NULL),
+(2, 'EMP002', '2023-02-01', 2, '2345678901', 1),
+(3, 'EMP003', '2023-03-01', 3, '3456789012', 2),
+(4, 'EMP004', '2023-04-01', 4, '4567890123', 2),
+(5, 'EMP005', '2023-05-01', 5, '5678901234', 1),
+(6, 'EMP006', '2023-06-01', 6, '6789012345', 2),
+(7, 'EMP007', '2023-07-01', 7, '7890123456', 2),
+(8, 'EMP008', '2023-08-01', 8, '8901234567', 2),
+(9, 'EMP009', '2023-09-01', 9, '9012345678', 2),
+(10, 'EMP010', '2023-10-01', 10, '0123456789', 1);
 
--- 7. Insert into Brands (10 records)
+-- Insert data into Brands (20 records)
 INSERT INTO Brands (brand_name) VALUES
-(N'Apple'), (N'Samsung'), (N'Xiaomi'), (N'Oppo'), (N'Vivo'),
-(N'Sony'), (N'LG'), (N'Nokia'), (N'Huawei'), (N'Realme');
+('Apple'), ('Samsung'), ('Xiaomi'), ('Oppo'), ('Vivo'), ('Huawei'), ('Sony'), ('LG'), ('Nokia'), ('OnePlus'),
+('Realme'), ('Asus'), ('Lenovo'), ('Motorola'), ('Google'), ('HTC'), ('ZTE'), ('Vsmart'), ('BlackBerry'), ('Poco');
 
--- 8. Insert into Product_specs (10 records)
+-- Insert data into Product_specs (20 records)
 INSERT INTO Product_specs (cpu, memory, storage, battery_capacity, color, screen_size, screen_type, camera) VALUES
-(N'A15 Bionic', N'6GB', N'128GB', 3240, N'Black', 6.1, N'OLED', 12),
-(N'Snapdragon 888', N'8GB', N'256GB', 5000, N'Blue', 6.7, N'AMOLED', 48),
-(N'Exynos 2100', N'12GB', N'512GB', 4500, N'White', 6.2, N'AMOLED', 64),
-(N'MediaTek Dimensity 1200', N'8GB', N'128GB', 4000, N'Red', 6.4, N'LCD', 48),
-(N'A14 Bionic', N'4GB', N'64GB', 2815, N'Green', 5.4, N'OLED', 12),
-(N'Snapdragon 865', N'6GB', N'128GB', 4300, N'Black', 6.5, N'AMOLED', 32),
-(N'Kirin 9000', N'8GB', N'256GB', 4400, N'Silver', 6.6, N'OLED', 50),
-(N'MediaTek Helio G95', N'6GB', N'128GB', 5000, N'Gold', 6.4, N'LCD', 64),
-(N'Snapdragon 720G', N'4GB', N'64GB', 5020, N'Blue', 6.5, N'AMOLED', 48),
-(N'A13 Bionic', N'4GB', N'128GB', 3110, N'Red', 6.1, N'LCD', 12);
+('A16 Bionic', '6GB', '128GB', 3200, 'Black', 6.1, 'OLED', 48),
+('Exynos 2200', '8GB', '256GB', 4000, 'White', 6.2, 'AMOLED', 50),
+('Snapdragon 8 Gen 2', '12GB', '512GB', 4500, 'Blue', 6.7, 'AMOLED', 64),
+('Dimensity 9000', '8GB', '128GB', 5000, 'Green', 6.5, 'IPS', 48),
+('A15 Bionic', '4GB', '64GB', 3000, 'Red', 5.4, 'OLED', 12),
+('Kirin 9000', '8GB', '256GB', 4400, 'Silver', 6.6, 'OLED', 50),
+('Snapdragon 870', '6GB', '128GB', 4200, 'Gold', 6.4, 'AMOLED', 48),
+('Helio G95', '6GB', '64GB', 5000, 'Black', 6.5, 'IPS', 64),
+('A14 Bionic', '4GB', '256GB', 2815, 'White', 6.1, 'OLED', 12),
+('Snapdragon 888', '12GB', '256GB', 4500, 'Blue', 6.7, 'AMOLED', 108),
+('Dimensity 1200', '8GB', '128GB', 4000, 'Green', 6.3, 'AMOLED', 50),
+('Exynos 2100', '8GB', '128GB', 4800, 'Black', 6.2, 'AMOLED', 64),
+('Snapdragon 865', '6GB', '128GB', 4300, 'Silver', 6.5, 'IPS', 48),
+('A13 Bionic', '4GB', '64GB', 3110, 'Red', 6.1, 'LCD', 12),
+('Kirin 990', '8GB', '256GB', 4200, 'Gold', 6.4, 'OLED', 40),
+('Snapdragon 765G', '6GB', '128GB', 4100, 'Blue', 6.4, 'AMOLED', 48),
+('Helio P90', '4GB', '64GB', 4000, 'Black', 6.3, 'IPS', 48),
+('Dimensity 800U', '6GB', '128GB', 3800, 'White', 6.5, 'AMOLED', 64),
+('Snapdragon 855', '8GB', '256GB', 4000, 'Green', 6.4, 'AMOLED', 48),
+('Exynos 990', '8GB', '128GB', 4300, 'Silver', 6.7, 'AMOLED', 64);
 
--- 9. Insert into Products (10 records)
+-- Insert data into Products (20 records)
 INSERT INTO Products (sku_code, name, brand_id, spec_id, description) VALUES
-(N'SKU001', N'iPhone 13', 1, 1, N'iPhone 13 with A15 Bionic chip'),
-(N'SKU002', N'Galaxy S21', 2, 2, N'Samsung Galaxy S21 with Snapdragon 888'),
-(N'SKU003', N'Mi 11', 3, 3, N'Xiaomi Mi 11 with high performance'),
-(N'SKU004', N'Reno 6', 4, 4, N'Oppo Reno 6 with sleek design'),
-(N'SKU005', N'V21', 5, 5, N'Vivo V21 with great camera'),
-(N'SKU006', N'Xperia 5', 6, 6, N'Sony Xperia 5 with compact design'),
-(N'SKU007', N'G8 ThinQ', 7, 7, N'LG G8 ThinQ with OLED display'),
-(N'SKU008', N'8.3 5G', 8, 8, N'Nokia 8.3 5G with great connectivity'),
-(N'SKU009', N'P40 Pro', 9, 9, N'Huawei P40 Pro with powerful camera'),
-(N'SKU010', N'GT Neo', 10, 10, N'Realme GT Neo with fast charging');
+('SKU001', 'iPhone 14', 1, 1, 'Latest iPhone model'),
+('SKU002', 'Galaxy S23', 2, 2, 'Flagship Samsung phone'),
+('SKU003', 'Mi 13', 3, 3, 'High-performance Xiaomi phone'),
+('SKU004', 'Reno 8', 4, 4, 'Sleek Oppo smartphone'),
+('SKU005', 'Vivo X80', 5, 5, 'Vivo flagship device'),
+('SKU006', 'P50 Pro', 6, 6, 'Huawei premium phone'),
+('SKU007', 'Xperia 1 IV', 7, 7, 'Sony multimedia phone'),
+('SKU008', 'G8 ThinQ', 8, 8, 'LG innovative phone'),
+('SKU009', 'Nokia G50', 9, 9, 'Affordable Nokia phone'),
+('SKU010', 'OnePlus 10 Pro', 10, 10, 'High-speed OnePlus device'),
+('SKU011', 'Realme GT', 11, 11, 'Budget performance phone'),
+('SKU012', 'Zenfone 8', 12, 12, 'Compact Asus phone'),
+('SKU013', 'Moto G Power', 13, 13, 'Long battery life phone'),
+('SKU014', 'Pixel 6', 14, 14, 'Google AI-powered phone'),
+('SKU015', 'HTC U12', 15, 15, 'HTC flagship device'),
+('SKU016', 'ZTE Axon', 16, 16, 'ZTE premium phone'),
+('SKU017', 'Vsmart Joy', 17, 17, 'Affordable Vsmart phone'),
+('SKU018', 'BlackBerry Key2', 18, 18, 'Physical keyboard phone'),
+('SKU019', 'Poco F4', 19, 19, 'High-value Poco phone'),
+('SKU020', 'Galaxy A53', 2, 20, 'Mid-range Samsung phone');
 
--- 10. Insert into Warehouse_locations (10 records)
-INSERT INTO Warehouse_locations (code, area, aisle, slot, capacity, description) VALUES
-(N'LOC001', N'A1', N'Aisle1', N'Slot1', 100, N'Main storage for electronics'),
-(N'LOC002', N'A1', N'Aisle2', N'Slot1', 50, N'Secondary storage'),
-(N'LOC003', N'B1', N'Aisle1', N'Slot2', 200, N'High capacity storage'),
-(N'LOC004', N'B1', N'Aisle2', N'Slot2', 150, N'Medium capacity storage'),
-(N'LOC005', N'C1', N'Aisle1', N'Slot3', 80, N'Small item storage'),
-(N'LOC006', N'C1', N'Aisle2', N'Slot3', 120, N'Mixed item storage'),
-(N'LOC007', N'D1', N'Aisle1', N'Slot4', 90, N'Spare parts storage'),
-(N'LOC008', N'D1', N'Aisle2', N'Slot4', 60, N'Fragile item storage'),
-(N'LOC009', N'E1', N'Aisle1', N'Slot5', 110, N'Bulk item storage'),
-(N'LOC010', N'E1', N'Aisle2', N'Slot5', 70, N'Backup storage');
-
--- 11. Insert into Product_units (15 records)
-INSERT INTO Product_units (imei, serial_number, product_id, purchase_price, received_date, current_location_id, status, created_by) VALUES
-(N'IMEI001', N'SN001', 1, 699.99, '2023-11-01', 1, N'AVAILABLE', 1),
-(N'IMEI002', N'SN002', 1, 699.99, '2023-11-01', 1, N'AVAILABLE', 1),
-(N'IMEI003', N'SN003', 2, 799.99, '2023-11-02', 2, N'AVAILABLE', 1),
-(N'IMEI004', N'SN004', 2, 799.99, '2023-11-02', 2, N'RESERVED', 1),
-(N'IMEI005', N'SN005', 3, 599.99, '2023-11-03', 3, N'AVAILABLE', 1),
-(N'IMEI006', N'SN006', 3, 599.99, '2023-11-03', 3, N'SOLD', 1),
-(N'IMEI007', N'SN007', 4, 499.99, '2023-11-04', 4, N'AVAILABLE', 1),
-(N'IMEI008', N'SN008', 4, 499.99, '2023-11-04', 4, N'AVAILABLE', 1),
-(N'IMEI009', N'SN009', 5, 399.99, '2023-11-05', 5, N'AVAILABLE', 1),
-(N'IMEI010', N'SN010', 5, 399.99, '2023-11-05', 5, N'AVAILABLE', 1),
-(N'IMEI011', N'SN011', 6, 899.99, '2023-11-06', 6, N'AVAILABLE', 1),
-(N'IMEI012', N'SN012', 6, 899.99, '2023-11-06', 6, N'RESERVED', 1),
-(N'IMEI013', N'SN013', 7, 699.99, '2023-11-07', 7, N'AVAILABLE', 1),
-(N'IMEI014', N'SN014', 8, 499.99, '2023-11-08', 8, N'AVAILABLE', 1),
-(N'IMEI015', N'SN015', 9, 999.99, '2023-11-09', 9, N'AVAILABLE', 1);
-
--- 12. Insert into Suppliers (10 records)
-INSERT INTO Suppliers (supplier_name, display_name, address, phone, email, representative, payment_method, note) VALUES
-(N'Supplier A', N'Apple Distributor', N'123 Tech St, Hanoi', N'0111222333', N'supplierA@tech.com', N'John Doe', N'Bank Transfer', NULL),
-(N'Supplier B', N'Samsung Distributor', N'456 Tech St, Saigon', N'0222333444', N'supplierB@tech.com', N'Jane Smith', N'Bank Transfer', NULL),
-(N'Supplier C', N'Xiaomi Distributor', N'789 Tech St, Danang', N'0333444555', N'supplierC@tech.com', N'Mike Johnson', N'Cash', NULL),
-(N'Supplier D', N'Oppo Distributor', N'101 Tech St, Cantho', N'0444555666', N'supplierD@tech.com', N'Anna Brown', N'Bank Transfer', NULL),
-(N'Supplier E', N'Vivo Distributor', N'202 Tech St, Hue', N'0555666777', N'supplierE@tech.com', N'Peter Lee', N'Cash', NULL),
-(N'Supplier F', N'Sony Distributor', N'303 Tech St, Hanoi', N'0666777888', N'supplierF@tech.com', N'Lisa Wong', N'Bank Transfer', NULL),
-(N'Supplier G', N'LG Distributor', N'404 Tech St, Saigon', N'0777888999', N'supplierG@tech.com', N'Tom Clark', N'Cash', NULL),
-(N'Supplier H', N'Nokia Distributor', N'505 Tech St, Danang', N'0888999000', N'supplierH@tech.com', N'Emma Davis', N'Bank Transfer', NULL),
-(N'Supplier I', N'Huawei Distributor', N'606 Tech St, Cantho', N'0999000111', N'supplierI@tech.com', N'David Wilson', N'Cash', NULL),
-(N'Supplier J', N'Realme Distributor', N'707 Tech St, Hue', N'0100111222', N'supplierJ@tech.com', N'Sarah Taylor', N'Bank Transfer', NULL);
-
--- 13. Insert into Purchase_orders (10 records)
-INSERT INTO Purchase_orders (po_code, supplier_id, created_by, created_at, status, total_amount) VALUES
-(N'PO001', 1, 1, '2023-11-01', N'PENDING', 1399.98),
-(N'PO002', 2, 2, '2023-11-02', N'ACTIVE', 1599.98),
-(N'PO003', 3, 3, '2023-11-03', N'COMPLETED', 1199.98),
-(N'PO004', 4, 4, '2023-11-04', N'PENDING', 999.98),
-(N'PO005', 5, 5, '2023-11-05', N'ACTIVE', 799.98),
-(N'PO006', 6, 6, '2023-11-06', N'COMPLETED', 1799.98),
-(N'PO007', 7, 7, '2023-11-07', N'PENDING', 1399.98),
-(N'PO008', 8, 8, '2023-11-08', N'ACTIVE', 999.98),
-(N'PO009', 9, 9, '2023-11-09', N'COMPLETED', 1999.98),
-(N'PO010', 10, 10, '2023-11-10', N'PENDING', 799.98);
-
--- 14. Insert into Purchase_order_lines (10 records)
-INSERT INTO Purchase_order_lines (po_id, product_id, unit_price, qty, line_amount) VALUES
-(1, 1, 699.99, 2, 1399.98),
-(2, 2, 799.99, 2, 1599.98),
-(3, 3, 599.99, 2, 1199.98),
-(4, 4, 499.99, 2, 999.98),
-(5, 5, 399.99, 2, 799.98),
-(6, 6, 899.99, 2, 1799.98),
-(7, 7, 699.99, 2, 1399.98),
-(8, 8, 499.99, 2, 999.98),
-(9, 9, 999.99, 2, 1999.98),
-(10, 10, 399.99, 2, 799.98);
-
--- 15. Insert into Stock_receipts (10 records)
-INSERT INTO Stock_receipts (receipts_no, supplier_id, created_by, requested_at, status, approved_by, approved_at, note) VALUES
-(N'REC001', 1, 1, '2023-11-01', N'PENDING', NULL, NULL, N'Waiting for delivery'),
-(N'REC002', 2, 2, '2023-11-02', N'RECEIVED', 1, '2023-11-03', N'Fully received'),
-(N'REC003', 3, 3, '2023-11-03', N'PARTIAL', 1, '2023-11-04', N'Partially received'),
-(N'REC004', 4, 4, '2023-11-04', N'PENDING', NULL, NULL, N'Pending approval'),
-(N'REC005', 5, 5, '2023-11-05', N'RECEIVED', 1, '2023-11-06', N'Fully received'),
-(N'REC006', 6, 6, '2023-11-06', N'PENDING', NULL, NULL, N'Waiting for delivery'),
-(N'REC007', 7, 7, '2023-11-07', N'RECEIVED', 1, '2023-11-08', N'Fully received'),
-(N'REC008', 8, 8, '2023-11-08', N'PARTIAL', 1, '2023-11-09', N'Partially received'),
-(N'REC009', 9, 9, '2023-11-09', N'RECEIVED', 1, '2023-11-10', N'Fully received'),
-(N'REC010', 10, 10, '2023-11-10', N'PENDING', NULL, NULL, N'Pending approval');
-
--- 16. Insert into Stock_receipt_lines (10 records)
-INSERT INTO Stock_receipt_lines (receipt_id, product_id, qty_expected, qty_received, unit_price, note) VALUES
-(1, 1, 2, 0, 699.99, N'Waiting for delivery'),
-(2, 2, 2, 2, 799.99, N'Fully received'),
-(3, 3, 2, 1, 599.99, N'Partially received'),
-(4, 4, 2, 0, 499.99, N'Pending delivery'),
-(5, 5, 2, 2, 399.99, N'Fully received'),
-(6, 6, 2, 0, 899.99, N'Waiting for delivery'),
-(7, 7, 2, 2, 699.99, N'Fully received'),
-(8, 8, 2, 1, 499.99, N'Partially received'),
-(9, 9, 2, 2, 999.99, N'Fully received'),
-(10, 10, 2, 0, 399.99, N'Pending delivery');
-
--- 1. Insert into Product_images (10 records)
+-- Insert data into Product_images (20 records)
 INSERT INTO Product_images (product_id, image_url, alt_text) VALUES
-(1, N'https://example.com/images/iphone13_black.jpg', N'iPhone 13 Black'),
-(1, N'https://example.com/images/iphone13_side.jpg', N'iPhone 13 Side View'),
-(2, N'https://example.com/images/galaxys21_blue.jpg', N'Galaxy S21 Blue'),
-(2, N'https://example.com/images/galaxys21_back.jpg', N'Galaxy S21 Back View'),
-(3, N'https://example.com/images/mi11_white.jpg', N'Xiaomi Mi 11 White'),
-(4, N'https://example.com/images/reno6_red.jpg', N'Oppo Reno 6 Red'),
-(5, N'https://example.com/images/v21_green.jpg', N'Vivo V21 Green'),
-(6, N'https://example.com/images/xperia5_black.jpg', N'Sony Xperia 5 Black'),
-(7, N'https://example.com/images/g8thinq_silver.jpg', N'LG G8 ThinQ Silver'),
-(8, N'https://example.com/images/nokia83_blue.jpg', N'Nokia 8.3 5G Blue');
+(1, 'http://example.com/images/iphone14.jpg', 'iPhone 14 front view'),
+(2, 'http://example.com/images/galaxys23.jpg', 'Galaxy S23 side view'),
+(3, 'http://example.com/images/mi13.jpg', 'Mi 13 back view'),
+(4, 'http://example.com/images/reno8.jpg', 'Reno 8 front view'),
+(5, 'http://example.com/images/vivox80.jpg', 'Vivo X80 side view'),
+(6, 'http://example.com/images/p50pro.jpg', 'P50 Pro back view'),
+(7, 'http://example.com/images/xperia1iv.jpg', 'Xperia 1 IV front view'),
+(8, 'http://example.com/images/g8thinq.jpg', 'G8 ThinQ side view'),
+(9, 'http://example.com/images/nokiag50.jpg', 'Nokia G50 back view'),
+(10, 'http://example.com/images/oneplus10pro.jpg', 'OnePlus 10 Pro front view'),
+(11, 'http://example.com/images/realmegt.jpg', 'Realme GT side view'),
+(12, 'http://example.com/images/zenfone8.jpg', 'Zenfone 8 back view'),
+(13, 'http://example.com/images/motogpower.jpg', 'Moto G Power front view'),
+(14, 'http://example.com/images/pixel6.jpg', 'Pixel 6 side view'),
+(15, 'http://example.com/images/htcu12.jpg', 'HTC U12 back view'),
+(16, 'http://example.com/images/zteaxon.jpg', 'ZTE Axon front view'),
+(17, 'http://example.com/images/vsmartjoy.jpg', 'Vsmart Joy side view'),
+(18, 'http://example.com/images/blackberrykey2.jpg', 'BlackBerry Key2 back view'),
+(19, 'http://example.com/images/pocof4.jpg', 'Poco F4 front view'),
+(20, 'http://example.com/images/galaxya53.jpg', 'Galaxy A53 side view');
 
--- 2. Insert into Stock_receipt_units (10 records)
-INSERT INTO Stock_receipt_units (line_id, unit_id) VALUES
-(1, 1),
-(2, 3),
-(3, 5),
-(4, 7),
-(5, 9),
-(6, 11),
-(7, 13),
-(8, 14),
-(9, 15),
-(10, 10);
+-- Insert data into Warehouse_locations
+INSERT INTO Warehouse_locations (code, area, aisle, slot, capacity, description) VALUES
+('LOC001', 'A', '1', 'S1', 100, 'Main storage area'),
+('LOC002', 'A', '1', 'S2', 80, 'Secondary storage'),
+('LOC003', 'B', '2', 'S1', 120, 'High-capacity storage'),
+('LOC004', 'B', '2', 'S2', 90, 'Medium storage'),
+('LOC005', 'C', '3', 'S1', 150, 'Large storage area'),
+('LOC006', 'C', '3', 'S2', 70, 'Small storage'),
+('LOC007', 'D', '4', 'S1', 100, 'Electronics storage'),
+('LOC008', 'D', '4', 'S2', 60, 'Fragile items storage'),
+('LOC009', 'E', '5', 'S1', 110, 'General storage'),
+('LOC010', 'E', '5', 'S2', 85, 'Backup storage');
 
--- 3. Insert into Stock_shipments (10 records)
-INSERT INTO Stock_shipments (shipment_no, customer, created_by, requested_at, status, approved_by, approved_at, note) VALUES
-(N'SHP001', N'Customer A', 1, '2023-11-11', N'PENDING', NULL, NULL, N'Pending approval'),
-(N'SHP002', N'Customer B', 2, '2023-11-12', N'PICKED', 1, '2023-11-13', N'Picked and ready to ship'),
-(N'SHP003', N'Customer C', 3, '2023-11-13', N'SHIPPED', 1, '2023-11-14', N'Shipped to customer'),
-(N'SHP004', N'Customer D', 4, '2023-11-14', N'PENDING', NULL, NULL, N'Waiting for stock'),
-(N'SHP005', N'Customer E', 5, '2023-11-15', N'PICKED', 1, '2023-11-16', N'Picked and ready'),
-(N'SHP006', N'Customer F', 6, '2023-11-16', N'SHIPPED', 1, '2023-11-17', N'Shipped to customer'),
-(N'SHP007', N'Customer G', 7, '2023-11-17', N'PENDING', NULL, NULL, N'Pending approval'),
-(N'SHP008', N'Customer H', 8, '2023-11-18', N'PICKED', 1, '2023-11-19', N'Picked and ready'),
-(N'SHP009', N'Customer I', 9, '2023-11-19', N'SHIPPED', 1, '2023-11-20', N'Shipped to customer'),
-(N'SHP010', N'Customer J', 10, '2023-11-20', N'PENDING', NULL, NULL, N'Pending approval');
+-- Insert data into Box_types
+INSERT INTO Box_types (box_code, capacity, description) VALUES
+('BOX001', 50, 'Small box for electronics'),
+('BOX002', 100, 'Medium box for general items'),
+('BOX003', 200, 'Large box for bulk items'),
+('BOX004', 20, 'Tiny box for accessories'),
+('BOX005', 150, 'Standard box for phones'),
+('BOX006', 80, 'Compact box for gadgets'),
+('BOX007', 120, 'Reinforced box for fragile items'),
+('BOX008', 60, 'Light box for small items'),
+('BOX009', 180, 'Heavy-duty box'),
+('BOX010', 90, 'Medium secure box');
 
--- 4. Insert into Stock_shipment_lines (10 records)
-INSERT INTO Stock_shipment_lines (shipment_id, product_id, qty) VALUES
+-- Insert data into Containers
+INSERT INTO Containers (container_code, box_type, location_id) VALUES
+('CONT001', 1, 1),
+('CONT002', 2, 2),
+('CONT003', 3, 3),
+('CONT004', 4, 4),
+('CONT005', 5, 5),
+('CONT006', 6, 6),
+('CONT007', 7, 7),
+('CONT008', 8, 8),
+('CONT009', 9, 9),
+('CONT010', 10, 10);
+
+-- Insert data into Product_units (20 records)
+INSERT INTO Product_units (imei, serial_number, warranty_start, warranty_end, product_id, purchase_price, received_date, container_id, status) VALUES
+('IMEI001', 'SN001', '2023-01-01', '2024-01-01', 1, 999.99, '2023-01-01', 1, 'AVAILABLE'),
+('IMEI002', 'SN002', '2023-02-01', '2024-02-01', 2, 899.99, '2023-02-01', 2, 'AVAILABLE'),
+('IMEI003', 'SN003', '2023-03-01', '2024-03-01', 3, 799.99, '2023-03-01', 3, 'AVAILABLE'),
+('IMEI004', 'SN004', '2023-04-01', '2024-04-01', 4, 699.99, '2023-04-01', 4, 'AVAILABLE'),
+('IMEI005', 'SN005', '2023-05-01', '2024-05-01', 5, 599.99, '2023-05-01', 5, 'AVAILABLE'),
+('IMEI006', 'SN006', '2023-06-01', '2024-06-01', 6, 1099.99, '2023-06-01', 6, 'AVAILABLE'),
+('IMEI007', 'SN007', '2023-07-01', '2024-07-01', 7, 999.99, '2023-07-01', 7, 'AVAILABLE'),
+('IMEI008', 'SN008', '2023-08-01', '2024-08-01', 8, 499.99, '2023-08-01', 8, 'AVAILABLE'),
+('IMEI009', 'SN009', '2023-09-01', '2024-09-01', 9, 399.99, '2023-09-01', 9, 'AVAILABLE'),
+('IMEI010', 'SN010', '2023-10-01', '2024-10-01', 10, 899.99, '2023-10-01', 10, 'AVAILABLE'),
+('IMEI011', 'SN011', '2023-11-01', '2024-11-01', 11, 499.99, '2023-11-01', 1, 'AVAILABLE'),
+('IMEI012', 'SN012', '2023-12-01', '2024-12-01', 12, 699.99, '2023-12-01', 2, 'AVAILABLE'),
+('IMEI013', 'SN013', '2024-01-01', '2025-01-01', 13, 599.99, '2024-01-01', 3, 'AVAILABLE'),
+('IMEI014', 'SN014', '2024-02-01', '2025-02-01', 14, 799.99, '2024-02-01', 4, 'AVAILABLE'),
+('IMEI015', 'SN015', '2024-03-01', '2025-03-01', 15, 499.99, '2024-03-01', 5, 'AVAILABLE'),
+('IMEI016', 'SN016', '2024-04-01', '2025-04-01', 16, 399.99, '2024-04-01', 6, 'AVAILABLE'),
+('IMEI017', 'SN017', '2024-05-01', '2025-05-01', 17, 299.99, '2024-05-01', 7, 'AVAILABLE'),
+('IMEI018', 'SN018', '2024-06-01', '2025-06-01', 18, 599.99, '2024-06-01', 8, 'AVAILABLE'),
+('IMEI019', 'SN019', '2024-07-01', '2025-07-01', 19, 499.99, '2024-07-01', 9, 'AVAILABLE'),
+('IMEI020', 'SN020', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE');
+
+-- Insert data into Suppliers
+INSERT INTO Suppliers (supplier_name, display_name, address, phone, email, representative, payment_method, note) VALUES
+('TechSupply', 'Tech Supply Co.', '123 Tech Rd', '0123456789', 'contact@techsupply.com', 'John Supplier', 'Bank Transfer', NULL),
+('GadgetWorld', 'Gadget World Ltd.', '456 Gadget St', '0987654321', 'info@gadgetworld.com', 'Jane Supplier', 'Credit Card', 'Reliable supplier'),
+('ElectroMart', 'Electro Mart Inc.', '789 Electro Ave', '0234567890', 'sales@electromart.com', 'Bob Supplier', 'Bank Transfer', NULL),
+('PhoneZone', 'Phone Zone Corp.', '101 Phone Rd', '0345678901', 'contact@phonezone.com', 'Alice Supplier', 'Cash', NULL),
+('TechTrend', 'Tech Trend Ltd.', '202 Trend St', '0456789012', 'info@techtrend.com', 'Tom Supplier', 'Bank Transfer', NULL),
+('MobileHub', 'Mobile Hub Inc.', '303 Hub Ave', '0567890123', 'sales@mobilehub.com', 'Emma Supplier', 'Credit Card', NULL),
+('GizmoSupply', 'Gizmo Supply Co.', '404 Gizmo Rd', '0678901234', 'contact@gizmosupply.com', 'Mike Supplier', 'Bank Transfer', NULL),
+('TechBit', 'Tech Bit Ltd.', '505 Bit St', '0789012345', 'info@techbit.com', 'Sarah Supplier', 'Cash', NULL),
+('SmartZone', 'Smart Zone Corp.', '606 Zone Ave', '0890123456', 'sales@smartzone.com', 'David Supplier', 'Bank Transfer', NULL),
+('ElectroTrend', 'Electro Trend Inc.', '707 Trend Rd', '0901234567', 'contact@electrotrend.com', 'Guest Supplier', 'Credit Card', NULL);
+
+-- Insert data into Purchase_orders
+INSERT INTO Purchase_orders (po_code, supplier_id, created_by, created_at, status, total_amount) VALUES
+('PO001', 1, 7, '2023-01-01', 'COMPLETED', 9999.90),
+('PO002', 2, 7, '2023-02-01', 'ACTIVE', 8999.90),
+('PO003', 3, 7, '2023-03-01', 'PENDING', 7999.90),
+('PO004', 4, 7, '2023-04-01', 'COMPLETED', 6999.90),
+('PO005', 5, 7, '2023-05-01', 'CANCELLED', 5999.90),
+('PO006', 6, 7, '2023-06-01', 'ACTIVE', 10999.90),
+('PO007', 7, 7, '2023-07-01', 'PENDING', 9999.90),
+('PO008', 8, 7, '2023-08-01', 'COMPLETED', 4999.90),
+('PO009', 9, 7, '2023-09-01', 'ACTIVE', 3999.90),
+('PO010', 10, 7, '2023-10-01', 'COMPLETED', 8999.90);
+
+-- Insert data into Purchase_order_lines
+INSERT INTO Purchase_order_lines (po_id, product_id, unit_price, qty) VALUES
+(1, 1, 999.99, 10),
+(2, 2, 899.99, 10),
+(3, 3, 799.99, 10),
+(4, 4, 699.99, 10),
+(5, 5, 599.99, 10),
+(6, 6, 1099.99, 10),
+(7, 7, 999.99, 10),
+(8, 8, 499.99, 10),
+(9, 9, 399.99, 10),
+(10, 10, 899.99, 10);
+
+-- Note: Receipts, Receipt_lines, and Receipt_units require valid po_id from Purchase_order_lines, 
+-- but the schema references po_id directly in Receipts, which seems incorrect. 
+-- Assuming Receipts should reference Purchase_orders instead for consistency.
+
+-- Correct the schema issue by altering the Receipts table (for demonstration purposes)
+/* ALTER TABLE Receipts DROP CONSTRAINT FK__Receipts__po_id;
+ALTER TABLE Receipts ADD CONSTRAINT FK_Receipts_Purchase_orders FOREIGN KEY (po_id) REFERENCES Purchase_orders(po_id); */
+
+-- Insert data into Receipts
+INSERT INTO Receipts (receipts_no, po_id, received_by, status, note, received_at) VALUES
+('REC001', 1, 3, 'RECEIVED', 'Received in full', '2023-01-02'),
+('REC002', 2, 3, 'PARTIAL', 'Partial delivery', '2023-02-02'),
+('REC003', 3, 3, 'PENDING', NULL, '2023-03-02'),
+('REC004', 4, 3, 'RECEIVED', 'Complete', '2023-04-02'),
+('REC005', 5, 3, 'CANCELLED', 'Order cancelled', '2023-05-02'),
+('REC006', 6, 3, 'RECEIVED', 'Received in full', '2023-06-02'),
+('REC007', 7, 3, 'PENDING', NULL, '2023-07-02'),
+('REC008', 8, 3, 'RECEIVED', 'Complete', '2023-08-02'),
+('REC009', 9, 3, 'PARTIAL', 'Missing items', '2023-09-02'),
+('REC010', 10, 3, 'RECEIVED', 'Complete', '2023-10-02');
+
+-- Insert data into Receipt_lines
+INSERT INTO Receipt_lines (receipt_id, product_id, qty_expected, qty_received, unit_price, note) VALUES
+(1, 1, 10, 10, 999.99, 'All units received'),
+(2, 2, 10, 5, 899.99, 'Partial delivery'),
+(3, 3, 10, 0, 799.99, 'Pending delivery'),
+(4, 4, 10, 10, 699.99, 'All units received'),
+(5, 5, 10, 0, 599.99, 'Order cancelled'),
+(6, 6, 10, 10, 1099.99, 'All units received'),
+(7, 7, 10, 0, 999.99, 'Pending delivery'),
+(8, 8, 10, 10, 499.99, 'All units received'),
+(9, 9, 10, 8, 399.99, 'Missing 2 units'),
+(10, 10, 10, 10, 899.99, 'All units received');
+
+-- Insert data into Receipt_units
+INSERT INTO Receipt_units (line_id, unit_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+(6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+
+-- Insert data into Shipments
+INSERT INTO Shipments (shipment_no, user_id, created_by, requested_at, status, note) VALUES
+('SHP001', 4, 8, '2023-01-05', 'SHIPPED', 'Shipped to customer'),
+('SHP002', 4, 8, '2023-02-05', 'PICKED', 'Ready for shipping'),
+('SHP003', 4, 8, '2023-03-05', 'PENDING', NULL),
+('SHP004', 4, 8, '2023-04-05', 'SHIPPED', 'Shipped to customer'),
+('SHP005', 4, 8, '2023-05-05', 'CANCELLED', 'Customer cancelled'),
+('SHP006', 4, 8, '2023-06-05', 'SHIPPED', 'Shipped to customer'),
+('SHP007', 4, 8, '2023-07-05', 'PENDING', NULL),
+('SHP008', 4, 8, '2023-08-05', 'SHIPPED', 'Shipped to customer'),
+('SHP009', 4, 8, '2023-09-05', 'PICKED', 'Ready for shipping'),
+('SHP010', 4, 8, '2023-10-05', 'SHIPPED', 'Shipped to customer');
+
+-- Insert data into Shipment_lines
+INSERT INTO Shipment_lines (shipment_id, product_id, qty) VALUES
 (1, 1, 2),
-(2, 2, 1),
-(3, 3, 1),
-(4, 4, 2),
-(5, 5, 2),
-(6, 6, 1),
-(7, 7, 2),
-(8, 8, 1),
-(9, 9, 2),
-(10, 10, 1);
+(2, 2, 3),
+(3, 3, 4),
+(4, 4, 5),
+(5, 5, 0),
+(6, 6, 2),
+(7, 7, 3),
+(8, 8, 4),
+(9, 9, 5),
+(10, 10, 2);
 
--- 5. Insert into Stock_shipment_units (10 records)
-INSERT INTO Stock_shipment_units (line_id, unit_id) VALUES
-(1, 1),
-(2, 3),
-(3, 5),
-(4, 7),
-(5, 9),
-(6, 11),
-(7, 13),
-(8, 14),
-(9, 15),
-(10, 10);
+-- Insert data into Shipment_units
+INSERT INTO Shipment_units (line_id, unit_id) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+(6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
 
--- 6. Insert into Stock_moves (10 records)
-INSERT INTO Stock_moves (move_no, unit_id, product_id, qty, from_location_id, to_location_id, status, created_by, approved_by, created_at, approved_at, note) VALUES
-(N'MOV001', 1, 1, 1, 1, 2, N'PENDING', 1, NULL, '2023-11-11', NULL, N'Move to secondary storage'),
-(N'MOV002', 3, 2, 1, 2, 3, N'APPROVED', 2, 1, '2023-11-12', '2023-11-13', N'Moved to high capacity storage'),
-(N'MOV003', 5, 3, 1, 3, 4, N'COMPLETED', 3, 1, '2023-11-13', '2023-11-14', N'Move completed'),
-(N'MOV004', 7, 4, 1, 4, 5, N'PENDING', 4, NULL, '2023-11-14', NULL, N'Pending approval'),
-(N'MOV005', 9, 5, 1, 5, 6, N'APPROVED', 5, 1, '2023-11-15', '2023-11-16', N'Moved to mixed storage'),
-(N'MOV006', 11, 6, 1, 6, 7, N'COMPLETED', 6, 1, '2023-11-16', '2023-11-17', N'Move completed'),
-(N'MOV007', 13, 7, 1, 7, 8, N'PENDING', 7, NULL, '2023-11-17', NULL, N'Pending approval'),
-(N'MOV008', 14, 8, 1, 8, 9, N'APPROVED', 8, 1, '2023-11-18', '2023-11-19', N'Moved to bulk storage'),
-(N'MOV009', 15, 9, 1, 9, 10, N'COMPLETED', 9, 1, '2023-11-19', '2023-11-20', N'Move completed'),
-(N'MOV010', 10, 10, 1, 10, 1, N'PENDING', 10, NULL, '2023-11-20', NULL, N'Pending approval');
+-- Insert data into Stock_adjustments
+INSERT INTO Stock_adjustments (adjustment_no, product_id, unit_id, qty_before, qty_after, delta, reason, created_by) VALUES
+('ADJ001', 1, 1, 10, 8, -2, 'Damaged units', 3),
+('ADJ002', 2, 2, 10, 9, -1, 'Lost unit', 3),
+('ADJ003', 3, 3, 10, 10, 0, 'Stock check', 3),
+('ADJ004', 4, 4, 10, 12, 2, 'Found units', 3),
+('ADJ005', 5, 5, 10, 8, -2, 'Theft', 3),
+('ADJ006', 6, 6, 10, 9, -1, 'Damaged unit', 3),
+('ADJ007', 7, 7, 10, 10, 0, 'Stock verification', 3),
+('ADJ008', 8, 8, 10, 11, 1, 'Extra unit found', 3),
+('ADJ009', 9, 9, 10, 7, -3, 'Damaged units', 3),
+('ADJ010', 10, 10, 10, 9, -1, 'Lost unit', 3);
 
--- 7. Insert into Stock_adjustments (10 records)
-INSERT INTO Stock_adjustments (adjustment_no, product_id, unit_id, qty_before, qty_after, delta, reason, created_by, created_at) VALUES
-(N'ADJ001', 1, 1, 2, 1, -1, N'Damaged item', 1, '2023-11-11'),
-(N'ADJ002', 2, 3, 1, 2, 1, N'Found extra item', 2, '2023-11-12'),
-(N'ADJ003', 3, 5, 1, 0, -1, N'Lost item', 3, '2023-11-13'),
-(N'ADJ004', 4, 7, 2, 1, -1, N'Damaged item', 4, '2023-11-14'),
-(N'ADJ005', 5, 9, 2, 3, 1, N'Found extra item', 5, '2023-11-15'),
-(N'ADJ006', 6, 11, 1, 0, -1, N'Lost item', 6, '2023-11-16'),
-(N'ADJ007', 7, 13, 2, 1, -1, N'Damaged item', 7, '2023-11-17'),
-(N'ADJ008', 8, 14, 1, 2, 1, N'Found extra item', 8, '2023-11-18'),
-(N'ADJ009', 9, 15, 2, 1, -1, N'Lost item', 9, '2023-11-19'),
-(N'ADJ010', 10, 10, 1, 2, 1, N'Found extra item', 10, '2023-11-20');
-
--- 8. Insert into Stock_audit_logs (10 records)
+-- Insert data into Stock_audit_logs
 INSERT INTO Stock_audit_logs (event_time, user_id, event_type, reference_table, reference_id, unit_cost, monetary_value, detail, note) VALUES
-('2023-11-11 10:00:00', 1, N'ADJUSTMENT', N'Stock_adjustments', 1, 699.99, -699.99, N'Damaged item detected', N'Adjusted stock'),
-('2023-11-12 10:00:00', 2, N'ADJUSTMENT', N'Stock_adjustments', 2, 799.99, 799.99, N'Extra item found', N'Adjusted stock'),
-('2023-11-13 10:00:00', 3, N'ADJUSTMENT', N'Stock_adjustments', 3, 599.99, -599.99, N'Lost item reported', N'Adjusted stock'),
-('2023-11-14 10:00:00', 4, N'ADJUSTMENT', N'Stock_adjustments', 4, 499.99, -499.99, N'Damaged item detected', N'Adjusted stock'),
-('2023-11-15 10:00:00', 5, N'ADJUSTMENT', N'Stock_adjustments', 5, 399.99, 399.99, N'Extra item found', N'Adjusted stock'),
-('2023-11-16 10:00:00', 6, N'ADJUSTMENT', N'Stock_adjustments', 6, 899.99, -899.99, N'Lost item reported', N'Adjusted stock'),
-('2023-11-17 10:00:00', 7, N'ADJUSTMENT', N'Stock_adjustments', 7, 699.99, -699.99, N'Damaged item detected', N'Adjusted stock'),
-('2023-11-18 10:00:00', 8, N'ADJUSTMENT', N'Stock_adjustments', 8, 499.99, 499.99, N'Extra item found', N'Adjusted stock'),
-('2023-11-19 10:00:00', 9, N'ADJUSTMENT', N'Stock_adjustments', 9, 999.99, -999.99, N'Lost item reported', N'Adjusted stock'),
-('2023-11-20 10:00:00', 10, N'ADJUSTMENT', N'Stock_adjustments', 10, 399.99, 399.99, N'Extra item found', N'Adjusted stock');
+('2023-01-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 1, 999.99, 1999.98, 'Damaged units removed', NULL),
+('2023-02-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 2, 899.99, 899.99, 'Lost unit', NULL),
+('2023-03-01 10:00:00', 3, 'CHECK', 'Products', 3, 799.99, 0.00, 'Stock check', NULL),
+('2023-04-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 4, 699.99, 1399.98, 'Found units', NULL),
+('2023-05-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 5, 599.99, 1199.98, 'Theft reported', NULL),
+('2023-06-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 6, 1099.99, 1099.99, 'Damaged unit', NULL),
+('2023-07-01 10:00:00', 3, 'CHECK', 'Products', 7, 999.99, 0.00, 'Stock verification', NULL),
+('2023-08-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 8, 499.99, 499.99, 'Extra unit found', NULL),
+('2023-09-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 9, 399.99, 1199.97, 'Damaged units', NULL),
+('2023-10-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 10, 899.99, 899.99, 'Lost unit', NULL);
 
--- 9. Insert into Shifts (10 records)
+-- Insert data into Shifts
 INSERT INTO Shifts (name, start_time, end_time, note) VALUES
-(N'Morning Shift', '08:00:00', '16:00:00', N'Morning warehouse operations'),
-(N'Afternoon Shift', '12:00:00', '20:00:00', N'Afternoon warehouse operations'),
-(N'Night Shift', '20:00:00', '04:00:00', N'Night warehouse operations'),
-(N'Early Morning Shift', '06:00:00', '14:00:00', N'Early morning operations'),
-(N'Late Afternoon Shift', '14:00:00', '22:00:00', N'Late afternoon operations'),
-(N'Overnight Shift', '22:00:00', '06:00:00', N'Overnight operations'),
-(N'Weekend Morning', '08:00:00', '16:00:00', N'Weekend morning operations'),
-(N'Weekend Afternoon', '12:00:00', '20:00:00', N'Weekend afternoon operations'),
-(N'Weekend Night', '20:00:00', '04:00:00', N'Weekend night operations'),
-(N'Special Shift', '10:00:00', '18:00:00', N'Special operations shift');
+('Morning Shift', '08:00:00', '16:00:00', 'Main warehouse shift'),
+('Afternoon Shift', '16:00:00', '00:00:00', 'Evening warehouse shift'),
+('Night Shift', '00:00:00', '08:00:00', 'Overnight shift'),
+('Weekend Morning', '09:00:00', '17:00:00', 'Weekend shift'),
+('Weekend Afternoon', '17:00:00', '01:00:00', 'Weekend evening shift'),
+('Morning Inspection', '07:00:00', '15:00:00', 'Inspection shift'),
+('Afternoon Inspection', '15:00:00', '23:00:00', 'Evening inspection'),
+('Morning Packing', '08:00:00', '16:00:00', 'Packing shift'),
+('Afternoon Packing', '16:00:00', '00:00:00', 'Evening packing'),
+('Admin Shift', '09:00:00', '17:00:00', 'Admin tasks');
 
--- 10. Insert into Shift_assignments (10 records)
+-- Insert data into Shift_assignments
 INSERT INTO Shift_assignments (shift_id, employee_id, assign_date, location_id, role_in_shift) VALUES
-(1, 1, '2023-11-11', 1, N'Admin'),
-(2, 2, '2023-11-12', 2, N'Warehouse Manager'),
-(3, 3, '2023-11-13', 3, N'Inventory Clerk'),
-(4, 4, '2023-11-14', 4, N'Sales Representative'),
-(5, 5, '2023-11-15', 5, N'Purchasing Officer'),
-(6, 6, '2023-11-16', 6, N'Supervisor'),
-(7, 7, '2023-11-17', 7, N'Accountant'),
-(8, 8, '2023-11-18', 8, N'Customer Support'),
-(9, 9, '2023-11-19', 9, N'Technician'),
-(10, 10, '2023-11-20', 10, N'Security Guard');
+(1, 3, '2023-01-01', 1, 'Inventory Clerk'),
+(2, 4, '2023-01-01', 2, 'Sales Representative'),
+(3, 6, '2023-01-01', 3, 'Quality Inspector'),
+(4, 8, '2023-01-01', 4, 'Logistics Coordinator'),
+(5, 9, '2023-01-01', 5, 'General Worker'),
+(6, 6, '2023-01-02', 6, 'Quality Inspector'),
+(7, 3, '2023-01-02', 7, 'Inventory Clerk'),
+(8, 4, '2023-01-02', 8, 'Sales Representative'),
+(9, 8, '2023-01-02', 9, 'Logistics Coordinator'),
+(10, 1, '2023-01-02', 10, 'System Admin');
 
--- 11. Insert into Attendances (10 records)
+-- Insert data into Attendances
 INSERT INTO Attendances (assign_id, employee_id, check_in, check_out, hours_worked, note) VALUES
-(1, 1, '2023-11-11 08:00:00', '2023-11-11 16:00:00', 8.0, N'Full shift'),
-(2, 2, '2023-11-12 12:00:00', '2023-11-12 20:00:00', 8.0, N'Full shift'),
-(3, 3, '2023-11-13 20:00:00', '2023-11-14 04:00:00', 8.0, N'Night shift'),
-(4, 4, '2023-11-14 06:00:00', '2023-11-14 14:00:00', 8.0, N'Full shift'),
-(5, 5, '2023-11-15 14:00:00', '2023-11-15 22:00:00', 8.0, N'Full shift'),
-(6, 6, '2023-11-16 22:00:00', '2023-11-17 06:00:00', 8.0, N'Overnight shift'),
-(7, 7, '2023-11-17 08:00:00', '2023-11-17 16:00:00', 8.0, N'Weekend shift'),
-(8, 8, '2023-11-18 12:00:00', '2023-11-18 20:00:00', 8.0, N'Weekend shift'),
-(9, 9, '2023-11-19 20:00:00', '2023-11-20 04:00:00', 8.0, N'Weekend night shift'),
-(10, 10, '2023-11-20 10:00:00', '2023-11-20 18:00:00', 8.0, N'Special shift');
+(1, 3, '2023-01-01 08:00:00', '2023-01-01 16:00:00', 8.0, NULL),
+(2, 4, '2023-01-01 16:00:00', '2023-01-02 00:00:00', 8.0, NULL),
+(3, 6, '2023-01-01 00:00:00', '2023-01-01 08:00:00', 8.0, NULL),
+(4, 8, '2023-01-01 09:00:00', '2023-01-01 17:00:00', 8.0, NULL),
+(5, 9, '2023-01-01 17:00:00', '2023-01-02 01:00:00', 8.0, NULL),
+(6, 6, '2023-01-02 07:00:00', '2023-01-02 15:00:00', 8.0, NULL),
+(7, 3, '2023-01-02 08:00:00', '2023-01-02 16:00:00', 8.0, NULL),
+(8, 4, '2023-01-02 16:00:00', '2023-01-03 00:00:00', 8.0, NULL),
+(9, 8, '2023-01-02 08:00:00', '2023-01-02 16:00:00', 8.0, NULL),
+(10, 1, '2023-01-02 09:00:00', '2023-01-02 17:00:00', 8.0, NULL);
 
--- 12. Insert into Payrolls (10 records)
+-- Insert data into Payrolls
 INSERT INTO Payrolls (employee_id, period_start, period_end, gross_amount, net_amount, created_at) VALUES
-(1, '2023-11-01', '2023-11-30', 2000.00, 1800.00, '2023-12-01'),
-(2, '2023-11-01', '2023-11-30', 1800.00, 1600.00, '2023-12-01'),
-(3, '2023-11-01', '2023-11-30', 1500.00, 1350.00, '2023-12-01'),
-(4, '2023-11-01', '2023-11-30', 1400.00, 1250.00, '2023-12-01'),
-(5, '2023-11-01', '2023-11-30', 1600.00, 1450.00, '2023-12-01'),
-(6, '2023-11-01', '2023-11-30', 1700.00, 1550.00, '2023-12-01'),
-(7, '2023-11-01', '2023-11-30', 1600.00, 1450.00, '2023-12-01'),
-(8, '2023-11-01', '2023-11-30', 1300.00, 1150.00, '2023-12-01'),
-(9, '2023-11-01', '2023-11-30', 1400.00, 1250.00, '2023-12-01'),
-(10, '2023-11-01', '2023-11-30', 1200.00, 1100.00, '2023-12-01');
+(1, '2023-01-01', '2023-01-31', 5000.00, 4500.00, '2023-02-01'),
+(2, '2023-01-01', '2023-01-31', 4000.00, 3600.00, '2023-02-01'),
+(3, '2023-01-01', '2023-01-31', 3000.00, 2700.00, '2023-02-01'),
+(4, '2023-01-01', '2023-01-31', 3500.00, 3150.00, '2023-02-01'),
+(5, '2023-01-01', '2023-01-31', 4000.00, 3600.00, '2023-02-01'),
+(6, '2023-01-01', '2023-01-31', 3200.00, 2880.00, '2023-02-01'),
+(7, '2023-01-01', '2023-01-31', 3800.00, 3420.00, '2023-02-01'),
+(8, '2023-01-01', '2023-01-31', 3600.00, 3240.00, '2023-02-01'),
+(9, '2023-01-01', '2023-01-31', 3000.00, 2700.00, '2023-02-01'),
+(10, '2023-01-01', '2023-01-31', 4500.00, 4050.00, '2023-02-01');
 
--- 13. Insert into Salary_components (10 records)
+-- Insert data into Salary_components
 INSERT INTO Salary_components (payroll_id, comp_type, amount) VALUES
-(1, N'Base Salary', 1800.00),
-(1, N'Bonus', 200.00),
-(2, N'Base Salary', 1600.00),
-(2, N'Overtime', 200.00),
-(3, N'Base Salary', 1350.00),
-(3, N'Bonus', 150.00),
-(4, N'Base Salary', 1250.00),
-(5, N'Base Salary', 1450.00),
-(6, N'Base Salary', 1550.00),
-(7, N'Base Salary', 1450.00);
+(1, 'Base Salary', 4000.00),
+(1, 'Bonus', 1000.00),
+(2, 'Base Salary', 3500.00),
+(2, 'Overtime', 500.00),
+(3, 'Base Salary', 3000.00),
+(4, 'Base Salary', 3000.00),
+(4, 'Commission', 500.00),
+(5, 'Base Salary', 4000.00),
+(6, 'Base Salary', 3200.00),
+(7, 'Base Salary', 3800.00);
 
--- 14. Insert into Orders (10 records)
+-- Insert data into Orders
 INSERT INTO Orders (user_id, total_amount, status, order_date, receive_date) VALUES
-(1, 1399.98, N'PENDING', '2023-11-11', NULL),
-(2, 799.99, N'CONFIRMED', '2023-11-12', '2023-11-14'),
-(3, 599.99, N'SHIPPED', '2023-11-13', '2023-11-15'),
-(4, 999.98, N'PENDING', '2023-11-14', NULL),
-(5, 799.98, N'CONFIRMED', '2023-11-15', '2023-11-17'),
-(6, 1799.98, N'SHIPPED', '2023-11-16', '2023-11-18'),
-(7, 1399.98, N'PENDING', '2023-11-17', NULL),
-(8, 999.98, N'CONFIRMED', '2023-11-18', '2023-11-20'),
-(9, 1999.98, N'SHIPPED', '2023-11-19', '2023-11-21'),
-(10, 799.98, N'PENDING', '2023-11-20', NULL);
+(4, 1999.98, 'SHIPPED', '2023-01-01', '2023-01-05'),
+(4, 2699.97, 'CONFIRMED', '2023-02-01', NULL),
+(4, 3199.96, 'PENDING', '2023-03-01', NULL),
+(4, 3499.95, 'SHIPPED', '2023-04-01', '2023-04-05'),
+(4, 599.99, 'CANCELLED', '2023-05-01', NULL),
+(4, 2199.98, 'SHIPPED', '2023-06-01', '2023-06-05'),
+(4, 2999.97, 'CONFIRMED', '2023-07-01', NULL),
+(4, 1999.96, 'SHIPPED', '2023-08-01', '2023-08-05'),
+(4, 1999.95, 'PENDING', '2023-09-01', NULL),
+(4, 1799.98, 'SHIPPED', '2023-10-01', '2023-10-05');
 
--- 15. Insert into Order_details (10 records)
+-- Insert data into Order_details
 INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) VALUES
-(1, 1, 2, 699.99, 1399.98),
-(2, 3, 1, 799.99, 799.99),
-(3, 5, 1, 599.99, 599.99),
-(4, 7, 2, 499.99, 999.98),
-(5, 9, 2, 399.99, 799.98),
-(6, 11, 2, 899.99, 1799.98),
-(7, 13, 2, 699.99, 1399.98),
-(8, 14, 2, 499.99, 999.98),
-(9, 15, 2, 999.99, 1999.98),
-(10, 10, 2, 399.99, 799.98);
+(1, 1, 2, 999.99, 1999.98),
+(2, 2, 3, 899.99, 2699.97),
+(3, 3, 4, 799.99, 3199.96),
+(4, 4, 5, 699.99, 3499.95),
+(5, 5, 1, 599.99, 599.99),
+(6, 6, 2, 1099.99, 2199.98),
+(7, 7, 3, 999.99, 2999.97),
+(8, 8, 4, 499.99, 1999.96),
+(9, 9, 5, 399.99, 1999.95),
+(10, 10, 2, 899.99, 1799.98);
 
--- 16. Insert into Containers (10 records)
-INSERT INTO Containers (container_code, description, status, location_id, created_at) VALUES
-(N'CON001', N'Container for iPhone 13', N'SEALED', 1, '2023-11-11'),
-(N'CON002', N'Container for Galaxy S21', N'SEALED', 2, '2023-11-12'),
-(N'CON003', N'Container for Mi 11', N'SEALED', 3, '2023-11-13'),
-(N'CON004', N'Container for Reno 6', N'SEALED', 4, '2023-11-14'),
-(N'CON005', N'Container for V21', N'SEALED', 5, '2023-11-15'),
-(N'CON006', N'Container for Xperia 5', N'SEALED', 6, '2023-11-16'),
-(N'CON007', N'Container for G8 ThinQ', N'SEALED', 7, '2023-11-17'),
-(N'CON008', N'Container for Nokia 8.3', N'SEALED', 8, '2023-11-18'),
-(N'CON009', N'Container for P40 Pro', N'SEALED', 9, '2023-11-19'),
-(N'CON010', N'Container for GT Neo', N'SEALED', 10, '2023-11-20');
-
--- 17. Insert into Container_units (10 records)
-INSERT INTO Container_units (container_id, unit_id) VALUES
-(1, 1),
-(2, 3),
-(3, 5),
-(4, 7),
-(5, 9),
-(6, 11),
-(7, 13),
-(8, 14),
-(9, 15),
-(10, 10);
-
--- 18. Insert into Returns (10 records)
+-- Insert data into Returns
 INSERT INTO Returns (return_no, order_id, customer_name, created_by, created_at, status) VALUES
-(N'RET001', 1, N'Customer A', 1, '2023-11-11', N'OPEN'),
-(N'RET002', 2, N'Customer B', 2, '2023-11-12', N'RECEIVED'),
-(N'RET003', 3, N'Customer C', 3, '2023-11-13', N'INSPECTED'),
-(N'RET004', 4, N'Customer D', 4, '2023-11-14', N'OPEN'),
-(N'RET005', 5, N'Customer E', 5, '2023-11-15', N'RECEIVED'),
-(N'RET006', 6, N'Customer F', 6, '2023-11-16', N'INSPECTED'),
-(N'RET007', 7, N'Customer G', 7, '2023-11-17', N'OPEN'),
-(N'RET008', 8, N'Customer H', 8, '2023-11-18', N'RECEIVED'),
-(N'RET009', 9, N'Customer I', 9, '2023-11-19', N'INSPECTED'),
-(N'RET010', 10, N'Customer J', 10, '2023-11-20', N'RESOLVED');
+('RET001', 1, 'John Customer', 4, '2023-01-06', 'RECEIVED'),
+('RET002', 2, 'Jane Customer', 4, '2023-02-06', 'OPEN'),
+('RET003', 3, 'Bob Customer', 4, '2023-03-06', 'INSPECTED'),
+('RET004', 4, 'Alice Customer', 4, '2023-04-06', 'RESOLVED'),
+('RET005', 5, 'Tom Customer', 4, '2023-05-06', 'OPEN'),
+('RET006', 6, 'Emma Customer', 4, '2023-06-06', 'RECEIVED'),
+('RET007', 7, 'Mike Customer', 4, '2023-07-06', 'INSPECTED'),
+('RET008', 8, 'Sarah Customer', 4, '2023-08-06', 'RESOLVED'),
+('RET009', 9, 'David Customer', 4, '2023-09-06', 'OPEN'),
+('RET010', 10, 'Guest Customer', 4, '2023-10-06', 'RECEIVED');
 
--- 19. Insert into Return_lines (10 records)
-INSERT INTO Return_lines (return_id, unit_id, qty, reason, created_at) VALUES
-(1, 1, 1, N'Defective product', '2023-11-11'),
-(2, 3, 1, N'Wrong item shipped', '2023-11-12'),
-(3, 5, 1, N'Customer changed mind', '2023-11-13'),
-(4, 7, 1, N'Damaged during shipping', '2023-11-14'),
-(5, 9, 1, N'Defective product', '2023-11-15'),
-(6, 11, 1, N'Wrong item shipped', '2023-11-16'),
-(7, 13, 1, N'Customer changed mind', '2023-11-17'),
-(8, 14, 1, N'Damaged during shipping', '2023-11-18'),
-(9, 15, 1, N'Defective product', '2023-11-19'),
-(10, 10, 1, N'Wrong item shipped', '2023-11-20');
+-- Insert data into Return_lines
+INSERT INTO Return_lines (return_id, unit_id, product_id, qty, reason, created_at) VALUES
+(1, 1, 1, 1, 'Defective unit', '2023-01-06'),
+(2, 2, 2, 1, 'Wrong item', '2023-02-06'),
+(3, 3, 3, 1, 'Damaged in transit', '2023-03-06'),
+(4, 4, 4, 1, 'Customer changed mind', '2023-04-06'),
+(5, 5, 5, 1, 'Not as described', '2023-05-06'),
+(6, 6, 6, 1, 'Defective unit', '2023-06-06'),
+(7, 7, 7, 1, 'Wrong color', '2023-07-06'),
+(8, 8, 8, 1, 'Customer return', '2023-08-06'),
+(9, 9, 9, 1, 'Faulty product', '2023-09-06'),
+(10, 10, 10, 1, 'Damaged item', '2023-10-06');
+
+-- Insert data into Quality_Inspections
+INSERT INTO Quality_Inspections (inspection_no, unit_id, location_id, inspected_by, inspected_at, status, result, note) VALUES
+('INS001', 1, 1, 6, '2023-01-07', 'PASSED', 'No defects', NULL),
+('INS002', 2, 2, 6, '2023-02-07', 'FAILED', 'Screen issue', 'Needs repair'),
+('INS003', 3, 3, 6, '2023-03-07', 'PENDING', NULL, NULL),
+('INS004', 4, 4, 6, '2023-04-07', 'PASSED', 'All good', NULL),
+('INS005', 5, 5, 6, '2023-05-07', 'QUARANTINE', 'Battery issue', 'Under review'),
+('INS006', 6, 6, 6, '2023-06-07', 'PASSED', 'No defects', NULL),
+('INS007', 7, 7, 6, '2023-07-07', 'FAILED', 'Camera issue', 'Needs repair'),
+('INS008', 8, 8, 6, '2023-08-07', 'PASSED', 'All good', NULL),
+('INS009', 9, 9, 6, '2023-09-07', 'PENDING', NULL, NULL),
+('INS010', 10, 10, 6, '2023-10-07', 'PASSED', 'No defects', NULL);
