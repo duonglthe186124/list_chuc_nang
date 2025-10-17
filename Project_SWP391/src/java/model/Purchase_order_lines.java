@@ -5,18 +5,16 @@ public class Purchase_order_lines {
     private int po_line_id, po_id, product_id;
     private float unit_price;
     private int qty;
-    private float line_amount;
 
     public Purchase_order_lines() {
     }
 
-    public Purchase_order_lines(int po_line_id, int po_id, int product_id, float unit_price, int qty, float line_amount) {
+    public Purchase_order_lines(int po_line_id, int po_id, int product_id, float unit_price, int qty) {
         this.po_line_id = po_line_id;
         this.po_id = po_id;
         this.product_id = product_id;
         this.unit_price = unit_price;
         this.qty = qty;
-        this.line_amount = line_amount;
     }
 
     public int getPo_line_id() {
@@ -57,14 +55,6 @@ public class Purchase_order_lines {
 
     public void setQty(int qty) {
         this.qty = qty;
-    }
-
-    public float getLine_amount() {
-        return line_amount;
-    }
-
-    public void setLine_amount(float line_amount) {
-        this.line_amount = line_amount;
     }
 
 }

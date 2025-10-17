@@ -3,14 +3,15 @@ package model;
 public class Suppliers {
 
     private int supplier_id;
-    private String supplier_name, address, phone, email, representative, payment_method, note;
+    private String supplier_name, display_name, address, phone, email, representative, payment_method, note;
 
     public Suppliers() {
     }
 
-    public Suppliers(int supplier_id, String supplier_name, String address, String phone, String email, String representative, String payment_method, String note) {
+    public Suppliers(int supplier_id, String supplier_name, String display_name, String address, String phone, String email, String representative, String payment_method, String note) {
         this.supplier_id = supplier_id;
         this.supplier_name = supplier_name;
+        this.display_name = display_name;
         this.address = address;
         this.phone = phone;
         this.email = email;
@@ -33,6 +34,14 @@ public class Suppliers {
 
     public void setSupplier_name(String supplier_name) {
         this.supplier_name = supplier_name;
+    }
+
+    public String getDisplay_name() {
+        return display_name;
+    }
+
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
     }
 
     public String getAddress() {

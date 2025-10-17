@@ -1,23 +1,24 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalTime;
 
 public class Shifts {
 
     private int shift_id;
     private String name;
-    private Date start_time, end_time;
+    private LocalTime start_time;
+    private LocalTime end_time;
     private String note;
 
-    public Shifts() {
-    }
-
-    public Shifts(int shift_id, String name, Date start_time, Date end_time, String note) {
+    public Shifts(int shift_id, String name, LocalTime start_time, LocalTime end_time, String note) {
         this.shift_id = shift_id;
         this.name = name;
         this.start_time = start_time;
         this.end_time = end_time;
         this.note = note;
+    }
+
+    public Shifts() {
     }
 
     public int getShift_id() {
@@ -36,19 +37,19 @@ public class Shifts {
         this.name = name;
     }
 
-    public Date getStart_time() {
+    public LocalTime getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(Date start_time) {
+    public void setStart_time(LocalTime start_time) {
         this.start_time = start_time;
     }
 
-    public Date getEnd_time() {
+    public LocalTime getEnd_time() {
         return end_time;
     }
 
-    public void setEnd_time(Date end_time) {
+    public void setEnd_time(LocalTime end_time) {
         this.end_time = end_time;
     }
 
