@@ -3,6 +3,7 @@ package model;
 import java.util.Date;
 
 public class Payrolls {
+
     private int payroll_id, employee_id;
     private Date period_start, period_end;
     private float gross_amount, net_amount;
@@ -76,5 +77,5 @@ public class Payrolls {
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
-    
+
 }

@@ -4,39 +4,37 @@ import java.util.Date;
 
 public class Products {
 
-    private int product_id;
-    private String product_name;
-    private int brand_id, spec_id, type_id;
+    private int product;
+    private String sku_code, name;
+    private int brand_id, spec_id;
     private String description;
-    private Date created_at;
+    private Date created_at, updated_at;
 
     public Products() {
     }
 
-    public Products(int product_id, String product_name, int brand_id, int spec_id, int type_id, String description, Date created_at) {
-        this.product_id = product_id;
-        this.product_name = product_name;
-        this.brand_id = brand_id;
-        this.spec_id = spec_id;
-        this.type_id = type_id;
-        this.description = description;
-        this.created_at = created_at;
+    public int getProduct() {
+        return product;
     }
 
-    public int getProduct_id() {
-        return product_id;
+    public void setProduct(int product) {
+        this.product = product;
     }
 
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
+    public String getSku_code() {
+        return sku_code;
     }
 
-    public String getProduct_name() {
-        return product_name;
+    public void setSku_code(String sku_code) {
+        this.sku_code = sku_code;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getBrand_id() {
@@ -55,14 +53,6 @@ public class Products {
         this.spec_id = spec_id;
     }
 
-    public int getType_id() {
-        return type_id;
-    }
-
-    public void setType_id(int type_id) {
-        this.type_id = type_id;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -77,6 +67,25 @@ public class Products {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public Products(int product, String sku_code, String name, int brand_id, int spec_id, String description, Date created_at, Date updated_at) {
+        this.product = product;
+        this.sku_code = sku_code;
+        this.name = name;
+        this.brand_id = brand_id;
+        this.spec_id = spec_id;
+        this.description = description;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
 }
