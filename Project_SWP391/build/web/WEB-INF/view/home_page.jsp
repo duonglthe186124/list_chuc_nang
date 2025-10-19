@@ -55,7 +55,7 @@
 
         <div class="navlinks" role="navigation" aria-label="Primary">
             <a href="/">Home</a>
-            <a href="/products">Products</a>
+            <a href="${pageContext.request.contextPath}/products">Products</a>
             <a href="/about">About</a>
             <a href="/policy">Policy</a>
             <a href="/reports">Reports</a>
