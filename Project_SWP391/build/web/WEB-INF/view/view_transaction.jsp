@@ -6,6 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -161,155 +162,266 @@
                 </div>
             </aside>
 
-            <main class="main">
+            <main class="main" id="receipt">
+                <!-- Main header / Receipt No -->
                 <div class="main-header" id="main-header">
-                    <h3>Transaction N<sup>o</sup>${param.id}</h3>
-                    <div class="muted">Type: <strong>${view.tx_type}</strong>· Date: <strong>${view.tx_date}</strong></div>
+                    <h3>
+                        Transaction No
+                        <span class="receipt-no">${view.receipt_no}</span>
+                    </h3>
                 </div>
 
-                <div class="grid">
-                    <!-- Left column: General transaction + product/unit -->
-                    <div class="card">
-                        <h4>Transaction information</h4>
-                        <div class="meta-row">
-                            <div>Ref code</div>
-                            <div><strong>${view.ref_code}</strong></div>
-                        </div>
-                        <div class="meta-row">
-                            <div>Transaction type</div>
-                            <div><strong>${view.tx_type}</strong></div>
-                        </div>
-                        <div class="meta-row">
-                            <div>Người thực hiện</div>
-                            <div>
-                                ${view.employee_code} - ${view.fullname}
+                <div class="header-info">
+                    <!-- Header block -->
+                    <section class="header-card card">
+                        <h4 class="block-title">Header Information</h4>
+                        <div class="header-columns">
+                            <div class="col">
+                                <dl>
+                                    <dt>PO No</dt>
+                                    <dd><a href="#" class="link">${view.po_code}</a></dd>
+                                    <dt>Received by</dt>
+                                    <dd>${view.fullname} — <small>${view.employee_code}</small> — 0987 654 321</dd>
+                                    <dt>Supplier</dt>
+                                    <dd>${view.supplier_name}</dd>
+                                    <dt>Note / Reason</dt>
+                                    <c:if test="${not empty view.note}">
+                                        <dd>${view.note}</dd>
+                                    </c:if>
+                                    <c:if test="${empty view.note}">
+                                        <dd>There is no note here</dd>
+                                    </c:if>
+                                </dl>
+                            </div>
+                            <div class="col">
+                                <dl>
+                                    <dt>PO Date</dt>
+                                    <dd>2025-10-15</dd>
+                                    <dt>Received At</dt>
+                                    <dd>${view.received_at}</dd>
+                                    <dt>Warehouse / Location</dt>
+                                    <dd>Kho A / Floor 2</dd>
+                                    <dt>Status</dt>
+                                    <dd>
+                                        <span class="status status-received">${view.status}</span>
+                                    </dd>
+                                </dl>
                             </div>
                         </div>
+                    </section>
 
-                        <h4 style="margin-top: 12px">Sản phẩm / Đơn vị</h4>
-                        <div class="meta-row">
-                            <div>Sản phẩm</div>
-                            <div>
-                                ${view.product_name}
+                    <!-- Summary block -->
+                    <section class="summary-card card">
+                        <h4 class="block-title">Summary</h4>
+                        <div class="summary-content">
+                            <div class="summary-item">
+                                <label>Tổng expected</label>
+                                <div id="sum-expected">0</div>
+                            </div>
+                            <div class="summary-item">
+                                <label>Tổng received</label>
+                                <div id="sum-received">0</div>
+                            </div>
+                            <div class="summary-item">
+                                <label>Tổng tiền</label>
+                                <div id="sum-money">0.00</div>
+                            </div>
+                            <div class="summary-item">
+                                <label>Tỉ lệ nhận</label>
+                                <div id="pct-received">0%</div>
+                            </div>
+                            <div class="summary-item">
+                                <label>Số dòng có discrepancy</label>
+                                <div id="rows-discrep">0</div>
                             </div>
                         </div>
-                        <div class="meta-row">
-                            <div>Trạng thái</div>
-                            <div>${view.status}</div>
-                        </div>
+                    </section>
+                </div>
 
-                        <c:if test="${not empty view.description}">
-                            <div style="margin-top: 8px">
-                                <strong>Mô tả:</strong>
-                                <div class="note">${view.description}</div>
-                            </div>
-                        </c:if>
+                <!-- Line separator -->
+                <hr class="separator" />
+
+                <!-- Lines (table) -->
+                <section class="lines card">
+                    <h4 class="block-title">Lines (Chi tiết dòng)</h4>
+                    <table class="lines-table" id="lines-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Product</th>
+                                <th>Expected</th>
+                                <th>Received</th>
+                                <th>Unit Price</th>
+                                <th>Line Total</th>
+                                <th>Discrepancy</th>
+                                <th>Bin</th>
+                                <th>Note</th>
+                                <th>Serials</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="l" items="${line}">
+                                <tr class="line-row" data-line-id="1">
+                                    <td class="center">1</td>
+                                    <td>
+                                        <div class="sku">${l.sku_code}</div>
+                                        <div class="prod-name">${l.name}</div>
+                                    </td>
+                                    <td class="center qty-expected">${l.qty_expected}</td>
+                                    <td class="center qty-received">${l.qty_received}</td>
+                                    <td class="right unit-price">${l.unit_price}</td>
+                                    <td class="right line-total"><fmt:formatNumber value="${l.qty_received * l.unit_price}" type="number" maxFractionDigits="2" /></td>
+                                    <td class="center discrepancy">${l.qty_received - l.qty_expected}</td>
+                                    <td class="center">${l.location}</td>
+                                    <td class="small">${l.note}</td>
+                                    <td class="center">
+                                        <button class="btn small-btn toggle-serials">
+                                            Show Serials (2)
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Serials row for dòng 1 -->
+                                <tr class="serials-row" data-parent-line="1" hidden>
+                                    <td colspan="10" class="serials-cell">
+                                        <div class="serials-title">Serials for SKU-001</div>
+                                        <table class="serial-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>IMEI</th>
+                                                    <th>SERIAL</th>
+                                                    <th>Warranty start</th>
+                                                    <th>Warranty end</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>123456789012345</td>
+                                                    <td>SN001</td>
+                                                    <td>2025-10-19</td>
+                                                    <td>2026-10-19</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>123456789012346</td>
+                                                    <td>SN002</td>
+                                                    <td>2025-10-19</td>
+                                                    <td>2026-10-19</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+
+                            <!-- Dòng 1 -->
+                            <tr class="line-row" data-line-id="1">
+                                <td class="center">1</td>
+                                <td>
+                                    <div class="sku">SKU-001</div>
+                                    <div class="prod-name">Điện thoại mẫu A</div>
+                                </td>
+                                <td class="center qty-expected">10</td>
+                                <td class="center qty-received">20</td>
+                                <td class="right unit-price">200.00</td>
+                                <td class="right line-total">2000.00</td>
+                                <td class="center discrepancy">0</td>
+                                <td class="center">A-01-01</td>
+                                <td class="small">Giao nguyên hộp</td>
+                                <td class="center">
+                                    <button class="btn small-btn toggle-serials">
+                                        Show Serials (2)
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Serials row for dòng 1 -->
+                            <tr class="serials-row" data-parent-line="1" hidden>
+                                <td colspan="10" class="serials-cell">
+                                    <div class="serials-title">Serials for SKU-001</div>
+                                    <table class="serial-table">
+                                        <thead>
+                                            <tr>
+                                                <th>IMEI</th>
+                                                <th>SERIAL</th>
+                                                <th>Warranty start</th>
+                                                <th>Warranty end</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>123456789012345</td>
+                                                <td>SN001</td>
+                                                <td>2025-10-19</td>
+                                                <td>2026-10-19</td>
+                                            </tr>
+                                            <tr>
+                                                <td>123456789012346</td>
+                                                <td>SN002</td>
+                                                <td>2025-10-19</td>
+                                                <td>2026-10-19</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- Dòng 2 (có discrepancy) -->
+                            <tr class="line-row" data-line-id="2">
+                                <td class="center">2</td>
+                                <td>
+                                    <div class="sku">SKU-002</div>
+                                    <div class="prod-name">Router mẫu B</div>
+                                </td>
+                                <td class="center qty-expected">5</td>
+                                <td class="center qty-received">3</td>
+                                <td class="right unit-price">150.00</td>
+                                <td class="right line-total">450.00</td>
+                                <td class="center discrepancy">-2</td>
+                                <td class="center">B-02-05</td>
+                                <td class="small">Thiếu 2</td>
+                                <td class="center">
+                                    <button class="btn small-btn toggle-serials">
+                                        Show Serials (1)
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Serials row for dòng 2 -->
+                            <tr class="serials-row" data-parent-line="2" hidden>
+                                <td colspan="10" class="serials-cell">
+                                    <div class="serials-title">Serials for SKU-002</div>
+                                    <table class="serial-table">
+                                        <thead>
+                                            <tr>
+                                                <th>IMEI</th>
+                                                <th>SERIAL</th>
+                                                <th>Warranty start</th>
+                                                <th>Warranty end</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>987654321098765</td>
+                                                <td>SN100</td>
+                                                <td>2025-10-19</td>
+                                                <td>2026-10-19</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- Summary bottom + actions -->
+                <section class="summary-bottom card">
+                    <div class="actions-left">
+                        <button class="btn ghost">Go to previous page</button>
                     </div>
-
-                    <!-- Right column: Locations, liên kết inbound/outbound -->
-                    <div class="card">
-                        <h4>Vị trí & Tham chiếu</h4>
-                        <div class="meta-row">
-                            <div>From</div>
-                            <div>
-                                ${view.from_code}
-                            </div>
-                        </div>
-
-                        <div class="meta-row">
-                            <div>To</div>
-                            <div>
-                                ${view.to_code}
-                            </div>
-                        </div>
-
-                        <h4 style="margin-top: 12px">History location</h4>
-                        <c:if test="${not empty view.tx_code}">
-                            <div class="meta-row">
-                                <div>Mã</div>
-                                <div><strong>${view.tx_code}</strong></div>
-                            </div>
-                            <div class="meta-row">
-                                <div>Nhà cung cấp</div>
-                                <div>${view.tx_name}</div>
-                            </div>
-                            <div class="meta-row">
-                                <div>Ngày nhận</div>
-                                <div>
-                                    ${view.date}
-                                </div>
-                            </div>
-                        </c:if>
-
-                        <c:if test="${empty view.tx_code}">
-                            <div class="muted" style="margin-top: 8px">
-                                Không có bản ghi inbound/outbound liên quan.
-                            </div>
-                        </c:if>
+                    <div class="actions-right">
+                        <button class="btn">Print</button>
+                        <button class="btn">Export PDF</button>
+                        <button class="btn">Download CSV</button>
                     </div>
-                </div>
-
-                <!-- Lines / chi tiết hàng hóa (nếu có) -->
-                <div class="card" style="margin-top: 12px">
-                    <h4>Chi tiết dòng hàng</h4>
-
-                    <c:choose>
-                        <c:when test="${not empty view.name}">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Màu</th>
-                                        <th>Dung lượng</th>
-                                        <th>Unit</th>
-                                        <th>Số lượng</th>
-                                        <th>Đơn giá</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>${view.name}</td>
-                                        <td>${view.color}</td>
-                                        <td>${view.memory}</td>
-                                        <td>${view.unit}</td>
-                                        <td>${view.qty}</td>
-                                        <td>${view.qty * view.price}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </c:when>
-
-                        <c:otherwise>
-                            <div class="muted">
-                                Không có dòng hàng chi tiết để hiển thị cho giao dịch này.
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-
-                <!-- Ghi chú và hành động -->
-                <div
-                    style="
-                    margin-top: 12px;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                    "
-                    >
-                    <div class="actions">
-                        <a
-                            href="${pageContext.request.contextPath}/inbound/transaction"
-                            class="btn"
-                            >Quay về danh sách</a
-                        >
-                        <a
-                            href="${pageContext.request.contextPath}/inbound/transaction/print?id=${tx.tx_id}"
-                            class="btn btn-primary"
-                            target="_blank"
-                            >In</a
-                        >
-                    </div>
-                </div>
+                </section>
             </main>
         </div>
 

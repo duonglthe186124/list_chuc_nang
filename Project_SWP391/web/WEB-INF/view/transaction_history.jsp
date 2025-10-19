@@ -197,12 +197,12 @@
                                 </svg>
                             </button>
                         </div>
-                        <select name="txType" class="filter-dropdown">
-                            <option value="" ${txType == ""? 'selected' : ''}>All</option>
-                            <option value="Inbound" ${txType == "Inbound"? 'selected' : ''}>Inbound</option>
-                            <option value="Outbound" ${txType == "Outbound"? 'selected' : ''}>Outbound</option>
-                            <option value="Moving" ${txType == "Moving"? 'selected' : ''}>Moving</option>
-                            <option value="Destroy" ${txType == "Destroy"? 'selected' : ''}>Destroy</option>
+                        <select name="status" class="filter-dropdown">
+                            <option value="" ${status == ""? 'selected' : ''}>All</option>
+                            <option value="Inbound" ${status == "Pending"? 'selected' : ''}>Pending</option>
+                            <option value="Outbound" ${status == "Received"? 'selected' : ''}>Received</option>
+                            <option value="Moving" ${status == "Partial"? 'selected' : ''}>Partial</option>
+                            <option value="Destroy" ${status == "Cancelled"? 'selected' : ''}>Cancelled</option>
                         </select>
                         <button type="submit" class="filter-btn">Filter</button>
                         <div class="items-per-page">
@@ -221,14 +221,14 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Type</th>
-                                    <th>Transaction</th>
-                                    <th>From</th>
-                                    <th>To</th>
-                                    <th>Employee</th>
-                                    <th>Date</th>
+                                    <th>Receipt No</th>
+                                    <th>Supplier</th>
+                                    <th>Total lines</th>
+                                    <th>Received</th>
+                                    <th>Cost received</th>
+                                    <th>Received by</th>
+                                    <th>Received at</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -322,15 +322,16 @@
             const data = [];
             <c:forEach var="l" items="${tx_list}">
             data.push({
-                tx_id: ${l.tx_id},
-                product_name: "${l.product_name}",
-                qty: ${l.qty},
-                unit_name: "${l.unit_name}",
-                tx_type: "${l.tx_type}",
-                from_code: "${l.from_code}",
-                to_code: "${l.to_code}",
-                employee_code: "${l.employee_code}",
-                tx_date: "${l.tx_date}"
+                receipt_id: ${l.receipt_id},
+                receipt_no: "${l.receipt_no}",
+                status: "${l.status}",
+                received_at: "${l.received_at}",
+                reveived_by: "${l.received_by}",
+                supplier: "${l.supplier}",
+                total_lines: ${l.total_line},
+                total_received: ${l.total_received},
+                total_expected: ${l.total_expected},
+                total: ${l.total}
             }
 
             );
@@ -349,15 +350,15 @@
                     tbody.innerHTML += `
                         <tr>
                             <td>` + index++ + `</td>
-                            <td>` + row.product_name + `</td>
-                            <td>` + row.qty + `</td>
-                            <td>` + row.unit_name + `</td>
-                            <td>` + row.tx_type + `</td>
-                            <td>` + row.from_code + `</td>
-                            <td>` + row.to_code + `</td>
-                            <td>` + row.employee_code + `</td>
-                            <td>` + row.tx_date + `</td>
-                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=` + row.tx_id + `" class="action-view">View</a></td>
+                            <td>` + row.receipt_no + `</td>
+                            <td>` + row.supplier + `</td>
+                            <td>` + row.total_lines + `</td>
+                            <td>` + row.total_received + ` / ` + row.total_expected + `</td>
+                            <td>` + row.total + `</td>
+                            <td>` + row.reveived_by + `</td>
+                            <td>` + row.received_at + `</td>
+                            <td>` + row.status + `</td>
+                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=` + row.receipt_id + `" class="action-view">View</a></td>
                         </tr>`;
                 });
 
