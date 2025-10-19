@@ -8,97 +8,104 @@ import java.util.Date;
  */
 public class TransactionDTO {
 
-    private int tx_id;
-    private String product_name;
-    private int qty;
-    private String unit_name, tx_type, from_code, to_code, employee_code;
-    private Date tx_date;
+    private int receipt_id;
+    private String receipt_no, status;
+    private Date received_at;
+    private String received_by, supplier;
+    private int total_line, total_expected, total_received;
+    private float total;
 
-    public TransactionDTO() {
+    public TransactionDTO(int receipt_id, String receipt_no, String status, Date received_at, String received_by, String supplier, int total_line, int total_expected, int total_received, float total) {
+        this.receipt_id = receipt_id;
+        this.receipt_no = receipt_no;
+        this.status = status;
+        this.received_at = received_at;
+        this.received_by = received_by;
+        this.supplier = supplier;
+        this.total_line = total_line;
+        this.total_expected = total_expected;
+        this.total_received = total_received;
+        this.total = total;
     }
 
-    public TransactionDTO(int tx_id, String product_name, int qty, String unit_name, String tx_type, String from_code, String to_code, String employee_code, Date tx_date) {
-        this.tx_id = tx_id;
-        this.product_name = product_name;
-        this.qty = qty;
-        this.unit_name = unit_name;
-        this.tx_type = tx_type;
-        this.from_code = from_code;
-        this.to_code = to_code;
-        this.employee_code = employee_code;
-        this.tx_date = tx_date;
+    public int getReceipt_id() {
+        return receipt_id;
     }
 
-    public int getTx_id() {
-        return tx_id;
+    public void setReceipt_id(int receipt_id) {
+        this.receipt_id = receipt_id;
     }
 
-    public void setTx_id(int tx_id) {
-        this.tx_id = tx_id;
+    public String getReceipt_no() {
+        return receipt_no;
     }
 
-    public String getProduct_name() {
-        return product_name;
+    public void setReceipt_no(String receipt_no) {
+        this.receipt_no = receipt_no;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public String getStatus() {
+        return status;
     }
 
-    public int getQty() {
-        return qty;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
+    public Date getReceived_at() {
+        return received_at;
     }
 
-    public String getUnit_name() {
-        return unit_name;
+    public void setReceived_at(Date received_at) {
+        this.received_at = received_at;
     }
 
-    public void setUnit_name(String unit_name) {
-        this.unit_name = unit_name;
+    public String getReceived_by() {
+        return received_by;
     }
 
-    public String getTx_type() {
-        return tx_type;
+    public void setReceived_by(String received_by) {
+        this.received_by = received_by;
     }
 
-    public void setTx_type(String tx_type) {
-        this.tx_type = tx_type;
+    public String getSupplier() {
+        return supplier;
     }
 
-    public String getFrom_code() {
-        return from_code;
+    public void setSupplier(String supplier) {
+        this.supplier = supplier;
     }
 
-    public void setFrom_code(String from_code) {
-        this.from_code = from_code;
+    public int getTotal_line() {
+        return total_line;
     }
 
-    public String getTo_code() {
-        return to_code;
+    public void setTotal_line(int total_line) {
+        this.total_line = total_line;
     }
 
-    public void setTo_code(String to_code) {
-        this.to_code = to_code;
+    public int getTotal_expected() {
+        return total_expected;
     }
 
-    public String getEmployee_code() {
-        return employee_code;
+    public void setTotal_expected(int total_expected) {
+        this.total_expected = total_expected;
     }
 
-    public void setEmployee_code(String employee_code) {
-        this.employee_code = employee_code;
+    public int getTotal_received() {
+        return total_received;
     }
 
-    public Date getTx_date() {
-        return tx_date;
+    public void setTotal_received(int total_received) {
+        this.total_received = total_received;
     }
 
-    public void setTx_date(Date tx_date) {
-        this.tx_date = tx_date;
+    public float getTotal() {
+        return total;
+    }
+
+    public void setTotal(float total) {
+        this.total = total;
     }
 
 }

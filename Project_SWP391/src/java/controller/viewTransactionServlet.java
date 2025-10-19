@@ -1,5 +1,6 @@
 package controller;
 
+import dto.LineTransactionDTO;
 import dto.ViewTransactionDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,22 +18,24 @@ import service.viewTransactionService;
 public class viewTransactionServlet extends HttpServlet {
 
     private ViewTransactionDTO view;
+    private List<LineTransactionDTO> line;
     private static final viewTransactionService service = new viewTransactionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String tx_id = request.getParameter("id");
+        String receipt_id = request.getParameter("id");
 
         int id = 0;
-        if (tx_id != null && !tx_id.trim().isEmpty()) {
-            id = Integer.parseInt(tx_id);
+        if (receipt_id != null && !receipt_id.trim().isEmpty()) {
+            id = Integer.parseInt(receipt_id);
         }
 
-        System.out.println(id);
 
         view = service.get_transaction_view(id);
+        line = service.get_transaction_line(id);
         request.setAttribute("view", view);
+        request.setAttribute("line", line);
         request.getRequestDispatcher("/WEB-INF/view/view_transaction.jsp").forward(request, response);
     }
 
