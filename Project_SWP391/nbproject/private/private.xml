@@ -27,6 +27,11 @@
             <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/PriceRange.java</file>
             <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/web.xml</file>
             <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/controller/products.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/dal/TransactionDAO.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/dto/TransactionDTO.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/web/WEB-INF/view/transaction_history.jsp</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/controller/transactionServlet.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/service/transactionService.java</file>
         </group>
     </open-files>
 </project-private>
