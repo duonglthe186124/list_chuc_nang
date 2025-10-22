@@ -117,21 +117,13 @@ CREATE TABLE Warehouse_locations
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME()
 )
 
-CREATE TABLE Box_types
-(
-	box_id INT IDENTITY(1,1) PRIMARY KEY,
-	box_code VARCHAR(32) UNIQUE NOT NULL,
-	capacity INT NOT NULL,
-	description NVARCHAR(1000) NULL
-)
-
 
 CREATE TABLE Containers
 (
 	container_id INT IDENTITY(1,1) PRIMARY KEY,
 	container_code VARCHAR(64) NOT NULL UNIQUE,
-	box_type INT NOT NULL REFERENCES Box_types(box_id),
-	location_id INT NOT NULL REFERENCES Warehouse_locations(location_id)
+	location_id INT NOT NULL REFERENCES Warehouse_locations(location_id),
+	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME()
 )
 
 CREATE TABLE Product_units
@@ -173,6 +165,7 @@ CREATE TABLE Purchase_orders
 	created_at DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
 	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
 	total_amount DECIMAL(18,2) NOT NULL,
+	note NVARCHAR(MAX) NULL,
 	CONSTRAINT CHK_Purchase_orders_status CHECK (status IN ('PENDING','ACTIVE','COMPLETED','CANCELLED'))
 )
 
@@ -534,31 +527,18 @@ INSERT INTO Warehouse_locations (code, area, aisle, slot, capacity, description)
 ('LOC009', 'E', '5', 'S1', 110, 'General storage'),
 ('LOC010', 'E', '5', 'S2', 85, 'Backup storage');
 
--- Insert data into Box_types
-INSERT INTO Box_types (box_code, capacity, description) VALUES
-('BOX001', 50, 'Small box for electronics'),
-('BOX002', 100, 'Medium box for general items'),
-('BOX003', 200, 'Large box for bulk items'),
-('BOX004', 20, 'Tiny box for accessories'),
-('BOX005', 150, 'Standard box for phones'),
-('BOX006', 80, 'Compact box for gadgets'),
-('BOX007', 120, 'Reinforced box for fragile items'),
-('BOX008', 60, 'Light box for small items'),
-('BOX009', 180, 'Heavy-duty box'),
-('BOX010', 90, 'Medium secure box');
-
 -- Insert data into Containers
-INSERT INTO Containers (container_code, box_type, location_id) VALUES
-('CONT001', 1, 1),
-('CONT002', 2, 2),
-('CONT003', 3, 3),
-('CONT004', 4, 4),
-('CONT005', 5, 5),
-('CONT006', 6, 6),
-('CONT007', 7, 7),
-('CONT008', 8, 8),
-('CONT009', 9, 9),
-('CONT010', 10, 10);
+INSERT INTO Containers (container_code, location_id) VALUES
+('CONT001', 1),
+('CONT002', 2),
+('CONT003', 3),
+('CONT004', 4),
+('CONT005', 5),
+('CONT006', 6),
+('CONT007', 7),
+('CONT008', 8),
+('CONT009', 9),
+('CONT010', 10);
 
 -- Insert data into Product_units (20 records)
 INSERT INTO Product_units (imei, serial_number, warranty_start, warranty_end, product_id, purchase_price, received_date, container_id, status) VALUES
@@ -581,7 +561,10 @@ INSERT INTO Product_units (imei, serial_number, warranty_start, warranty_end, pr
 ('IMEI017', 'SN017', '2024-05-1', '2025-05-01', 17, 299.99, '2024-05-01', 7, 'AVAILABLE'),
 ('IMEI018', 'SN018', '2024-06-01', '2025-06-01', 18, 599.99, '2024-06-01', 8, 'AVAILABLE'),
 ('IMEI019', 'SN019', '2024-07-01', '2025-07-01', 19, 499.99, '2024-07-01', 9, 'AVAILABLE'),
-('IMEI020', 'SN020', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE');
+('IMEI020', 'SN020', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE'),
+('IMEI021', 'SN021', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE'),
+('IMEI022', 'SN022', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE'),
+('IMEI023', 'SN023', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE');
 
 -- Insert data into Suppliers
 INSERT INTO Suppliers (supplier_name, display_name, address, phone, email, representative, payment_method, note) VALUES
@@ -633,7 +616,8 @@ INSERT INTO Receipts (receipts_no, po_id, received_by, status, note, received_at
 ('REC007', 7, 3, 'PENDING', NULL, '2023-07-02'),
 ('REC008', 8, 3, 'RECEIVED', 'Complete', '2023-08-02'),
 ('REC009', 9, 3, 'PARTIAL', 'Missing items', '2023-09-02'),
-('REC010', 10, 3, 'RECEIVED', 'Complete', '2023-10-02');
+('REC010', 10, 3, 'RECEIVED', 'Complete', '2023-10-02'),
+('REC011', 10, 3, 'RECEIVED', 'Complete', '2023-10-02');
 
 -- Insert data into Receipt_lines
 INSERT INTO Receipt_lines (receipt_id, product_id, qty_expected, qty_received, unit_price, note) VALUES
@@ -646,12 +630,14 @@ INSERT INTO Receipt_lines (receipt_id, product_id, qty_expected, qty_received, u
 (7, 7, 10, 0, 999.99, 'Pending delivery'),
 (8, 8, 10, 10, 499.99, 'All units received'),
 (9, 9, 10, 8, 399.99, 'Missing 2 units'),
-(10, 10, 10, 10, 899.99, 'All units received');
+(10, 10, 10, 10, 899.99, 'All units received'),
+(11, 10, 50, 38, 899.99, 'All units received'),
+(11, 1, 35, 24, 253.33, 'All unit received');
 
 -- Insert data into Receipt_units
 INSERT INTO Receipt_units (line_id, unit_id) VALUES
 (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
-(6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+(6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (10, 11), (10, 12);
 
 -- Insert data into Shipments
 INSERT INTO Shipments (shipment_no, user_id, created_by, requested_at, status, note) VALUES
