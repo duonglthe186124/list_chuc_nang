@@ -56,6 +56,26 @@
         <servlet-name>viewTransactionServlet</servlet-name>
         <servlet-class>controller.viewTransactionServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>InventoryController</servlet-name>
+        <servlet-class>controller.InventoryController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InboundController</servlet-name>
+        <servlet-class>controller.InboundController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AuditController</servlet-name>
+        <servlet-class>controller.AuditController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>QualityController</servlet-name>
+        <servlet-class>controller.QualityController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FilterController</servlet-name>
+        <servlet-class>controller.FilterController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
@@ -103,6 +123,26 @@
     <servlet-mapping>
         <servlet-name>viewTransactionServlet</servlet-name>
         <url-pattern>/inbound/transaction/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InboundController</servlet-name>
+        <url-pattern>/InboundController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AuditController</servlet-name>
+        <url-pattern>/AuditController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QualityController</servlet-name>
+        <url-pattern>/QualityController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FilterController</servlet-name>
+        <url-pattern>/FilterController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InventoryController</servlet-name>
+        <url-pattern>/InventoryController</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
