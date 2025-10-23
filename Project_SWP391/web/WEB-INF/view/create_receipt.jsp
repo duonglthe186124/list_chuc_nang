@@ -19,14 +19,42 @@
                     <td>Choose purchase order</td>
                     <td>
                         <select name="po_id" onchange="this.form.submit()">
-                            <option value="" ${pl.id == selectedID ? 'selected' : ''}>---Choose purchase order---</option>
+                            <option value="" ${pl.po_id == selectedID ? 'selected' : ''}>---Choose purchase order---</option>
                             <c:forEach var="pl" items="${poList}">
-                                <option value="${pl.id}" ${pl.id == selectedID? 'selected' : ''}>${pl.po_code}</option>
+                                <option value="${pl.po_id}" ${pl.po_id == selectedID? 'selected' : ''}>${pl.po_code}</option>
                             </c:forEach>
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td>Supplier</td>
+                    <td>${not empty poHeader? poHeader.display_name : ''}</td>
+                </tr>
+                <tr>
+                    <td>Created at</td>
+                    <td>${not empty poHeader? poHeader.created_at : ''}</td>
+                </tr>
+                <tr>
+                    <td>Note</td>
+                    <td>${not empty poHeader? poHeader.note : ''}</td>
+                </tr>
             </table>
+            <c:if test="${not empty poLine}">
+                <table>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit_price</th>
+                    </tr>
+                    <tr>
+                        <c:forEach var="l" items="${poLine}">
+                            <td>${l.product_name}</td>
+                            <td>${l.qty}</td>
+                            <td>${l.unit_price}
+                        </c:forEach>
+                    </tr>
+                </table> 
+            </c:if>
         </form>
     </body>
 </html>

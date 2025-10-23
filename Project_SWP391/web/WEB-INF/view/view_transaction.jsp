@@ -178,7 +178,7 @@
                         <div class="header-columns">
                             <div class="col">
                                 <dl>
-                                    <dt>PO No</dt>
+                                    <dt>Purchase Order No</dt>
                                     <dd><a href="#" class="link">${view.po_code}</a></dd>
                                     <dt>Received by</dt>
                                     <dd>${view.fullname} — ${view.employee_code}</dd>
@@ -195,7 +195,7 @@
                             </div>
                             <div class="col">
                                 <dl>
-                                    <dt>PO Date</dt>
+                                    <dt>Purchase Order Date</dt>
                                     <dd>${view.po_date}</dd>
                                     <dt>Received At</dt>
                                     <dd>${view.received_at}</dd>

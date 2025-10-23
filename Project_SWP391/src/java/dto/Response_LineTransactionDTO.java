@@ -4,7 +4,7 @@ package dto;
  *
  * @author ASUS
  */
-public class LineTransactionResponseDTO {
+public class Response_LineTransactionDTO {
 
     private int line_id;
     private String sku_code, name;
@@ -12,10 +12,10 @@ public class LineTransactionResponseDTO {
     private float unit_price;
     private String note, location;
 
-    public LineTransactionResponseDTO() {
+    public Response_LineTransactionDTO() {
     }
 
-    public LineTransactionResponseDTO(int line_id, String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
+    public Response_LineTransactionDTO(int line_id, String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
         this.line_id = line_id;
         this.sku_code = sku_code;
         this.name = name;

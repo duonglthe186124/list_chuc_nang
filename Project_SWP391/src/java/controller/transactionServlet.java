@@ -1,6 +1,6 @@
 package controller;
 
-import dto.TransactionResponseDTO;
+import dto.Response_TransactionDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -17,7 +17,7 @@ import service.TransactionService;
  */
 public class transactionServlet extends HttpServlet {
 
-    private List<TransactionResponseDTO> tx_list;
+    private List<Response_TransactionDTO> tx_list;
     private static final TransactionService service = new TransactionService();
 
     @Override

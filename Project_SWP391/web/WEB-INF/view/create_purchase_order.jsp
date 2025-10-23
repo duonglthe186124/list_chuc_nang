@@ -458,16 +458,16 @@
                         newRow.innerHTML = `
                             <td>
                                 <div class="form-group">
-                                    <select>
+                                    <select name="product">
                                         <option>Choose product</option>
-            <c:forEach var="pl" items="${pList}">
+                                            <c:forEach var="pl" items="${pList}">
                                                 <option value="${pl.product_id}">${pl.name}</option>
-            </c:forEach>
+                                            </c:forEach>
                                     </select>
                                 </div>
                             </td>
-                            <td><input type="number" value="1" min="0"></td>
-                            <td><input type="text" value="0"></td>
+                            <td><input type="number" value="1" min="0" name="qty"></td>
+                            <td><input type="text" value="0" name="unit_price"></td>
                             <td>0.00</td>
                             <td class="action-cell"><button class="btn-delete-item">✕</button></td>
                         `;

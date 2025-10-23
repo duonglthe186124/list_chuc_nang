@@ -1,8 +1,8 @@
 package dal;
 
-import dto.LineTransactionResponseDTO;
-import dto.SerialTransactionResponseDTO;
-import dto.ViewTransactionResponseDTO;
+import dto.Response_LineTransactionDTO;
+import dto.Response_SerialTransactionDTO;
+import dto.Response_ViewTransactionDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -42,8 +42,8 @@ public class ViewTransactionDAO extends DBContext {
         return check;
     }
     
-    public ViewTransactionResponseDTO view_transaction(int receipt_id) {
-        ViewTransactionResponseDTO line = null;
+    public Response_ViewTransactionDTO view_transaction(int receipt_id) {
+        Response_ViewTransactionDTO line = null;
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
                 + "	r.receipts_no,\n"
@@ -71,7 +71,7 @@ public class ViewTransactionDAO extends DBContext {
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                line = new ViewTransactionResponseDTO(
+                line = new Response_ViewTransactionDTO(
                         rs.getString("receipts_no"),
                         rs.getString("po_code"),
                         rs.getDate("created_at"),
@@ -89,8 +89,8 @@ public class ViewTransactionDAO extends DBContext {
         return line;
     }
     
-    public List<LineTransactionResponseDTO> transaction_line(int receipt_id) {
-        List<LineTransactionResponseDTO> list = new ArrayList();
+    public List<Response_LineTransactionDTO> transaction_line(int receipt_id) {
+        List<Response_LineTransactionDTO> list = new ArrayList();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
                 + "	rl.line_id,\n"
@@ -119,7 +119,7 @@ public class ViewTransactionDAO extends DBContext {
                 while (rs.next()) {
                     String location = "";
                     
-                    LineTransactionResponseDTO line = new LineTransactionResponseDTO(
+                    Response_LineTransactionDTO line = new Response_LineTransactionDTO(
                             rs.getInt("line_id"),
                             rs.getString("sku_code"),
                             rs.getString("name"),
@@ -138,8 +138,8 @@ public class ViewTransactionDAO extends DBContext {
         return list;
     }
     
-    public List<SerialTransactionResponseDTO> transaction_units(int receipt_id) {
-        List<SerialTransactionResponseDTO> list = new ArrayList();
+    public List<Response_SerialTransactionDTO> transaction_units(int receipt_id) {
+        List<Response_SerialTransactionDTO> list = new ArrayList();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
                 + "	pu.imei,\n"
@@ -159,7 +159,7 @@ public class ViewTransactionDAO extends DBContext {
             {
                 while(rs.next())
                 {
-                    SerialTransactionResponseDTO line = new SerialTransactionResponseDTO(
+                    Response_SerialTransactionDTO line = new Response_SerialTransactionDTO(
                                 rs.getString("imei"),
                                 rs.getString("serial_number"),
                                 rs.getDate("warranty_start"),
@@ -178,7 +178,7 @@ public class ViewTransactionDAO extends DBContext {
     
     public static void main(String[] args) {
         ViewTransactionDAO dao = new ViewTransactionDAO();
-        List<LineTransactionResponseDTO> l = dao.transaction_line(1);
+        List<Response_LineTransactionDTO> l = dao.transaction_line(1);
         
         if (l != null) {
             System.out.println(l.get(0).getLocation());

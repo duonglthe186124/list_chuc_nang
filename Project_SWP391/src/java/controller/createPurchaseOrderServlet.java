@@ -1,7 +1,7 @@
 package controller;
 
-import dto.ProductResponseDTO;
-import dto.SupplierResponseDTO;
+import dto.Response_ProductDTO;
+import dto.Response_SupplierDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,8 +22,8 @@ import service.ManagePOService;
 public class createPurchaseOrderServlet extends HttpServlet {
 
     private static final ManagePOService service = new ManagePOService();
-    private static List<SupplierResponseDTO> supplier_list = new ArrayList();
-    private static List<ProductResponseDTO> product_list = new ArrayList();
+    private static List<Response_SupplierDTO> supplier_list = new ArrayList();
+    private static List<Response_ProductDTO> product_list = new ArrayList();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,7 +44,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         String[] raw_product = request.getParameterValues("product");
         String[] raw_qty = request.getParameterValues("qty");
         String[] raw_unit_price = request.getParameterValues("unit_price");
-        
+
         int supplier_id;
         Date date;
         int[] product_id = new int[raw_product.length];
@@ -69,7 +69,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         }
 
         service.add_purchase_order(supplier_id, date, note, product_id, qty, unit_price);
-        
+
         response.sendRedirect(request.getContextPath() + "/inbound/transaction");
     }
 

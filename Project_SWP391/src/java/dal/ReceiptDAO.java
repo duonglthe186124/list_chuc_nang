@@ -1,7 +1,8 @@
 package dal;
 
-import dto.POLineResponseDTO;
-import dto.ReceiptHeaderDTO;
+import dto.Response_ReceiptLineDTO;
+import dto.Response_ReceiptHeaderDTO;
+import dto.Response_ReceiptOrderDTO;
 import util.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,16 +16,13 @@ import java.util.List;
  */
 public class ReceiptDAO extends DBContext {
 
-    public List<ReceiptHeaderDTO> PO_list() {
-        List<ReceiptHeaderDTO> list = new ArrayList();
+    public List<Response_ReceiptOrderDTO> PO_list() {
+        List<Response_ReceiptOrderDTO> list = new ArrayList();
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT\n"
                 + "	po.po_id,\n"
-                + "	po.po_code,\n"
-                + "	s.display_name,\n"
-                + "	po.created_at,\n"
-                + "	po.note\n"
+                + "	po.po_code\n"
                 + "FROM Purchase_orders po\n"
                 + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id\n"
                 + "LEFT JOIN Purchase_order_lines pol ON po.po_id = pol.po_id\n"
@@ -33,12 +31,9 @@ public class ReceiptDAO extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ReceiptHeaderDTO line = new ReceiptHeaderDTO(
+                    Response_ReceiptOrderDTO line = new Response_ReceiptOrderDTO(
                             rs.getInt("po_id"),
-                            rs.getString("po_code"),
-                            rs.getString("display_name"),
-                            rs.getDate("created_at"),
-                            rs.getString("note"));
+                            rs.getString("po_code"));
                     list.add(line);
                 }
             }
@@ -47,30 +42,61 @@ public class ReceiptDAO extends DBContext {
         }
         return list;
     }
+    
+    public Response_ReceiptHeaderDTO po_header(int po_id)
+    {
+        Response_ReceiptHeaderDTO line = null;
 
-    public List<POLineResponseDTO> po_line(int po_id) {
-        List<POLineResponseDTO> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT\n"
+                + "	s.display_name,\n"
+                + "	po.created_at,\n"
+                + "	po.note\n"
+                + "FROM Purchase_orders po\n"
+                + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id\n"
+                + "LEFT JOIN Purchase_order_lines pol ON po.po_id = pol.po_id\n"
+                + "WHERE (po.status = 'PENDING' OR po.status = 'ACTIVE') AND po.po_id = ?");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, po_id);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    line = new Response_ReceiptHeaderDTO(
+                            rs.getString("display_name"),
+                            rs.getDate("created_at"),
+                            rs.getString("note"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return line;
+    }
+
+    public List<Response_ReceiptLineDTO> po_line(int po_id) {
+        List<Response_ReceiptLineDTO> list = new ArrayList();
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
                 + "*\n"
                 + "FROM Purchase_orders po\n"
                 + "LEFT JOIN Purchase_order_lines pol ON po.po_id = pol.po_id\n"
-                + "LEFT JOIN Products p ON po.product_id = p.product_id\n"
+                + "LEFT JOIN Products p ON pol.product_id = p.product_id\n"
                 + "WHERE 1 = 1 ");
 
         sql.append("AND po.po_id = ? ");
-        
+
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             ps.setInt(1, po_id);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    POLineResponseDTO line = new POLineResponseDTO(
-                                rs.getInt("product_id"),
-                                rs.getString("name"),
-                                rs.getFloat("unit_price"),
-                                rs.getInt("qty"));
+                    Response_ReceiptLineDTO line = new Response_ReceiptLineDTO(
+                            rs.getInt("product_id"),
+                            rs.getString("name"),
+                            rs.getFloat("unit_price"),
+                            rs.getInt("qty"));
                 }
             }
         } catch (SQLException e) {

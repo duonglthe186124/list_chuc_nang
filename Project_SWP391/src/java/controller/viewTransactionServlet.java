@@ -1,8 +1,8 @@
 package controller;
 
-import dto.LineTransactionResponseDTO;
-import dto.SerialTransactionResponseDTO;
-import dto.ViewTransactionResponseDTO;
+import dto.Response_LineTransactionDTO;
+import dto.Response_SerialTransactionDTO;
+import dto.Response_ViewTransactionDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,9 +18,9 @@ import service.ViewTransactionService;
  */
 public class viewTransactionServlet extends HttpServlet {
 
-    private ViewTransactionResponseDTO view;
-    private List<LineTransactionResponseDTO> line;
-    private List<SerialTransactionResponseDTO> unit;
+    private Response_ViewTransactionDTO view;
+    private List<Response_LineTransactionDTO> line;
+    private List<Response_SerialTransactionDTO> unit;
     private static final ViewTransactionService service = new ViewTransactionService();
 
     @Override
@@ -32,7 +32,6 @@ public class viewTransactionServlet extends HttpServlet {
         if (receipt_id != null && !receipt_id.trim().isEmpty()) {
             id = Integer.parseInt(receipt_id);
         }
-
 
         view = service.get_transaction_view(id);
         line = service.get_transaction_line(id);
