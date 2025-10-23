@@ -181,7 +181,7 @@
                                     <dt>PO No</dt>
                                     <dd><a href="#" class="link">${view.po_code}</a></dd>
                                     <dt>Received by</dt>
-                                    <dd>${view.fullname} — <small>${view.employee_code}</small> — 0987 654 321</dd>
+                                    <dd>${view.fullname} — ${view.employee_code}</dd>
                                     <dt>Supplier</dt>
                                     <dd>${view.supplier_name}</dd>
                                     <dt>Note / Reason</dt>
@@ -196,14 +196,12 @@
                             <div class="col">
                                 <dl>
                                     <dt>PO Date</dt>
-                                    <dd>2025-10-15</dd>
+                                    <dd>${view.po_date}</dd>
                                     <dt>Received At</dt>
                                     <dd>${view.received_at}</dd>
-                                    <dt>Warehouse / Location</dt>
-                                    <dd>Kho A / Floor 2</dd>
                                     <dt>Status</dt>
                                     <dd>
-                                        <span class="status status-received">${view.status}</span>
+                                        <span class="status">${view.status}</span>
                                     </dd>
                                 </dl>
                             </div>
@@ -261,7 +259,7 @@
                         </thead>
                         <tbody>
                             <c:forEach var="l" items="${line}">
-                                <tr class="line-row" data-line-id="1">
+                                <tr class="line-row" data-line-id="${l.line_id}">
                                     <td class="center">1</td>
                                     <td>
                                         <div class="sku">${l.sku_code}</div>
@@ -276,14 +274,14 @@
                                     <td class="small">${l.note}</td>
                                     <td class="center">
                                         <button class="btn small-btn toggle-serials">
-                                            Show Serials (2)
+                                            Show Serials (${l.qty_received})
                                         </button>
                                     </td>
                                 </tr>
                                 <!-- Serials row for dòng 1 -->
-                                <tr class="serials-row" data-parent-line="1" hidden>
+                                <tr class="serials-row" data-parent-line="${l.line_id}" hidden>
                                     <td colspan="10" class="serials-cell">
-                                        <div class="serials-title">Serials for SKU-001</div>
+                                        <div class="serials-title">Serials for ${l.sku_code}</div>
                                         <table class="serial-table">
                                             <thead>
                                                 <tr>
@@ -294,119 +292,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>123456789012345</td>
-                                                    <td>SN001</td>
-                                                    <td>2025-10-19</td>
-                                                    <td>2026-10-19</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>123456789012346</td>
-                                                    <td>SN002</td>
-                                                    <td>2025-10-19</td>
-                                                    <td>2026-10-19</td>
-                                                </tr>
+                                                <c:forEach var="u" items="${unit}">
+                                                    <tr>
+                                                        <td>${u.imei}</td>
+                                                        <td>${u.serial_number}</td>
+                                                        <td>${u.warranty_start}</td>
+                                                        <td>${u.warranty_end}</td>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </td>
                                 </tr>
                             </c:forEach>
-
-
-                            <!-- Dòng 1 -->
-                            <tr class="line-row" data-line-id="1">
-                                <td class="center">1</td>
-                                <td>
-                                    <div class="sku">SKU-001</div>
-                                    <div class="prod-name">Điện thoại mẫu A</div>
-                                </td>
-                                <td class="center qty-expected">10</td>
-                                <td class="center qty-received">20</td>
-                                <td class="right unit-price">200.00</td>
-                                <td class="right line-total">2000.00</td>
-                                <td class="center discrepancy">0</td>
-                                <td class="center">A-01-01</td>
-                                <td class="small">Giao nguyên hộp</td>
-                                <td class="center">
-                                    <button class="btn small-btn toggle-serials">
-                                        Show Serials (2)
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- Serials row for dòng 1 -->
-                            <tr class="serials-row" data-parent-line="1" hidden>
-                                <td colspan="10" class="serials-cell">
-                                    <div class="serials-title">Serials for SKU-001</div>
-                                    <table class="serial-table">
-                                        <thead>
-                                            <tr>
-                                                <th>IMEI</th>
-                                                <th>SERIAL</th>
-                                                <th>Warranty start</th>
-                                                <th>Warranty end</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>123456789012345</td>
-                                                <td>SN001</td>
-                                                <td>2025-10-19</td>
-                                                <td>2026-10-19</td>
-                                            </tr>
-                                            <tr>
-                                                <td>123456789012346</td>
-                                                <td>SN002</td>
-                                                <td>2025-10-19</td>
-                                                <td>2026-10-19</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            <!-- Dòng 2 (có discrepancy) -->
-                            <tr class="line-row" data-line-id="2">
-                                <td class="center">2</td>
-                                <td>
-                                    <div class="sku">SKU-002</div>
-                                    <div class="prod-name">Router mẫu B</div>
-                                </td>
-                                <td class="center qty-expected">5</td>
-                                <td class="center qty-received">3</td>
-                                <td class="right unit-price">150.00</td>
-                                <td class="right line-total">450.00</td>
-                                <td class="center discrepancy">-2</td>
-                                <td class="center">B-02-05</td>
-                                <td class="small">Thiếu 2</td>
-                                <td class="center">
-                                    <button class="btn small-btn toggle-serials">
-                                        Show Serials (1)
-                                    </button>
-                                </td>
-                            </tr>
-                            <!-- Serials row for dòng 2 -->
-                            <tr class="serials-row" data-parent-line="2" hidden>
-                                <td colspan="10" class="serials-cell">
-                                    <div class="serials-title">Serials for SKU-002</div>
-                                    <table class="serial-table">
-                                        <thead>
-                                            <tr>
-                                                <th>IMEI</th>
-                                                <th>SERIAL</th>
-                                                <th>Warranty start</th>
-                                                <th>Warranty end</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>987654321098765</td>
-                                                <td>SN100</td>
-                                                <td>2025-10-19</td>
-                                                <td>2026-10-19</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </section>
@@ -414,7 +312,7 @@
                 <!-- Summary bottom + actions -->
                 <section class="summary-bottom card">
                     <div class="actions-left">
-                        <button class="btn ghost">Go to previous page</button>
+                        <a class="btn ghost" href="${pageContext.request.contextPath}/inbound/transaction">Go to previous page</a>
                     </div>
                     <div class="actions-right">
                         <button class="btn">Print</button>
@@ -497,5 +395,118 @@
                 </div>
             </div>
         </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const statusEl = document.querySelector(".status");
+                if (statusEl) {
+                    const statusText = statusEl.textContent.trim().toLowerCase(); // ví dụ: "received"
+                    statusEl.classList.add(`status-` + statusText);
+                }
+            });
+            // app.js - tính toán summary dựa trên bảng lines, điều khiển hiển thị serials
+            (function () {
+
+                // Helper parsing/formatting
+                function parseNumber(v) {
+                    // loại bỏ khoảng trắng, ký tự không phải số/.- rồi parse
+                    if (v === null || v === undefined)
+                        return 0;
+                    const s = String(v).replace(/[, ]+/g, "");
+                    const n = parseFloat(s);
+                    return isNaN(n) ? 0 : n;
+                }
+                function formatMoney(v) {
+                    return Number(v).toFixed(2);
+                }
+
+                // Recalculate a single line (tr element)
+                function recalcLine(tr) {
+                    const qtyExpected = parseNumber(
+                            tr.querySelector(".qty-expected")?.textContent
+                            );
+                    const qtyReceived = parseNumber(
+                            tr.querySelector(".qty-received")?.textContent
+                            );
+                    const unitPrice = parseNumber(tr.querySelector(".unit-price")?.textContent);
+                    const lineTotal = qtyReceived * unitPrice;
+
+                    const lineTotalEl = tr.querySelector(".line-total");
+                    lineTotalEl.textContent = formatMoney(lineTotal);
+
+                    const discrepancy = qtyReceived - qtyExpected;
+                    const discEl = tr.querySelector(".discrepancy");
+                    discEl.textContent = discrepancy > 0 ? "+" + discrepancy : discrepancy;
+                    discEl.classList.remove("pos", "neg", "zero");
+                    if (discrepancy === 0)
+                        discEl.classList.add("zero");
+                    else if (discrepancy > 0)
+                        discEl.classList.add("pos");
+                    else
+                        discEl.classList.add("neg");
+
+                    return {qtyExpected, qtyReceived, lineTotal, discrepancy};
+                }
+
+                // Recalculate whole table and update summary areas
+                function recalcAll() {
+                    const rows = Array.from(
+                            document.querySelectorAll("#lines-table tbody tr.line-row")
+                            );
+                    let sumExpected = 0,
+                            sumReceived = 0,
+                            sumMoney = 0,
+                            rowsWithDisc = 0;
+
+                    rows.forEach((tr) => {
+                        const r = recalcLine(tr);
+                        sumExpected += r.qtyExpected;
+                        sumReceived += r.qtyReceived;
+                        sumMoney += r.lineTotal;
+                        if (r.discrepancy !== 0)
+                            rowsWithDisc++;
+                    });
+
+                    const pct = sumExpected === 0 ? 0 : (sumReceived / sumExpected) * 100;
+
+                    // update header summary (right)
+                    document.getElementById("sum-expected").textContent = sumExpected;
+                    document.getElementById("sum-received").textContent = sumReceived;
+                    document.getElementById("sum-money").textContent = formatMoney(sumMoney);
+                    document.getElementById("pct-received").textContent = pct.toFixed(1) + "%";
+                    document.getElementById("rows-discrep").textContent = rowsWithDisc;
+                }
+
+                // Toggle serials rows (show/hide the serials-row that follows a line)
+                document.querySelectorAll(".toggle-serials").forEach((btn) => {
+                    btn.addEventListener("click", function () {
+                        // tìm dòng cha (closest .line-row)
+                        const tr = btn.closest("tr.line-row");
+                        if (!tr)
+                            return;
+                        const lineId = tr.dataset.lineId;
+                        const serialsRow = document.querySelector(
+                                `tr.serials-row[data-parent-line="` + lineId + `"]`
+                                );
+                        if (!serialsRow)
+                            return;
+                        const isHidden = serialsRow.hasAttribute("hidden");
+                        if (isHidden) {
+                            serialsRow.removeAttribute("hidden");
+                            btn.textContent = btn.textContent.replace(/Show/i, "Hide");
+                        } else {
+                            serialsRow.setAttribute("hidden", "");
+                            btn.textContent = btn.textContent.replace(/Hide/i, "Show");
+                        }
+                    });
+                });
+
+                // Initial calc
+                recalcAll();
+
+                // OPTIONAL: If dynamic rows are added later, you can call `rebind()` to reattach listeners.
+                window.receiptRecalc = recalcAll;
+            })();
+
+        </script>
     </body>
 </html>

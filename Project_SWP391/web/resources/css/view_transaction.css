@@ -168,7 +168,7 @@ button.menu-item a:visited {
 .status-partial {
     background: #f59e0b;
 } /* amber */
-.status-cancel {
+.status-cancelled {
     background: #ef4444;
 } /* red */
 .status-pending {
@@ -341,6 +341,7 @@ button.menu-item a:visited {
     color: #fff;
     font-weight: 700;
     box-shadow: 0 4px 12px rgba(6, 182, 212, 0.12);
+    text-decoration: none;
 }
 .btn.ghost {
     background: #f0f0f0;

@@ -1,7 +1,8 @@
 package controller;
 
-import dto.LineTransactionDTO;
-import dto.ViewTransactionDTO;
+import dto.LineTransactionResponseDTO;
+import dto.SerialTransactionResponseDTO;
+import dto.ViewTransactionResponseDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -9,7 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import service.viewTransactionService;
+import service.ViewTransactionService;
 
 /**
  *
@@ -17,9 +18,10 @@ import service.viewTransactionService;
  */
 public class viewTransactionServlet extends HttpServlet {
 
-    private ViewTransactionDTO view;
-    private List<LineTransactionDTO> line;
-    private static final viewTransactionService service = new viewTransactionService();
+    private ViewTransactionResponseDTO view;
+    private List<LineTransactionResponseDTO> line;
+    private List<SerialTransactionResponseDTO> unit;
+    private static final ViewTransactionService service = new ViewTransactionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -34,8 +36,10 @@ public class viewTransactionServlet extends HttpServlet {
 
         view = service.get_transaction_view(id);
         line = service.get_transaction_line(id);
+        unit = service.get_transaction_unit(id);
         request.setAttribute("view", view);
         request.setAttribute("line", line);
+        request.setAttribute("unit", unit);
         request.getRequestDispatcher("/WEB-INF/view/view_transaction.jsp").forward(request, response);
     }
 

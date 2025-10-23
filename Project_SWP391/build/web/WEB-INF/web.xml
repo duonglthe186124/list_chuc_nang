@@ -24,6 +24,14 @@
         <servlet-name>viewTransactionServlet</servlet-name>
         <servlet-class>controller.viewTransactionServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <servlet-class>controller.createReceiptServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
@@ -39,6 +47,14 @@
     <servlet-mapping>
         <servlet-name>viewTransactionServlet</servlet-name>
         <url-pattern>/inbound/transaction/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/createpo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <url-pattern>/inbound/create-receipt</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
