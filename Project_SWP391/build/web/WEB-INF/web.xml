@@ -13,8 +13,40 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>controller.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>login_servlet</servlet-name>
         <servlet-class>controller.login_servlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <servlet-class>controller.createReceiptServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>loginCheck</servlet-name>
+        <servlet-class>controller.login_servlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>products</servlet-name>
+        <servlet-class>controller.products</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>productSearch</servlet-name>
+        <servlet-class>controller.Product_search_filter</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderProduct</servlet-name>
+        <servlet-class>controller.OrderProduct</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderList</servlet-name>
+        <servlet-class>controller.OrderLists</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>transactionServlet</servlet-name>
@@ -49,8 +81,40 @@
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/createpo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <url-pattern>/inbound/create-receipt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/registerStaff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>login_servlet</servlet-name>
-        <url-pattern>/login</url-pattern>
+        <url-pattern>/loginStaff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>loginCheck</servlet-name>
+        <url-pattern>/loginCheck</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>products</servlet-name>
+        <url-pattern>/products</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>productSearch</servlet-name>
+        <url-pattern>/products/filter</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderProduct</servlet-name>
+        <url-pattern>/order</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderList</servlet-name>
+        <url-pattern>/order/list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>transactionServlet</servlet-name>
