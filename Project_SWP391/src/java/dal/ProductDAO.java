@@ -1,6 +1,6 @@
 package dal;
 
-import dto.ProductResponseDTO;
+import dto.Response_ProductDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -14,15 +14,15 @@ import util.DBContext;
  */
 public class ProductDAO extends DBContext {
 
-    public List<ProductResponseDTO> list_product() {
-        List<ProductResponseDTO> list = new ArrayList();
+    public List<Response_ProductDTO> list_product() {
+        List<Response_ProductDTO> list = new ArrayList();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT product_id, name FROM Products");
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    ProductResponseDTO line = new ProductResponseDTO(
+                    Response_ProductDTO line = new Response_ProductDTO(
                             rs.getInt("product_id"),
                             rs.getString("name"));
                     list.add(line);

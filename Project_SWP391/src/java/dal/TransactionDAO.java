@@ -6,12 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import util.*;
-import dto.TransactionResponseDTO;
+import dto.Response_TransactionDTO;
 
 public class TransactionDAO extends DBContext {
 
-    public List<TransactionResponseDTO> transactions(String search_name, String status, int offset, int limit) {
-        List<TransactionResponseDTO> list = new ArrayList();
+    public List<Response_TransactionDTO> transactions(String search_name, String status, int offset, int limit) {
+        List<Response_TransactionDTO> list = new ArrayList();
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
@@ -63,7 +63,7 @@ public class TransactionDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                TransactionResponseDTO line = new TransactionResponseDTO(
+                Response_TransactionDTO line = new Response_TransactionDTO(
                         rs.getInt("receipts_id"),
                         rs.getString("receipts_no"),
                         rs.getString("status"),
@@ -127,7 +127,7 @@ public class TransactionDAO extends DBContext {
 
     public static void main(String[] args) {
         TransactionDAO dao = new TransactionDAO();
-        List<TransactionResponseDTO> list = dao.transactions(null, null, 0, 10);
+        List<Response_TransactionDTO> list = dao.transactions(null, null, 0, 10);
         int total = dao.total_lines(null, null);
         if (!list.isEmpty()) {
             System.out.println(list.get(0).getSupplier());

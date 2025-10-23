@@ -6,38 +6,19 @@ import java.util.Date;
  *
  * @author ASUS
  */
-public class ReceiptHeaderDTO {
+public class Response_ReceiptHeaderDTO {
 
-    private int id;
-    private String po_code, display_name;
+    private String display_name;
     private Date created_at;
     private String note;
 
-    public ReceiptHeaderDTO() {
+    public Response_ReceiptHeaderDTO() {
     }
 
-    public ReceiptHeaderDTO(int id, String po_code, String display_name, Date created_at, String note) {
-        this.id = id;
-        this.po_code = po_code;
+    public Response_ReceiptHeaderDTO(String display_name, Date created_at, String note) {
         this.display_name = display_name;
         this.created_at = created_at;
         this.note = note;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getPo_code() {
-        return po_code;
-    }
-
-    public void setPo_code(String po_code) {
-        this.po_code = po_code;
     }
 
     public String getDisplay_name() {

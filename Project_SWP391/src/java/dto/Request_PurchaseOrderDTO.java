@@ -6,7 +6,7 @@ import java.util.Date;
  *
  * @author ASUS
  */
-public class PurchaseOrderRequestDTO {
+public class Request_PurchaseOrderDTO {
 
     private String po_code;
     private int supplier_id, created_by;
@@ -14,10 +14,10 @@ public class PurchaseOrderRequestDTO {
     private float total_amount;
     private String status, note;
 
-    public PurchaseOrderRequestDTO() {
+    public Request_PurchaseOrderDTO() {
     }
 
-    public PurchaseOrderRequestDTO(String po_code, int supplier_id, int created_by, Date created_at, float total_amount, String status, String note) {
+    public Request_PurchaseOrderDTO(String po_code, int supplier_id, int created_by, Date created_at, float total_amount, String status, String note) {
         this.po_code = po_code;
         this.supplier_id = supplier_id;
         this.created_by = created_by;

@@ -4,15 +4,15 @@ package dto;
  *
  * @author ASUS
  */
-public class SupplierResponseDTO {
+public class Response_SupplierDTO {
 
     private int supplier_id;
     private String supplier_name;
 
-    public SupplierResponseDTO() {
+    public Response_SupplierDTO() {
     }
 
-    public SupplierResponseDTO(int supplier_id, String supplier_name) {
+    public Response_SupplierDTO(int supplier_id, String supplier_name) {
         this.supplier_id = supplier_id;
         this.supplier_name = supplier_name;
     }

@@ -7,10 +7,10 @@ package service;
 import dal.ProductDAO;
 import dal.PurchaseOrderDAO;
 import dal.SupplierDAO;
-import dto.POLineRequestDTO;
-import dto.ProductResponseDTO;
-import dto.PurchaseOrderRequestDTO;
-import dto.SupplierResponseDTO;
+import dto.Request_POLineDTO;
+import dto.Response_ProductDTO;
+import dto.Request_PurchaseOrderDTO;
+import dto.Response_SupplierDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,13 +25,13 @@ public class ManagePOService {
     private static final ProductDAO product_dao = new ProductDAO();
     private static final PurchaseOrderDAO po_dao = new PurchaseOrderDAO();
 
-    public List<SupplierResponseDTO> get_list_supplier() {
-        List<SupplierResponseDTO> list = supplier_dao.list_supplier();
+    public List<Response_SupplierDTO> get_list_supplier() {
+        List<Response_SupplierDTO> list = supplier_dao.list_supplier();
         return list;
     }
 
-    public List<ProductResponseDTO> get_list_product() {
-        List<ProductResponseDTO> list = product_dao.list_product();
+    public List<Response_ProductDTO> get_list_product() {
+        List<Response_ProductDTO> list = product_dao.list_product();
         return list;
     }
 
@@ -41,15 +41,15 @@ public class ManagePOService {
             total_po += qty[i] * unit_price[i];
         }
 
-        PurchaseOrderRequestDTO order = new PurchaseOrderRequestDTO("PO-20252310-1", supplier_id, 6, date, total_po, null, note);
+        Request_PurchaseOrderDTO order = new Request_PurchaseOrderDTO("PO-20252310-1", supplier_id, 6, date, total_po, null, note);
         int po_id = po_dao.add_purchase_order(order);
 
-        List<POLineRequestDTO> list = new ArrayList();
+        List<Request_POLineDTO> list = new ArrayList();
         for (int i = 0; i < product_id.length; i++) {
-            POLineRequestDTO line = new POLineRequestDTO(po_id, product_id[i], unit_price[i], qty[i]);
+            System.out.println(product_id[i]);
+            Request_POLineDTO line = new Request_POLineDTO(po_id, product_id[i], unit_price[i], qty[i]);
             list.add(line);
         }
-        
-        
+        po_dao.add_po_line(list);
     }
 }

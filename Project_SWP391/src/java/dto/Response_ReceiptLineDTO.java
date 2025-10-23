@@ -4,28 +4,21 @@ package dto;
  *
  * @author ASUS
  */
-public class POLineRequestDTO {
+public class Response_ReceiptLineDTO {
 
-    private int po_id, product_id;
+    private int product_id;
+    private String product_name;
     private float unit_price;
     private int qty;
 
-    public POLineRequestDTO() {
-    }
-
-    public POLineRequestDTO(int po_id, int product_id, float unit_price, int qty) {
-        this.po_id = po_id;
+    public Response_ReceiptLineDTO(int product_id, String product_name, float unit_price, int qty) {
         this.product_id = product_id;
+        this.product_name = product_name;
         this.unit_price = unit_price;
         this.qty = qty;
     }
 
-    public int getPo_id() {
-        return po_id;
-    }
-
-    public void setPo_id(int po_id) {
-        this.po_id = po_id;
+    public Response_ReceiptLineDTO() {
     }
 
     public int getProduct_id() {
@@ -34,6 +27,14 @@ public class POLineRequestDTO {
 
     public void setProduct_id(int product_id) {
         this.product_id = product_id;
+    }
+
+    public String getProduct_name() {
+        return product_name;
+    }
+
+    public void setProduct_name(String product_name) {
+        this.product_name = product_name;
     }
 
     public float getUnit_price() {

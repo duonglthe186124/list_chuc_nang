@@ -6,19 +6,19 @@ import java.util.Date;
  *
  * @author ASUS
  */
-public class SerialTransactionResponseDTO {
+public class Response_SerialTransactionDTO {
 
     private String imei, serial_number;
     private Date warranty_start, warranty_end;
 
-    public SerialTransactionResponseDTO(String imei, String serial_number, Date warranty_start, Date warranty_end) {
+    public Response_SerialTransactionDTO(String imei, String serial_number, Date warranty_start, Date warranty_end) {
         this.imei = imei;
         this.serial_number = serial_number;
         this.warranty_start = warranty_start;
         this.warranty_end = warranty_end;
     }
 
-    public SerialTransactionResponseDTO() {
+    public Response_SerialTransactionDTO() {
     }
 
     public String getImei() {

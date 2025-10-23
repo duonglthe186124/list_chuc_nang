@@ -6,7 +6,7 @@ import java.util.Date;
  *
  * @author ASUS
  */
-public class ViewTransactionResponseDTO {
+public class Response_ViewTransactionDTO {
 
     private String receipt_no, po_code;
     private Date po_date;
@@ -14,10 +14,10 @@ public class ViewTransactionResponseDTO {
     private Date received_at;
     private String employee_code, fullname, supplier_name, note;
 
-    public ViewTransactionResponseDTO() {
+    public Response_ViewTransactionDTO() {
     }
 
-    public ViewTransactionResponseDTO(String receipt_no, String po_code, Date po_date, String status, Date received_at, String employee_code, String fullname, String supplier_name, String note) {
+    public Response_ViewTransactionDTO(String receipt_no, String po_code, Date po_date, String status, Date received_at, String employee_code, String fullname, String supplier_name, String note) {
         this.receipt_no = receipt_no;
         this.po_code = po_code;
         this.po_date = po_date;
