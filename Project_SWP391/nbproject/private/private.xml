@@ -7,6 +7,35 @@
             <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_purchase_order.jsp</file>
             <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/controller/createPurchaseOrderServlet.java</file>
             <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/web/resources/css/transaction_history.css</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/Feature.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_screen.jsp</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/login_page.jsp</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/TransactionDTO.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/AuthUser_HE186124_DuongLT.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/home_page.jsp</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/error_page.jsp</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dal/SearchProductDBContext.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/controller/login_servlet.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dal/ProductSpecsDBContext.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dal/ListProductDBContext.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/SpecsOptions.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/ProductInfoScreen_DuongLT.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/controller/BaseAuthController.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/util/DBCheck.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dal/UserDBContext_HE181624_DuongLT.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/util/DBContext.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/controller/Product_search_filter.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_search_filter.jsp</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/dispatcher-servlet.xml</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/ViewTransactionDTO.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/dto/PriceRange.java</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/web/WEB-INF/web.xml</file>
+            <file>file:/C:/SWP_Project_2/list_chuc_nang/Project_SWP391/src/java/controller/products.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/dal/TransactionDAO.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/dto/TransactionDTO.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/web/WEB-INF/view/transaction_history.jsp</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/controller/transactionServlet.java</file>
+            <file>file:/D:/Project/SWP391/SWP391_PROJECT/list_chuc_nang/Project_SWP391/src/java/service/transactionService.java</file>
         </group>
     </open-files>
 </project-private>
