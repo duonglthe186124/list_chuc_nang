@@ -1,6 +1,8 @@
 package dal;
 
-import dto.ViewTransactionDTO;
+import dto.LineTransactionResponseDTO;
+import dto.SerialTransactionResponseDTO;
+import dto.ViewTransactionResponseDTO;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -13,18 +15,18 @@ import util.*;
  * @author ASUS
  */
 public class ViewTransactionDAO extends DBContext {
-
-    public boolean check_exists_transaction(int tx_id) {
+    
+    public boolean check_exists_transaction(int receipt_id) {
         int count = 0;
         boolean check = false;
-
-        String sql = "SELECT COUNT(tx_id) AS total\n"
-                + "FROM Inventory_transactions\n"
-                + "WHERE tx_id = ?";
-
+        
+        String sql = "SELECT COUNT(r.receipts_id) AS total\n"
+                + "FROM Receipts r\n"
+                + "WHERE r.receipts_id = ?";
+        
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, tx_id);
-
+            ps.setInt(1, receipt_id);
+            
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 count = rs.getInt("total");
@@ -32,122 +34,154 @@ public class ViewTransactionDAO extends DBContext {
                     check = true;
                 }
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        
         return check;
     }
-
-    public ViewTransactionDTO view_transaction(int tx_id) {
-        ViewTransactionDTO line = null;
+    
+    public ViewTransactionResponseDTO view_transaction(int receipt_id) {
+        ViewTransactionResponseDTO line = null;
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
-                + "	t.tx_id, \n"
-                + "	t.tx_type, \n"
-                + "	p.product_name, \n"
-                + "	pu.status,\n"
-                + "	p.description,\n"
-                + "	t.qty,\n"
-                + "	pu.unit_price,\n"
-                + "	t.qty * pu.unit_price AS total_price,\n"
-                + "	CASE\n"
-                + "		WHEN t.tx_type = 'Inbound'  THEN s.supplier_name          -- nguồn là supplier (nếu có)\n"
-                + "		WHEN t.tx_type = 'Outbound' THEN fl.code                  -- nguồn là kho (from_location)\n"
-                + "		WHEN t.tx_type = 'Moving'   THEN fl.code                  -- nguồn là kho (from_location)\n"
-                + "		WHEN t.tx_type = 'Destroy'  THEN fl.code                  -- nguồn là kho (from_location)\n"
-                + "		ELSE fl.code\n"
-                + "	END AS from_code,\n"
-                + "\n"
-                + "	CASE\n"
-                + "		WHEN t.tx_type = 'Inbound'  THEN tl.code                  -- đích là kho (to_location)\n"
-                + "		WHEN t.tx_type = 'Outbound' THEN cu.fullname               -- đích là user/khách (Outbound_inventory.user_id -> Users)\n"
-                + "		WHEN t.tx_type = 'Moving'   THEN tl.code                  -- đích là kho (to_location)\n"
-                + "		WHEN t.tx_type = 'Destroy'  THEN NULL                     -- tiêu huỷ không có đích\n"
-                + "		ELSE tl.code\n"
-                + "	END AS to_code,\n"
-                + "\n"
-                + "	CASE\n"
-                + "		WHEN t.tx_type = 'Inbound'  THEN ib.inbound_code                 \n"
-                + "		WHEN t.tx_type = 'Outbound' THEN ob.outbound_code             \n"
-                + "		ELSE NULL\n"
-                + "	END AS tx_code,\n"
-                + "\n"
-                + "	CASE\n"
-                + "		WHEN t.tx_type = 'Inbound'  THEN s.supplier_name          \n"
-                + "		WHEN t.tx_type = 'Outbound' THEN cu.fullname              \n"
-                + "	END AS tx_name,\n"
-                + "\n"
-                + "	CASE\n"
-                + "		WHEN t.tx_type = 'Inbound'  THEN ib.received_at          \n"
-                + "		WHEN t.tx_type = 'Outbound' THEN ob.created_at           \n"
-                + "	END AS date,\n"
-                + "\n"
-                + "  COALESCE(ib.inbound_code, ob.outbound_code, t.ref_code) AS ref_code,\n"
-                + "\n"
+                + "	r.receipts_no,\n"
+                + "	po.po_code,\n"
+                + "	po.created_at,\n"
+                + "	r.status,\n"
+                + "	r.received_at,\n"
                 + "	e.employee_code,\n"
-                + "	eu.fullname,\n"
-                + "	t.tx_date,\n"
-                + "	t.name,\n"
-                + "	t.color,\n"
-                + "	t.memory,\n"
-                + "	t.unit,\n"
-                + "	t.price\n"
-                + "FROM Inventory_transactions t\n"
-                + "LEFT JOIN Products p             ON t.product_id = p.product_id\n"
-                + "JOIN Product_units pu            ON t.unit_id    = pu.unit_id\n"
-                + "LEFT JOIN Employees e            ON t.employee_id = e.employee_id\n"
-                + "LEFT JOIN Users eu               ON e.user_id = eu.user_id\n"
-                + "LEFT JOIN Warehouse_locations fl ON t.from_location = fl.location_id\n"
-                + "LEFT JOIN Warehouse_locations tl ON t.to_location   = tl.location_id\n"
-                + "LEFT JOIN Inbound_inventory ib   ON t.related_inbound_id  = ib.inbound_id\n"
-                + "LEFT JOIN Suppliers s            ON ib.supplier_id        = s.supplier_id\n"
-                + "LEFT JOIN Outbound_inventory ob  ON t.related_outbound_id = ob.outbound_id\n"
-                + "LEFT JOIN Users cu               ON ob.user_id            = cu.user_id\n"
+                + "	u.fullname,	\n"
+                + "	s.supplier_name,\n"
+                + "	po.note \n"
+                + "FROM Receipts r\n"
+                + "LEFT JOIN Purchase_orders po ON r.po_id = po.po_id\n"
+                + "LEFT JOIN Employees e ON r.received_by = e.employee_id\n"
+                + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id\n"
+                + "LEFT JOIN Users u ON e.user_id = u.user_id\n"
                 + "WHERE 1 = 1 ");
-
-        if (check_exists_transaction(tx_id)) {
-            sql.append(" AND tx_id = ? ");
+        
+        if (check_exists_transaction(receipt_id)) {
+            sql.append(" AND r.receipts_id = ? ");
         }
-
+        
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
-            ps.setInt(1, tx_id);
-
+            ps.setInt(1, receipt_id);
+            
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                line = new ViewTransactionDTO(
-                        rs.getString("tx_type"),
-                        rs.getDate("tx_date"),
-                        rs.getString("ref_code"),
+                line = new ViewTransactionResponseDTO(
+                        rs.getString("receipts_no"),
+                        rs.getString("po_code"),
+                        rs.getDate("created_at"),
+                        rs.getString("status"),
+                        rs.getDate("received_at"),
                         rs.getString("employee_code"),
                         rs.getString("fullname"),
-                        rs.getString("product_name"),
-                        rs.getString("status"),
-                        rs.getString("description"),
-                        rs.getInt("qty"),
-                        rs.getString("from_code"),
-                        rs.getString("to_code"),
-                        rs.getString("tx_code"),
-                        rs.getString("tx_name"),
-                        rs.getDate("date"),
-                        rs.getString("name"),
-                        rs.getString("color"),
-                        rs.getString("memory"),
-                        rs.getString("unit"),
-                        rs.getFloat("price"));
+                        rs.getString("supplier_name"),
+                        rs.getString("note"));
             }
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return line;
     }
-
+    
+    public List<LineTransactionResponseDTO> transaction_line(int receipt_id) {
+        List<LineTransactionResponseDTO> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT \n"
+                + "	rl.line_id,\n"
+                + "	rl.receipt_id,\n"
+                + "	p.sku_code,\n"
+                + "	p.name,\n"
+                + "	rl.qty_expected,\n"
+                + "	rl.qty_received,\n"
+                + "	rl.unit_price,\n"
+                + "	rl.note,\n"
+                + "	wl.aisle,\n"
+                + "	wl.area,\n"
+                + "	wl.slot\n"
+                + "FROM Receipt_lines rl\n"
+                + "LEFT JOIN Products p ON rl.product_id = p.product_id\n"
+                + "LEFT JOIN Receipt_units ru ON rl.line_id = ru.unit_id\n"
+                + "LEFT JOIN Product_units pu ON ru.unit_id = pu.unit_id\n"
+                + "LEFT JOIN Containers c ON pu.container_id = c.container_id\n"
+                + "LEFT JOIN Warehouse_locations wl ON c.location_id = wl.location_id\n"
+                + "WHERE 1 = 1 AND rl.receipt_id = ?");
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, receipt_id);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String location = "";
+                    
+                    LineTransactionResponseDTO line = new LineTransactionResponseDTO(
+                            rs.getInt("line_id"),
+                            rs.getString("sku_code"),
+                            rs.getString("name"),
+                            rs.getInt("qty_expected"),
+                            rs.getInt("qty_received"),
+                            rs.getFloat("unit_price"),
+                            rs.getString("note"),
+                            location += rs.getString("aisle") + "-" + rs.getString("area") + "-" + rs.getString("slot"));
+                    list.add(line);
+                }
+                rs.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public List<SerialTransactionResponseDTO> transaction_units(int receipt_id) {
+        List<SerialTransactionResponseDTO> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT \n"
+                + "	pu.imei,\n"
+                + "	pu.serial_number,\n"
+                + "	pu.warranty_start,\n"
+                + "	pu.warranty_end\n"
+                + "FROM Receipt_lines rl\n"
+                + "LEFT JOIN Receipt_units ru ON rl.line_id = ru.line_id\n"
+                + "LEFT JOIN Product_units pu ON ru.unit_id = pu.unit_id\n"
+                + "WHERE rl.receipt_id = ? ");
+        
+        try(PreparedStatement ps = connection.prepareStatement(sql.toString()))
+        {
+            ps.setInt(1, receipt_id);
+            
+            try(ResultSet rs = ps.executeQuery())
+            {
+                while(rs.next())
+                {
+                    SerialTransactionResponseDTO line = new SerialTransactionResponseDTO(
+                                rs.getString("imei"),
+                                rs.getString("serial_number"),
+                                rs.getDate("warranty_start"),
+                                rs.getDate("warranty_end"));
+                    
+                    list.add(line);
+                }
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
     public static void main(String[] args) {
         ViewTransactionDAO dao = new ViewTransactionDAO();
-        ViewTransactionDTO l = dao.view_transaction(1);
-
+        List<LineTransactionResponseDTO> l = dao.transaction_line(1);
+        
         if (l != null) {
-            System.out.println(l.getTx_type());
+            System.out.println(l.get(0).getLocation());
         }
     }
 }

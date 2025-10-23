@@ -1,6 +1,6 @@
 package controller;
 
-import dto.TransactionDTO;
+import dto.TransactionResponseDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import service.transactionService;
+import service.TransactionService;
 
 /**
  *
@@ -17,19 +17,19 @@ import service.transactionService;
  */
 public class transactionServlet extends HttpServlet {
 
-    private List<TransactionDTO> tx_list;
-    private static final transactionService service = new transactionService();
+    private List<TransactionResponseDTO> tx_list;
+    private static final TransactionService service = new TransactionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String raw_search = request.getParameter("searchInput");
-        String raw_tx_type = request.getParameter("txType");
+        String raw_status = request.getParameter("status");
         String raw_page_size = request.getParameter("pageSize");
         String raw_page_no = request.getParameter("pageNo");
         String raw_page_input = request.getParameter("pageInput");
 
-        String search = null, tx_type = null;
+        String search = null, status = null;
         int page_size = 10, page_no = 1, total_lines;
 
         if (raw_search != null && !raw_search.isEmpty()) {
@@ -39,10 +39,10 @@ public class transactionServlet extends HttpServlet {
             }
         }
 
-        if (raw_tx_type != null && !raw_tx_type.isEmpty()) {
-            List<String> allowedTypes = Arrays.asList("Inbound", "Outbound", "Moving", "Destroy");
-            if (allowedTypes.contains(raw_tx_type)) {
-                tx_type = raw_tx_type;
+        if (raw_status != null && !raw_status.isEmpty()) {
+            List<String> allowedTypes = Arrays.asList("Pending", "Received", "Partial", "Cancelled");
+            if (allowedTypes.contains(raw_status)) {
+                status = raw_status;
             }
         }
 
@@ -56,11 +56,11 @@ public class transactionServlet extends HttpServlet {
             page_no = Integer.parseInt(raw_page_no);
         }
 
-        total_lines = service.get_total_lines(search, tx_type);
-        tx_list = service.get_transactions(search, tx_type, page_no, page_size);
+        total_lines = service.get_total_lines(search, status);
+        tx_list = service.get_transactions(search, status, page_no, page_size);
         request.setAttribute("tx_list", tx_list);
         request.setAttribute("searchInput", search);
-        request.setAttribute("txType", tx_type);
+        request.setAttribute("status", status);
         request.setAttribute("pageSize", page_size);
         request.setAttribute("pageNo", page_no);
         request.setAttribute("totalLines", total_lines);
