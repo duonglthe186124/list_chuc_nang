@@ -13,14 +13,6 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
-        <servlet-name>transactionServlet</servlet-name>
-        <servlet-class>controller.transactionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>viewTransactionServlet</servlet-name>
-        <servlet-class>controller.viewTransactionServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>RegisterServlet</servlet-name>
         <servlet-class>controller.RegisterServlet</servlet-class>
     </servlet>
@@ -28,12 +20,15 @@
         <servlet-name>login_servlet</servlet-name>
         <servlet-class>controller.login_servlet</servlet-class>
     </servlet>
+    <servlet>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createReceiptServlet</servlet-name>
         <servlet-class>controller.createReceiptServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>loginCheck</servlet-name>
         <servlet-class>controller.login_servlet</servlet-class>
     </servlet>
@@ -53,17 +48,25 @@
         <servlet-name>OrderList</servlet-name>
         <servlet-class>controller.OrderLists</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>transactionServlet</servlet-name>
+        <servlet-class>controller.transactionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>viewTransactionServlet</servlet-name>
+        <servlet-class>controller.viewTransactionServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>transactionServlet</servlet-name>
-        <url-pattern>/inbound/transaction</url-pattern>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/createpo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>viewTransactionServlet</servlet-name>
-        <url-pattern>/inbound/transaction/view</url-pattern>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <url-pattern>/inbound/create-receipt</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
@@ -72,12 +75,8 @@
     <servlet-mapping>
         <servlet-name>login_servlet</servlet-name>
         <url-pattern>/loginStaff</url-pattern>
-        <servlet-name>createPurchaseOrderServlet</servlet-name>
-        <url-pattern>/inbound/createpo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>createReceiptServlet</servlet-name>
-        <url-pattern>/inbound/create-receipt</url-pattern>
         <servlet-name>loginCheck</servlet-name>
         <url-pattern>/loginCheck</url-pattern>
     </servlet-mapping>
@@ -96,6 +95,14 @@
     <servlet-mapping>
         <servlet-name>OrderList</servlet-name>
         <url-pattern>/order/list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>transactionServlet</servlet-name>
+        <url-pattern>/inbound/transaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewTransactionServlet</servlet-name>
+        <url-pattern>/inbound/transaction/view</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
