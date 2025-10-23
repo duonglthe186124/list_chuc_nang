@@ -13,10 +13,6 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
-        <servlet-name>login_servlet</servlet-name>
-        <servlet-class>controller.login_servlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>transactionServlet</servlet-name>
         <servlet-class>controller.transactionServlet</servlet-class>
     </servlet>
@@ -25,6 +21,13 @@
         <servlet-class>controller.viewTransactionServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>controller.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>login_servlet</servlet-name>
+        <servlet-class>controller.login_servlet</servlet-class>
+    </servlet>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
     </servlet>
@@ -55,10 +58,6 @@
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>login_servlet</servlet-name>
-        <url-pattern>/login</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>transactionServlet</servlet-name>
         <url-pattern>/inbound/transaction</url-pattern>
     </servlet-mapping>
@@ -67,6 +66,12 @@
         <url-pattern>/inbound/transaction/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/registerStaff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>login_servlet</servlet-name>
+        <url-pattern>/loginStaff</url-pattern>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
         <url-pattern>/inbound/createpo</url-pattern>
     </servlet-mapping>
