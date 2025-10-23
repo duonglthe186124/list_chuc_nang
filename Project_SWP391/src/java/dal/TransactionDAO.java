@@ -6,12 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import util.*;
-import dto.TransactionDTO;
+import dto.TransactionResponseDTO;
 
 public class TransactionDAO extends DBContext {
 
-    public List<TransactionDTO> transactions(String search_name, String status, int offset, int limit) {
-        List<TransactionDTO> list = new ArrayList();
+    public List<TransactionResponseDTO> transactions(String search_name, String status, int offset, int limit) {
+        List<TransactionResponseDTO> list = new ArrayList();
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT \n"
@@ -37,7 +37,7 @@ public class TransactionDAO extends DBContext {
         List<Object> params = new ArrayList();
 
         if (search_name != null) {
-            sql.append("AND p.product_name LIKE ? ");
+            sql.append("AND s.display_name LIKE ? ");
             params.add(search_name);
         }
         if (status != null) {
@@ -63,7 +63,7 @@ public class TransactionDAO extends DBContext {
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                TransactionDTO line = new TransactionDTO(
+                TransactionResponseDTO line = new TransactionResponseDTO(
                         rs.getInt("receipts_id"),
                         rs.getString("receipts_no"),
                         rs.getString("status"),
@@ -101,7 +101,7 @@ public class TransactionDAO extends DBContext {
         List<Object> params = new ArrayList();
 
         if (search_name != null) {
-            sql.append("AND p.product_name LIKE ? ");
+            sql.append("AND s.display_name LIKE ? ");
             params.add(search_name);
         }
         if (tx_type != null) {
@@ -127,7 +127,7 @@ public class TransactionDAO extends DBContext {
 
     public static void main(String[] args) {
         TransactionDAO dao = new TransactionDAO();
-        List<TransactionDTO> list = dao.transactions(null, null, 0, 10);
+        List<TransactionResponseDTO> list = dao.transactions(null, null, 0, 10);
         int total = dao.total_lines(null, null);
         if (!list.isEmpty()) {
             System.out.println(list.get(0).getSupplier());

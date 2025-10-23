@@ -199,10 +199,10 @@
                         </div>
                         <select name="status" class="filter-dropdown">
                             <option value="" ${status == ""? 'selected' : ''}>All</option>
-                            <option value="Inbound" ${status == "Pending"? 'selected' : ''}>Pending</option>
-                            <option value="Outbound" ${status == "Received"? 'selected' : ''}>Received</option>
-                            <option value="Moving" ${status == "Partial"? 'selected' : ''}>Partial</option>
-                            <option value="Destroy" ${status == "Cancelled"? 'selected' : ''}>Cancelled</option>
+                            <option value="Pending" ${status == "Pending"? 'selected' : ''}>Pending</option>
+                            <option value="Received" ${status == "Received"? 'selected' : ''}>Received</option>
+                            <option value="Partial" ${status == "Partial"? 'selected' : ''}>Partial</option>
+                            <option value="Cancelled" ${status == "Cancelled"? 'selected' : ''}>Cancelled</option>
                         </select>
                         <button type="submit" class="filter-btn">Filter</button>
                         <div class="items-per-page">

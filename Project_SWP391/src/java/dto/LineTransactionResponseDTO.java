@@ -4,17 +4,19 @@ package dto;
  *
  * @author ASUS
  */
-public class LineTransactionDTO {
+public class LineTransactionResponseDTO {
 
+    private int line_id;
     private String sku_code, name;
     private int qty_expected, qty_received;
     private float unit_price;
     private String note, location;
 
-    public LineTransactionDTO() {
+    public LineTransactionResponseDTO() {
     }
 
-    public LineTransactionDTO(String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
+    public LineTransactionResponseDTO(int line_id, String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
+        this.line_id = line_id;
         this.sku_code = sku_code;
         this.name = name;
         this.qty_expected = qty_expected;
@@ -22,6 +24,14 @@ public class LineTransactionDTO {
         this.unit_price = unit_price;
         this.note = note;
         this.location = location;
+    }
+
+    public int getLine_id() {
+        return line_id;
+    }
+
+    public void setLine_id(int line_id) {
+        this.line_id = line_id;
     }
 
     public String getSku_code() {

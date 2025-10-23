@@ -1,24 +1,26 @@
 package dto;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  *
  * @author ASUS
  */
-public class ViewTransactionDTO {
+public class ViewTransactionResponseDTO {
 
-    private String receipt_no, po_code, status;
+    private String receipt_no, po_code;
+    private Date po_date;
+    private String status;
     private Date received_at;
     private String employee_code, fullname, supplier_name, note;
 
-    public ViewTransactionDTO() {
+    public ViewTransactionResponseDTO() {
     }
 
-    public ViewTransactionDTO(String receipt_no, String po_code, String status, Date received_at, String employee_code, String fullname, String supplier_name, String note) {
+    public ViewTransactionResponseDTO(String receipt_no, String po_code, Date po_date, String status, Date received_at, String employee_code, String fullname, String supplier_name, String note) {
         this.receipt_no = receipt_no;
         this.po_code = po_code;
+        this.po_date = po_date;
         this.status = status;
         this.received_at = received_at;
         this.employee_code = employee_code;
@@ -41,6 +43,14 @@ public class ViewTransactionDTO {
 
     public void setPo_code(String po_code) {
         this.po_code = po_code;
+    }
+
+    public Date getPo_date() {
+        return po_date;
+    }
+
+    public void setPo_date(Date po_date) {
+        this.po_date = po_date;
     }
 
     public String getStatus() {

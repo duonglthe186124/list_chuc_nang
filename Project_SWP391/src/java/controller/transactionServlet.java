@@ -1,6 +1,6 @@
 package controller;
 
-import dto.TransactionDTO;
+import dto.TransactionResponseDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import service.transactionService;
+import service.TransactionService;
 
 /**
  *
@@ -17,8 +17,8 @@ import service.transactionService;
  */
 public class transactionServlet extends HttpServlet {
 
-    private List<TransactionDTO> tx_list;
-    private static final transactionService service = new transactionService();
+    private List<TransactionResponseDTO> tx_list;
+    private static final TransactionService service = new TransactionService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

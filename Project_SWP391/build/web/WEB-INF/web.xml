@@ -25,6 +25,12 @@
         <servlet-class>controller.viewTransactionServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <servlet-class>controller.createReceiptServlet</servlet-class>
         <servlet-name>loginCheck</servlet-name>
         <servlet-class>controller.login_servlet</servlet-class>
     </servlet>
@@ -61,6 +67,12 @@
         <url-pattern>/inbound/transaction/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>createPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/createpo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>createReceiptServlet</servlet-name>
+        <url-pattern>/inbound/create-receipt</url-pattern>
         <servlet-name>loginCheck</servlet-name>
         <url-pattern>/loginCheck</url-pattern>
     </servlet-mapping>
