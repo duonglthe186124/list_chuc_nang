@@ -558,7 +558,7 @@ INSERT INTO Product_units (imei, serial_number, warranty_start, warranty_end, pr
 ('IMEI014', 'SN014', '2024-02-01', '2025-02-01', 14, 799.99, '2024-02-01', 4, 'AVAILABLE'),
 ('IMEI015', 'SN015', '2024-03-01', '2025-03-01', 15, 499.99, '2024-03-01', 5, 'AVAILABLE'),
 ('IMEI016', 'SN016', '2024-04-01', '2025-04-01', 16, 399.99, '2024-04-01', 6, 'AVAILABLE'),
-('IMEI017', 'SN017', '2024-05-1', '2025-05-01', 17, 299.99, '2024-05-01', 7, 'AVAILABLE'),
+('IMEI017', 'SN017', '2024-05-01', '2025-05-01', 17, 299.99, '2024-05-01', 7, 'AVAILABLE'),
 ('IMEI018', 'SN018', '2024-06-01', '2025-06-01', 18, 599.99, '2024-06-01', 8, 'AVAILABLE'),
 ('IMEI019', 'SN019', '2024-07-01', '2025-07-01', 19, 499.99, '2024-07-01', 9, 'AVAILABLE'),
 ('IMEI020', 'SN020', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE'),
@@ -604,6 +604,14 @@ INSERT INTO Purchase_order_lines (po_id, product_id, unit_price, qty) VALUES
 (8, 8, 499.99, 10),
 (9, 9, 399.99, 10),
 (10, 10, 899.99, 10);
+
+-- Note: Receipts, Receipt_lines, and Receipt_units require valid po_id from Purchase_order_lines, 
+-- but the schema references po_id directly in Receipts, which seems incorrect. 
+-- Assuming Receipts should reference Purchase_orders instead for consistency.
+
+-- Correct the schema issue by altering the Receipts table (for demonstration purposes)
+/* ALTER TABLE Receipts DROP CONSTRAINT FK__Receipts__po_id;
+ALTER TABLE Receipts ADD CONSTRAINT FK_Receipts_Purchase_orders FOREIGN KEY (po_id) REFERENCES Purchase_orders(po_id); */
 
 -- Insert data into Receipts
 INSERT INTO Receipts (receipts_no, po_id, received_by, status, note, received_at) VALUES
@@ -687,11 +695,11 @@ INSERT INTO Stock_adjustments (adjustment_no, product_id, unit_id, qty_before, q
 INSERT INTO Stock_audit_logs (event_time, user_id, event_type, reference_table, reference_id, unit_cost, monetary_value, detail, note) VALUES
 ('2023-01-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 1, 999.99, 1999.98, 'Damaged units removed', NULL),
 ('2023-02-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 2, 899.99, 899.99, 'Lost unit', NULL),
-('2023-03-01 10:00:00', 3, 'QC CHECK', 'Products', 3, 799.99, 0.00, 'Stock check', NULL),
+('2023-03-01 10:00:00', 3, 'CHECK', 'Products', 3, 799.99, 0.00, 'Stock check', NULL),
 ('2023-04-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 4, 699.99, 1399.98, 'Found units', NULL),
 ('2023-05-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 5, 599.99, 1199.98, 'Theft reported', NULL),
 ('2023-06-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 6, 1099.99, 1099.99, 'Damaged unit', NULL),
-('2023-07-01 10:00:00', 3, 'QC CHECK', 'Products', 7, 999.99, 0.00, 'Stock verification', NULL),
+('2023-07-01 10:00:00', 3, 'CHECK', 'Products', 7, 999.99, 0.00, 'Stock verification', NULL),
 ('2023-08-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 8, 499.99, 499.99, 'Extra unit found', NULL),
 ('2023-09-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 9, 399.99, 1199.97, 'Damaged units', NULL),
 ('2023-10-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 10, 899.99, 899.99, 'Lost unit', NULL);
@@ -762,17 +770,17 @@ INSERT INTO Salary_components (payroll_id, comp_type, amount) VALUES
 (7, 'Base Salary', 3800.00);
 
 -- Insert data into Orders
-INSERT INTO Orders (user_id, total_amount, status, order_date) VALUES
-(4, 1999.98, 'SHIPPED', '2023-01-01'),
-(4, 2699.97, 'CONFIRMED', '2023-02-01'),
-(4, 3199.96, 'PENDING', '2023-03-01'),
-(4, 3499.95, 'SHIPPED', '2023-04-01'),
-(4, 599.99, 'CANCELLED', '2023-05-01'),
-(4, 2199.98, 'SHIPPED', '2023-06-01'),
-(4, 2999.97, 'CONFIRMED', '2023-07-01'),
-(4, 1999.96, 'SHIPPED', '2023-08-01'),
-(4, 1999.95, 'PENDING', '2023-09-01'),
-(4, 1799.98, 'SHIPPED', '2023-10-01');
+INSERT INTO Orders (user_id, total_amount, status, order_date, receive_date) VALUES
+(4, 1999.98, 'SHIPPED', '2023-01-01', '2023-01-05'),
+(4, 2699.97, 'CONFIRMED', '2023-02-01', NULL),
+(4, 3199.96, 'PENDING', '2023-03-01', NULL),
+(4, 3499.95, 'SHIPPED', '2023-04-01', '2023-04-05'),
+(4, 599.99, 'CANCELLED', '2023-05-01', NULL),
+(4, 2199.98, 'SHIPPED', '2023-06-01', '2023-06-05'),
+(4, 2999.97, 'CONFIRMED', '2023-07-01', NULL),
+(4, 1999.96, 'SHIPPED', '2023-08-01', '2023-08-05'),
+(4, 1999.95, 'PENDING', '2023-09-01', NULL),
+(4, 1799.98, 'SHIPPED', '2023-10-01', '2023-10-05');
 
 -- Insert data into Order_details
 INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) VALUES
@@ -788,30 +796,30 @@ INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) VALU
 (10, 10, 2, 899.99, 1799.98);
 
 -- Insert data into Returns
-INSERT INTO Returns (return_no, order_id, created_by, created_at, status) VALUES
-('RET001', 1, 4, '2023-01-06', 'RECEIVED'),
-('RET002', 2, 4, '2023-02-06', 'OPEN'),
-('RET003', 3, 4, '2023-03-06', 'INSPECTED'),
-('RET004', 4, 4, '2023-04-06', 'RESOLVED'),
-('RET005', 5, 4, '2023-05-06', 'OPEN'),
-('RET006', 6, 4, '2023-06-06', 'RECEIVED'),
-('RET007', 7, 4, '2023-07-06', 'INSPECTED'),
-('RET008', 8, 4, '2023-08-06', 'RESOLVED'),
-('RET009', 9, 4, '2023-09-06', 'OPEN'),
-('RET010', 10, 4, '2023-10-06', 'RECEIVED');
+INSERT INTO Returns (return_no, order_id, customer_name, created_by, created_at, status) VALUES
+('RET001', 1, 'John Customer', 4, '2023-01-06', 'RECEIVED'),
+('RET002', 2, 'Jane Customer', 4, '2023-02-06', 'OPEN'),
+('RET003', 3, 'Bob Customer', 4, '2023-03-06', 'INSPECTED'),
+('RET004', 4, 'Alice Customer', 4, '2023-04-06', 'RESOLVED'),
+('RET005', 5, 'Tom Customer', 4, '2023-05-06', 'OPEN'),
+('RET006', 6, 'Emma Customer', 4, '2023-06-06', 'RECEIVED'),
+('RET007', 7, 'Mike Customer', 4, '2023-07-06', 'INSPECTED'),
+('RET008', 8, 'Sarah Customer', 4, '2023-08-06', 'RESOLVED'),
+('RET009', 9, 'David Customer', 4, '2023-09-06', 'OPEN'),
+('RET010', 10, 'Guest Customer', 4, '2023-10-06', 'RECEIVED');
 
 -- Insert data into Return_lines
-INSERT INTO Return_lines (return_id, unit_id, reason) VALUES
-(1, 1, 'Defective unit'),
-(2, 2, 'Wrong item'),
-(3, 3, 'Damaged in transit'),
-(4, 4, 'Customer changed mind'),
-(5, 5, 'Not as described'),
-(6, 6, 'Defective unit'),
-(7, 7, 'Wrong color'),
-(8, 8, 'Customer return'),
-(9, 9, 'Faulty product'),
-(10, 10, 'Damaged item');
+INSERT INTO Return_lines (return_id, unit_id, product_id, qty, reason, created_at) VALUES
+(1, 1, 1, 1, 'Defective unit', '2023-01-06'),
+(2, 2, 2, 1, 'Wrong item', '2023-02-06'),
+(3, 3, 3, 1, 'Damaged in transit', '2023-03-06'),
+(4, 4, 4, 1, 'Customer changed mind', '2023-04-06'),
+(5, 5, 5, 1, 'Not as described', '2023-05-06'),
+(6, 6, 6, 1, 'Defective unit', '2023-06-06'),
+(7, 7, 7, 1, 'Wrong color', '2023-07-06'),
+(8, 8, 8, 1, 'Customer return', '2023-08-06'),
+(9, 9, 9, 1, 'Faulty product', '2023-09-06'),
+(10, 10, 10, 1, 'Damaged item', '2023-10-06');
 
 -- Insert data into Quality_Inspections
 INSERT INTO Quality_Inspections (inspection_no, unit_id, location_id, inspected_by, inspected_at, status, result, note) VALUES
