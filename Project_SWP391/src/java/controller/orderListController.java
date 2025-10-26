@@ -56,7 +56,7 @@ public class orderListController extends HttpServlet {
         boolean showSuccess = "true".equalsIgnoreCase(successParam);
 
         // UserId cố định 
-        int userId = 6;
+        int userId = 2;
         UserToCheckTask user = null;
         try {
             user = dbr.getUserById(userId);

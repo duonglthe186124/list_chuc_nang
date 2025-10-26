@@ -161,7 +161,7 @@
 
             <main class="main">
                 <div class="main-header" id="main-header">
-                    <h1>Transaction history</h1>
+                    <h1>Order detail</h1>
                 </div>
 
                 <form action="${pageContext.request.contextPath}/inbound/transactions" method="get">
