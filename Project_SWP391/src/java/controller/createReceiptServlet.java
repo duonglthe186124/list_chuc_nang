@@ -37,7 +37,6 @@ public class createReceiptServlet extends HttpServlet {
             po_id = Integer.parseInt(raw_po_id);
         }
         
-        System.out.println(po_id);
         purchase_order_list = service.get_purchase_order_list();
         if (po_id != 0) {
             po_line_list = service.get_po_line(po_id);
@@ -53,7 +52,23 @@ public class createReceiptServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        String raw_po_id = request.getParameter("po_id");
+        String receipt_no = request.getParameter("receipt_no");
+        String[] raw_received_qty = request.getParameterValues("received_qty");
+        String[] note = request.getParameterValues("note");
+        
+        System.out.println(receipt_no);
+        int length = raw_received_qty.length;
+        int po_id = Integer.parseInt(raw_po_id);
+        int[] received_qty = new int[length];
+        
+        for(int i = 0; i < length; i++)
+        {
+            received_qty[i] = Integer.parseInt(raw_received_qty[i]);
+        }
+        
+        service.create_receipt(po_id, receipt_no, 4,received_qty);
+        response.sendRedirect(request.getContextPath() + "/inbound/transactions");
     }
 
     @Override

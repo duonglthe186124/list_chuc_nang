@@ -63,14 +63,15 @@ form
     font-size: 13px;
 }
 
-button.menu-item a {
+a.menu-item  {
+    color: inherit;
     display: block;
     text-decoration: none;
     font-weight: 500;
 }
 
-button.menu-item a:visited {
-    color: black;
+a:visited {
+    text-decoration: none;
 }
 
 .menu-item.active {
@@ -95,4 +96,290 @@ button.menu-item a:visited {
 .main-header h1 {
     font-size: 24px;
     margin: 0 0 18px 0;
+}
+
+
+.form-section {
+    margin-bottom: 24px;
+}
+
+.header-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--gap, 20px);
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .header-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(200px, 1fr)
+        );
+    gap: var(--gap, 20px);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border, #f0f0f0);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.header-info-section-1,
+.header-info-section-2 {
+    margin-bottom: 0;
+}
+
+.header-section-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+.form-group-margin-bottom {
+    margin-bottom: 15px;
+}
+
+
+.divider {
+    height: 1px;
+    background: var(--border);
+}
+
+
+.summary-section {
+    background-color: rgb(250, 250, 250);
+    margin-top: 0;
+    padding: 15px;
+    border: 1px solid var(--border, #f0f0f0);
+    border-radius: 6px;
+}
+
+.summary-section h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.summary-table {
+    width: 100%;
+    font-size: 14px;
+}
+.summary-table td {
+    padding: 8px 0;
+}
+.summary-table td:last-child {
+    text-align: right;
+    font-weight: 700;
+    min-width: 100px;
+}
+.summary-table .grand-total td {
+    font-size: 16px;
+    font-weight: 700;
+    padding-top: 12px;
+    border-top: 1px solid var(--border, #f0f0f0);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border, #f0f0f0);
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(
+        90deg,
+        var(--accent, #06b6d4),
+        var(--accent-2, #4f46e5)
+        );
+    color: white;
+}
+
+.form-section h2 {
+    font-size: 20px;
+    margin: 0 0 16px 0;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.item-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 14px;
+    border: none;
+}
+
+.item-table thead th {
+    background-color: transparent;
+    padding: 10px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.item-table tbody tr {
+    background-color: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.2s ease;
+}
+
+.item-table tbody td {
+    padding: 12px 10px;
+    border: none;
+    vertical-align: middle;
+}
+
+.item-table input[type="text"],
+.item-table input[type="number"],
+.item-table textarea {
+    width: 100%;
+    padding: 8px 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #e2e8f0;
+    border-radius: 0;
+    transition: border-color 0.2s ease;
+}
+
+.item-table input:read-only {
+    border-bottom: 2px solid transparent;
+    color: var(--text);
+    font-weight: 500;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+.item-table .item-received-qty,
+.item-table .col-note textarea {
+    border-bottom: 2px solid var(--accent);
+}
+
+.item-table .item-received-qty:focus,
+.item-table .col-note textarea:focus {
+    border-bottom-color: var(--accent-2);
+    background-color: #fafbff;
+    outline: none;
+    box-shadow: none;
+}
+
+.item-table .col-note textarea {
+    min-height: 42px;
+    resize: vertical;
+}
+
+.item-table .col-stt,
+.item-table th.col-stt {
+    text-align: center;
+    width: 50px;
+}
+
+.item-table .col-qty_expected,
+.item-table .col-qty_received,
+.item-table th.col-qty_expected,
+.item-table th.col-qty_received {
+    width: 130px;
+    text-align: right;
+}
+.item-table .col-qty_expected input:read-only {
+    text-align: right;
+    padding-right: 4px;
+}
+
+.item-table .col-price,
+.item-table th.col-price {
+    width: 140px;
+    text-align: right;
+}
+.item-table .col-price input:read-only {
+    text-align: right;
+    padding-right: 4px;
+}
+
+.item-table .col-total,
+.item-table th.col-total {
+    width: 150px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.item-table .col-note {
+    width: 200px;
+}
+
+.item-table .col-actions,
+.item-table th.col-actions {
+    text-align: center;
+    width: 120px;
+}
+
+.item-table .btn-add-item {
+    font-size: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    background: linear-gradient(
+        90deg,
+        var(--accent, #06b6d4),
+        var(--accent-2, #4f46e5)
+        );
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.item-table .btn-add-item:hover {
+    opacity: 0.75;
+    border-color: #d1d5db;
 }

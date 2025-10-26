@@ -34,11 +34,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>transactionServlet</servlet-name>
-        <url-pattern>/inbound/transaction</url-pattern>
+        <url-pattern>/inbound/transactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>viewTransactionServlet</servlet-name>
-        <url-pattern>/inbound/transaction/view</url-pattern>
+        <url-pattern>/inbound/transactions/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
