@@ -12,204 +12,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Tạo Phiếu Nhập Kho</title>
-
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/create_receipt.css" />
-
-        <style>
-            /* Bổ sung: Định dạng các thành phần của Form */
-            .form-section {
-                margin-bottom: 24px;
-            }
-
-            /* CSS ĐÃ CHỈNH SỬA: Bố cục 3 cột cho phần Header */
-            .header-layout {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr; /* 3 cột bằng nhau */
-                gap: var(--gap, 20px);
-                align-items: flex-start; /* căn trên */
-                margin-bottom: 24px;
-            }
-            @media (max-width: 900px) {
-                .header-layout {
-                    grid-template-columns: 1fr; /* Stack lại trên màn hình nhỏ */
-                }
-            }
-            /* END CSS CHỈNH SỬA */
-
-            /* form-grid không cần thiết cho 3 cột dọc này nữa */
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(
-                    auto-fit,
-                    minmax(200px, 1fr)
-                    ); /* Responsive grid */
-                gap: var(--gap, 20px);
-            }
-
-            .form-group {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-            }
-
-            .form-group label {
-                font-size: 14px;
-                font-weight: 500;
-                color: #334155;
-            }
-
-            .form-group input[type="text"],
-            .form-group input[type="date"],
-            .form-group input[type="number"],
-            .form-group select,
-            .form-group textarea {
-                width: 100%;
-                padding: 10px 12px;
-                border: 1px solid var(--border, #f0f0f0);
-                border-radius: 6px;
-                font-size: 14px;
-                font-family: inherit;
-            }
-
-            .form-group textarea {
-                min-height: 80px;
-                resize: vertical;
-            }
-
-            /* Bổ sung: Định dạng bảng chi tiết sản phẩm */
-            .item-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 24px 0;
-                font-size: 14px;
-            }
-
-            .item-table th,
-            .item-table td {
-                border: 1px solid var(--border, #f0f0f0);
-                padding: 10px 12px;
-                text-align: left;
-            }
-
-            .item-table th {
-                background-color: #f8fafc; /* Màu từ footer của bạn */
-                font-weight: 600;
-            }
-
-            .item-table .col-stt {
-                width: 50px;
-                text-align: center;
-            }
-            .col-qty_expected,
-            .col-qty_received,
-            .col-price,
-            .col-total,
-            .col-note{
-                width: 120px;
-                text-align: right;
-            }
-            .col-unit {
-                width: 80px;
-            }
-            .col-actions {
-                width: auto;
-                text-align: center;
-            }
-
-            .item-table input[type="number"] {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid var(--border, #f0f0f0);
-                border-radius: 4px;
-                text-align: right;
-            }
-
-            .btn-add-item {
-                padding: 8px 14px;
-                font-size: 13px;
-                font-weight: 500;
-                border: 1px solid var(--border, #f0f0f0);
-                background: #f8fafc;
-                border-radius: 6px;
-                cursor: pointer;
-            }
-            .btn-add-item:hover {
-                background-color: #f0f0f0;
-            }
-
-            /* Bổ sung: Phần tóm tắt */
-            .summary-section {
-                background-color: rgb(250, 250, 250);
-                margin-top: 0;
-                padding: 15px; /* Thêm padding để trông như một block */
-                border: 1px solid var(--border, #f0f0f0);
-                border-radius: 6px;
-            }
-
-            .summary-section h4 {
-                margin: 0 0 10px 0;
-                font-size: 16px;
-            }
-
-            .summary-table {
-                width: 100%;
-                font-size: 14px;
-            }
-            .summary-table td {
-                padding: 8px 0;
-            }
-            .summary-table td:last-child {
-                text-align: right;
-                font-weight: 700;
-                min-width: 100px;
-            }
-            .summary-table .grand-total td {
-                font-size: 16px;
-                font-weight: 700;
-                padding-top: 12px;
-                border-top: 1px solid var(--border, #f0f0f0);
-            }
-
-            /* Bỏ signature-section */
-
-            /* Bổ sung: Nút bấm */
-            .action-buttons {
-                display: flex;
-                gap: 12px;
-                justify-content: flex-end;
-                margin-top: 32px;
-                padding-top: 20px;
-                border-top: 1px solid var(--border, #f0f0f0);
-            }
-
-            .btn {
-                padding: 10px 20px;
-                font-size: 14px;
-                font-weight: 700;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-            }
-
-            .btn-primary {
-                background: linear-gradient(
-                    90deg,
-                    var(--accent, #06b6d4),
-                    var(--accent-2, #4f46e5)
-                    );
-                color: white;
-            }
-
-            .btn-secondary {
-                background: #f0f0f0;
-                color: var(--text, #0b1220);
-                border: 1px solid var(--border, #f0f0f0);
-            }
-            .btn-secondary:hover {
-                background: #e5e5e5;
-            }
-        </style>
     </head>
     <body>
         <nav class="nav">
@@ -249,11 +53,11 @@
             </div>
 
             <div class="navlinks" role="navigation" aria-label="Primary">
-                <a href="/home.html">Home</a>
-                <a href="/products">Products</a>
-                <a href="/about">About</a>
-                <a href="/policy">Policy</a>
-                <a href="/reports">Reports</a>
+                <a href="${pageContext.request.contextPath}/home">Home</a>
+                <a href="${pageContext.request.contextPath}/products">Products</a>
+                <a href="${pageContext.request.contextPath}/about">About</a>
+                <a href="${pageContext.request.contextPath}/policy">Policy</a>
+                <a href="${pageContext.request.contextPath}/report">Reports</a>
             </div>
 
             <div class="cta">
@@ -346,15 +150,13 @@
                 <h3 class="sidebar-title">Role Pannel</h3>
 
                 <div class="sidebar-menu">
-                    <button class="menu-item">
-                        Overview
-                    </button>
-                    <button class="menu-item active">Transaction history</button>
-                    <button class="menu-item">Purchase Order History</button>
-                    <button class="menu-item">Create purchase order</button>
-                    <button class="menu-item">Create inbound inventory</button>
-                    <button class="menu-item">Supplier managements</button>
-                    <button class="menu-item">Inbound QC Reports</button>
+                    <a class="menu-item" href="">Overview</a>
+                    <a class="menu-item" href="${pageContext.request.contextPath}/inbound/transactions">Transaction history</a>
+                    <a class="menu-item">Purchase Order History</a>
+                    <a class="menu-item" href="${pageContext.request.contextPath}/inbound/createpo">Create purchase order</a>
+                    <a class="menu-item active" href="${pageContext.request.contextPath}/inbound/create-receipt">Create inbound inventory</a>
+                    <a class="menu-item">Supplier managements</a>
+                    <a class="menu-item">Inbound QC Reports</a>
                 </div>
             </aside>
 
@@ -365,10 +167,10 @@
 
 
                 <div class="header-layout">
-                    <section class="form-section" style="margin-bottom: 0;">
-                        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">1. Thông tin Phiếu Nhập</div>
+                    <section class="form-section header-info-section-1">
+                        <div class="header-section-title">1. Thông tin Phiếu Nhập</div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
+                        <div class="form-group form-group-margin-bottom">
                             <label for="receipt-id">Số Phiếu</label>
                             <input
                                 type="text"
@@ -390,7 +192,7 @@
                             </form>
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
+                        <div class="form-group form-group-margin-bottom">
                             <label for="receipt-date">Ngày Nhập</label>
                             <input
                                 type="date"
@@ -401,39 +203,39 @@
 
                         <div class="form-group">
                             <label>Receipt Note</label>
-                            <textarea  
-                                placeholder="—"></textarea>
+                            <textarea placeholder="—"></textarea>
                         </div>
 
                     </section>
 
-                    <section class="form-section" style="margin-bottom: 0;">
-                        <div style="font-weight: 700; margin-bottom: 12px; font-size: 15px;">2. Thông tin Đơn Hàng PO</div>
+                    <%-- Thay thế: style="margin-bottom: 0;" --%>
+                    <section class="form-section header-info-section-2">
+                        <div class="header-section-title">2. Thông tin Đơn Hàng PO</div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
+                        <div class="form-group form-group-margin-bottom">
                             <label>Supplier</label>
-                            <input 
-                                type="text" 
-                                value="${not empty poHeader ? poHeader.display_name : ''}" 
-                                disabled 
+                            <input
+                                type="text"
+                                value="${not empty poHeader ? poHeader.display_name : ''}"
+                                disabled
                                 placeholder="—"
                                 />
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 15px;">
+                        <div class="form-group form-group-margin-bottom">
                             <label>Created at</label>
-                            <input 
-                                type="text" 
-                                value="${not empty poHeader ? poHeader.created_at : ''}" 
-                                disabled 
+                            <input
+                                type="text"
+                                value="${not empty poHeader ? poHeader.created_at : ''}"
+                                disabled
                                 placeholder="—"
                                 />
                         </div>
 
                         <div class="form-group">
                             <label>Purchase Order Note</label>
-                            <textarea 
-                                disabled 
+                            <textarea
+                                disabled
                                 placeholder="—">${not empty poHeader ? poHeader.note : ''}</textarea>
                         </div>
                     </section>
@@ -452,11 +254,11 @@
                         </table>
                     </section>
                 </div>
-                <div class="divider" style="background: var(--border)"></div>
+                <div class="divider"></div>
 
                 <form action="${pageContext.request.contextPath}/inbound/create-receipt" method="post">
                     <input type="hidden" name="po_id" value="${selectedID}">
-                    <input type="hidden" name="received_no" value="REC102">
+                    <input type="hidden" name="receipt_no" value="REC102">
                     <section class="form-section">
                         <h2>Chi Tiết Hàng Hóa</h2>
                         <table class="item-table">
@@ -479,19 +281,23 @@
                                             <tr data-product-id="${item.product_id}">
                                                 <td class="col-stt">${loop.index + 1}</td>
                                                 <td>
-                                                    <div class="form-group">
-                                                        <input
-                                                            type="text"
-                                                            name="product_name_${item.product_id}"
-                                                            value="${item.product_name}"
-                                                            style="border: none"
-                                                            disabled
-                                                            />
-                                                    </div>
                                                     <input type="hidden" name="product_id" value="${item.product_id}" />
+                                                    <input
+                                                        type="text"
+                                                        class="product-name-display"
+                                                        name="product_name_${item.product_id}"
+                                                        value="${item.product_name}"
+                                                        readonly=""
+                                                        />
+                                                    <%--<div class="product-sku">SKU: ${item.sku}</div>--%>
                                                 </td>
                                                 <td class="col-qty_expected">
-                                                    <input type="number" name="expected_qty" value="${item.qty}" min="0" disabled>
+                                                    <input 
+                                                        type="text" 
+                                                        name="expected_qty" 
+                                                        value="${item.qty}"
+                                                        readonly=""
+                                                        />
                                                 </td>
                                                 <td class="col-qty_received">
                                                     <input
@@ -508,23 +314,22 @@
                                                         type="text"
                                                         name="unit_price"
                                                         value="${item.unit_price}"
-                                                        disabled
-                                                        style="text-align: right; border: none; background: transparent;"
+                                                        readonly=""
                                                         />
                                                 </td>
-
-                                                <td class="col-total item-total-price"></td>
-
-                                                <td class="col-note">
-                                                    <div class="form-group">
-                                                        <textarea name="note" style="background: transparent;"></textarea>
-                                                    </div>
+                                                <td class="col-total item-total-price">
+                                                    <%-- JavaScript sẽ điền vào đây --%>
                                                 </td>
-                                                <td class="col-actions form-group">
+                                                <td class="col-note">
+                                                    <textarea 
+                                                        name="note" 
+                                                        rows="2"
+                                                        placeholder="..."></textarea>
+                                                </td>
+                                                <td class="col-actions">
                                                     <button
                                                         type="button"
-                                                        class="btn-add-item" 
-                                                        style="padding: 6px 8px; font-size: 11px; width: 100%;"
+                                                        class="btn-add-item"
                                                         onclick="alert('Cập nhật ĐVT bằng CSV cho dòng này')"
                                                         >
                                                         Update Unit
@@ -620,15 +425,11 @@
             </div>
         </footer>
         <script>
-            // JavaScript để tính toán Thành Tiền và Tổng Cộng động
-
-            // JavaScript để tính toán Thành Tiền và Tổng Cộng động
-
             function formatCurrency(amount) {
                 if (isNaN(amount) || amount === null)
                     return "0 đ";
                 // Định dạng số với dấu phân cách hàng nghìn (Việt Nam) và thêm đơn vị 'đ'
-                return amount.toLocaleString('vi-VN') + ' đ';
+                return amount.toLocaleString('vi-VN') + 'đ';
             }
 
             function recalculateItemTotal(inputElement) {

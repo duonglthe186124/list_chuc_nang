@@ -65,6 +65,10 @@ a.menu-item {
     font-weight: 500;
 }
 
+a:visited {
+    text-decoration: none;
+}
+
 .menu-item.active {
     background: linear-gradient(90deg, var(--accent), var(--accent-2));
     color: white;

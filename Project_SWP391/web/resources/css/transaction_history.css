@@ -63,14 +63,15 @@ form
     font-size: 13px;
 }
 
-button.menu-item a {
+a.menu-item {
+    color: inherit;
     display: block;
     text-decoration: none;
     font-weight: 500;
 }
 
-button.menu-item a:visited {
-    color: black;
+a:visited {
+    text-decoration: none;
 }
 
 .menu-item.active {
