@@ -150,7 +150,7 @@
     <!-- MOBILE MENU (hidden on desktop) -->
     <div class="mobile-menu container" id="mobileMenu" hidden>
         <a href="/">Home</a>
-        <a href="/products">Products</a>
+        <a href="${pageContext.request.contextPath}/products">Products</a>
         <a href="/products/new">Add product</a>
         <a href="/about">About</a>
         <a href="/policy">Policy</a>
