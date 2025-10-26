@@ -53,11 +53,11 @@
             </div>
 
             <div class="navlinks" role="navigation" aria-label="Primary">
-                <a href="/home.html">Home</a>
-                <a href="/products">Products</a>
-                <a href="/about">About</a>
-                <a href="/policy">Policy</a>
-                <a href="/reports">Reports</a>
+                <a href="${pageContext.request.contextPath}/home">Home</a>
+                <a href="${pageContext.request.contextPath}/products">Products</a>
+                <a href="${pageContext.request.contextPath}/about">About</a>
+                <a href="${pageContext.request.contextPath}/policy">Policy</a>
+                <a href="${pageContext.request.contextPath}/report">Reports</a>
             </div>
 
             <div class="cta">
@@ -149,24 +149,22 @@
                 <h3 class="sidebar-title">Role Pannel</h3>
 
                 <div class="sidebar-menu">
-                    <button class="menu-item">
-                        Overview
-                    </button>
-                    <button class="menu-item active">Transaction history</button>
-                    <button class="menu-item">Purchase Order History</button>
-                    <button class="menu-item">Create purchase order</button>
-                    <button class="menu-item">Create inbound inventory</button>
-                    <button class="menu-item">Supplier managements</button>
-                    <button class="menu-item">Inbound QC Reports</button>
+                    <a class="menu-item" href="">Overview</a>
+                    <a class="menu-item active" href="${pageContext.request.contextPath}/inbound/transactions">Transaction history</a>
+                    <a class="menu-item">Purchase Order History</a>
+                    <a class="menu-item" href="${pageContext.request.contextPath}/inbound/createpo">Create purchase order</a>
+                    <a class="menu-item" href="${pageContext.request.contextPath}/inbound/create-receipt">Create inbound inventory</a>
+                    <a class="menu-item">Supplier managements</a>
+                    <a class="menu-item">Inbound QC Reports</a>
                 </div>
             </aside>
 
             <main class="main">
                 <div class="main-header" id="main-header">
-                    <h1>Transaction history</h1>
+                    <h1>Order detail</h1>
                 </div>
 
-                <form action="${pageContext.request.contextPath}/inbound/transaction" method="get">
+                <form action="${pageContext.request.contextPath}/inbound/transactions" method="get">
                     <div class="transaction-actions">
                         <div class="search-bar-container">
                             <input type="text" name="searchInput" value="${param.searchInput}" placeholder="Search" class="search-input" />
@@ -358,7 +356,7 @@
                             <td>` + row.reveived_by + `</td>
                             <td>` + row.received_at + `</td>
                             <td>` + row.status + `</td>
-                            <td><a href="${pageContext.request.contextPath}/inbound/transaction/view?id=` + row.receipt_id + `" class="action-view">View</a></td>
+                            <td><a href="${pageContext.request.contextPath}/inbound/transactions/view?id=` + row.receipt_id + `" class="action-view">View</a></td>
                         </tr>`;
                 });
 
