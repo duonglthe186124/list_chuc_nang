@@ -127,7 +127,7 @@ public class ViewTransactionDAO extends DBContext {
                             rs.getInt("qty_received"),
                             rs.getFloat("unit_price"),
                             rs.getString("note"),
-                            location += rs.getString("aisle") + "-" + rs.getString("area") + "-" + rs.getString("slot"));
+                            location += rs.getString("area") + "-" + rs.getString("aisle") + "-" + rs.getString("slot"));
                     list.add(line);
                 }
                 rs.close();

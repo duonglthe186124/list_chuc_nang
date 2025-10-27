@@ -48,6 +48,10 @@
         <servlet-name>CreateOrderController</servlet-name>
         <servlet-class>controller.CreateOrderController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>errorPage</servlet-name>
+        <servlet-class>controller.errorPage</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -87,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>CreateOrderController</servlet-name>
         <url-pattern>/process/order</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>errorPage</servlet-name>
+        <url-pattern>/404</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

@@ -36,6 +36,12 @@ public class viewTransactionServlet extends HttpServlet {
         view = service.get_transaction_view(id);
         line = service.get_transaction_line(id);
         unit = service.get_transaction_unit(id);
+
+        if (view == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
         request.setAttribute("view", view);
         request.setAttribute("line", line);
         request.setAttribute("unit", unit);

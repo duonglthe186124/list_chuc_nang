@@ -95,6 +95,7 @@ public class ReceiptDAO extends DBContext {
                 while (rs.next()) {
                     Response_ReceiptLineDTO line = new Response_ReceiptLineDTO(
                             rs.getInt("product_id"),
+                            rs.getString("sku_code"),
                             rs.getString("name"),
                             rs.getFloat("unit_price"),
                             rs.getInt("qty"));

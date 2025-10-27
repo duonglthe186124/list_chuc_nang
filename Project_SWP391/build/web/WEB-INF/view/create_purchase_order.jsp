@@ -175,19 +175,21 @@
                                         <input
                                             type="text"
                                             id="po-code"
-                                            value="PO-20251001-001"
-                                            disabled
+                                            name="po_code"
+                                            value="${po_code}"
+                                            readonly=""
                                             />
                                     </div>
                                     <div class="form-group">
                                         <label for="supplier">Supplier</label>
                                         <select id="supplier" name="supplier">
-                                            <option>Select a supplier</option>
+                                            <option value="">Select a supplier</option>
                                             <c:forEach var="sl" items="${sList}">
                                                 <option value="${sl.supplier_id}">${sl.supplier_name}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
+                                    <%--
                                     <div class="form-group">
                                         <label for="delivery-date">Expected Delivery Date</label>
                                         <input type="date" id="delivery-date" name="delivery_date"/>
@@ -214,7 +216,7 @@
                                             id="delivery-location"
                                             value="Main Warehouse - B2"
                                             />
-                                    </div>
+                                    </div> --%>
                                 </div>
                                 <div class="form-group">
                                     <label for="po-note">Note</label>
@@ -267,7 +269,7 @@
                                             <td>
                                                 <div class="form-group">
                                                     <select name="product">
-                                                        <option>Choose product</option>
+                                                        <option value="">Choose product</option>
                                                         <c:forEach var="pl" items="${pList}">
                                                             <option value="${pl.product_id}">${pl.name}</option>
                                                         </c:forEach>
@@ -275,7 +277,7 @@
                                                 </div>
                                             </td>
                                             <td><input type="number" value="1" name="qty"/></td>
-                                            <td><input type="text" value="0.00" name="unit_price"/></td>
+                                            <td><input type="text" value="0" name="unit_price"/></td>
                                             <td></td>
                                             <td class="action-cell"></td>
                                         </tr>
@@ -286,6 +288,7 @@
                         </div>
 
                         <div class="form-actions">
+                            <p style="color: red; margin: 0; padding-top: 7px">${not empty error? error : ""}</p>
                             <button type="button" class="btn-cancel">Cancel</button>
                             <button type="submit" class="btn-create-po" id="create-po">Create Purchase Order</button>
                         </div>
@@ -458,16 +461,16 @@
                         newRow.innerHTML = `
                             <td>
                                 <div class="form-group">
-                                    <select>
-                                        <option>Choose product</option>
+                                    <select name="product">
+                                        <option value="">Choose product</option>
             <c:forEach var="pl" items="${pList}">
                                                 <option value="${pl.product_id}">${pl.name}</option>
             </c:forEach>
                                     </select>
                                 </div>
                             </td>
-                            <td><input type="number" value="1" min="0"></td>
-                            <td><input type="text" value="0"></td>
+                            <td><input type="number" value="1" name="qty"/></td>
+                            <td><input type="text" value="0" name="unit_price"/></td>
                             <td>0.00</td>
                             <td class="action-cell"><button class="btn-delete-item">✕</button></td>
                         `;

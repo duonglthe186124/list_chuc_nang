@@ -11,7 +11,7 @@ import java.util.List;
 public class TransactionService {
 
     private static final TransactionDAO dao = new TransactionDAO();
-
+    
     public List<Response_TransactionDTO> get_transactions(String search_name, String status, int page, int page_size) {
         if (search_name == null || search_name.trim().isEmpty()) {
             search_name = null;

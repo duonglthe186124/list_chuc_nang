@@ -56,8 +56,13 @@ public class createReceiptServlet extends HttpServlet {
         String receipt_no = request.getParameter("receipt_no");
         String[] raw_received_qty = request.getParameterValues("received_qty");
         String[] note = request.getParameterValues("note");
+        String[] imei = request.getParameterValues("imei");
+        String[] serial_number = request.getParameterValues("serial_number");
+        String[] warranty_start = request.getParameterValues("warranty_start");
+        String[] warranty_end = request.getParameterValues("warranty_end");
+        String receipt_note = request.getParameter("receipt_note");
         
-        System.out.println(receipt_no);
+        System.out.println(receipt_note.length());
         int length = raw_received_qty.length;
         int po_id = Integer.parseInt(raw_po_id);
         int[] received_qty = new int[length];

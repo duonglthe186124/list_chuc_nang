@@ -235,6 +235,7 @@
                     </div>
 
                     <div id="pagination" class="pagination">
+                        <span style="color: red; font-weight: 700">${not empty error? error : ""}</span>
                         <span id="pagination-info"></span>
                         <span class="go-to-text">Go to</span>
                         <input type="number" name="pageInput" class="page-input" />
