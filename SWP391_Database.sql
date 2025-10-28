@@ -7,6 +7,7 @@ BEGIN
 	DROP DATABASE SWP391_WarehouseManagements
 END
 
+
 CREATE DATABASE SWP391_WarehouseManagements
 GO
 
@@ -249,21 +250,6 @@ CREATE TABLE Stock_adjustments
 	created_at DATETIME2(0) DEFAULT SYSUTCDATETIME()
 )
 
-CREATE TABLE Stock_audit_logs
-(
-	audit_id BIGINT IDENTITY(1,1) PRIMARY KEY,
-	event_time DATETIME2(0) DEFAULT SYSUTCDATETIME(),
-	user_id INT NULL,
-	event_type NVARCHAR(50) NULL,
-	reference_table NVARCHAR(50) NULL,
-	reference_id BIGINT NULL,
-	unit_cost DECIMAL(18,2) NULL, 
-	monetary_value DECIMAL(18,2) NULL,
-	detail NVARCHAR(1000) NULL,
-	note NVARCHAR(MAX) NULL,
-	CONSTRAINT CHK_Audit_log_event_type CHECK (event_type IN ('RECEIPT','SHIPPING','MOVING','QC CHECK','ADJUSTMENT'))
-)
-
 CREATE TABLE Shifts
 (
 	shift_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -363,6 +349,18 @@ CREATE TABLE Quality_Inspections
   note             NVARCHAR(1000) NULL,                     
   CONSTRAINT CHK_QualityStatus CHECK (status IN ('PENDING','PASSED','FAILED','QUARANTINE'))
 );
+
+CREATE TABLE PO_Cache(
+	po_code_head NVARCHAR(50) DEFAULT 'PO',
+	po_code_date DATETIME,
+	po_code_no INT
+)
+
+CREATE TABLE PNK_Cache(
+	receipt_code_head NVARCHAR(50) DEFAULT 'PNK',
+	receipt_code_date DATETIME,
+	receipt_code_no INT
+)
 
 USE SWP391_WarehouseManagements
 GO
