@@ -27,7 +27,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
             throws ServletException, IOException {
         String po_code = service.get_auto_po_code();
         supplier_list = service.get_list_supplier();
-        product_list = service.get_list_product();
+        product_list = service.get_list_product_sku();
 
         request.setAttribute("sList", supplier_list);
         request.setAttribute("pList", product_list);
@@ -75,7 +75,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         try {
             for (int i = 0; i < raw_product.length; i++) {
                 if (raw_product[i] == null || raw_product[i].trim().isEmpty()) {
-                    error = "Please check all products";
+                    error = "Please choose the products";
                     request.setAttribute("error", error);
                     doGet(request, response);
                     return;
@@ -91,7 +91,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         try {
             for (int i = 0; i < raw_qty.length; i++) {
                 if (raw_qty[i] == null || raw_qty[i].trim().isEmpty()) {
-                    error = "Please check all quantity";
+                    error = "Please enter all quantity";
                     request.setAttribute("error", error);
                     doGet(request, response);
                     return;
@@ -115,7 +115,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         try {
             for (int i = 0; i < raw_unit_price.length; i++) {
                 if (raw_unit_price[i] == null || raw_unit_price[i].trim().isEmpty()) {
-                    error = "Please check all price";
+                    error = "Please enter unit_price of product";
                     request.setAttribute("error", error);
                     doGet(request, response);
                     return;
@@ -124,7 +124,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
                 unit_price[i] = Float.parseFloat(raw_unit_price[i]);
 
                 if (unit_price[i] <= 0) {
-                    error = "Price must be positive";
+                    error = "Unit price must be positive";
                     request.setAttribute("error", error);
                     doGet(request, response);
                     return;

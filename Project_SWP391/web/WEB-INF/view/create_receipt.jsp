@@ -177,8 +177,10 @@
                             <input
                                 type="text"
                                 id="receipt-id"
-                                value="PNK-2025-10-001"
-                                disabled
+                                form="form"
+                                name="receipt_code"
+                                value="${receipt_code}"
+                                readonly
                                 />
                         </div>
 
@@ -199,7 +201,6 @@
                             <input
                                 type="date"
                                 id="receipt-date"
-                                value="2025-10-24"
                                 />
                         </div>
 
@@ -260,7 +261,6 @@
 
                 <form id="form" action="${pageContext.request.contextPath}/inbound/create-receipt" method="post">
                     <input type="hidden" name="po_id" value="${selectedID}">
-                    <input type="hidden" name="receipt_no" value="REC103">
                     <section class="form-section">
                         <h2>Chi Tiết Hàng Hóa</h2>
                         <table class="item-table">
@@ -338,12 +338,10 @@
                                                 </td>
                                                 <th class="col-loc">
                                                     <select name="location">
-                                                        <option value="">Choose locations</option>
-                                                        <option value="loc123">loc123</option>
-                                                        <option value="loc123">loc123</option>
-                                                        <option value="loc123">loc123</option>
-                                                        <option value="loc123">loc123</option>
-                                                        <option value="loc123">loc123</option>
+                                                        <option value="">---Choose locations---</option>
+                                                        <c:forEach var="loc" items="${locations}">
+                                                            <option value="${loc.location_id}">${loc.location_name}</option>
+                                                        </c:forEach>
                                                     </select>
                                                 </th>
                                                 <td class="col-note">

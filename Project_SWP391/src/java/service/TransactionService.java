@@ -10,9 +10,13 @@ import java.util.List;
  */
 public class TransactionService {
 
-    private static final TransactionDAO dao = new TransactionDAO();
-    
+    private TransactionDAO dao = new TransactionDAO();
+
     public List<Response_TransactionDTO> get_transactions(String search_name, String status, int page, int page_size) {
+        if (page < 1 || page_size < 1) {
+            throw new IllegalArgumentException("Page and page size must be >= 1");
+        }
+
         if (search_name == null || search_name.trim().isEmpty()) {
             search_name = null;
         } else {
@@ -43,10 +47,11 @@ public class TransactionService {
     }
 
     public static void main(String[] args) {
+        TransactionDAO dao = new TransactionDAO();
         List<Response_TransactionDTO> a = dao.transactions(null, null, 0, 20);
         int page = dao.total_lines(null, null);
         if (!a.isEmpty()) {
             System.out.println(a.get(0).getReceipt_no() + " " + a.get(0).getTotal());
         }
-    } 
+    }
 }

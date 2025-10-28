@@ -18,7 +18,15 @@ import service.TransactionService;
 public class transactionServlet extends HttpServlet {
 
     private List<Response_TransactionDTO> tx_list;
-    private static final TransactionService service = new TransactionService();
+    private TransactionService service = new TransactionService();
+    
+    public transactionServlet(TransactionService service) {
+        this.service = service;
+    }
+
+    public transactionServlet() {
+        this.service = new TransactionService();
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -55,7 +63,7 @@ public class transactionServlet extends HttpServlet {
         
         if (raw_page_input != null && !raw_page_input.trim().isEmpty()) {
             page_no = Integer.parseInt(raw_page_input);
-            if(page_no > (int) Math.ceil((double) total_lines / page_size))
+            if(page_no > (int) Math.ceil((double) total_lines / page_size) || page_no < 1)
             {
                 page_no = 1;
                 error = "Page does not exists";

@@ -9,7 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import service.ViewTransactionService;
 
 /**
@@ -20,7 +22,7 @@ public class viewTransactionServlet extends HttpServlet {
 
     private Response_ViewTransactionDTO view;
     private List<Response_LineTransactionDTO> line;
-    private List<Response_SerialTransactionDTO> unit;
+    private Map<Integer, List<Response_SerialTransactionDTO>> unit = new HashMap();
     private static final ViewTransactionService service = new ViewTransactionService();
 
     @Override
@@ -35,7 +37,9 @@ public class viewTransactionServlet extends HttpServlet {
 
         view = service.get_transaction_view(id);
         line = service.get_transaction_line(id);
-        unit = service.get_transaction_unit(id);
+        for (Response_LineTransactionDTO l : line) {
+            unit.put(l.getProduct_id(), service.get_transaction_unit(id, l.getProduct_id()));
+        }
 
         if (view == null) {
             response.sendRedirect(request.getContextPath() + "/404");

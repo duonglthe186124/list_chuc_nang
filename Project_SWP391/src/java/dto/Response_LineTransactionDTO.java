@@ -6,7 +6,7 @@ package dto;
  */
 public class Response_LineTransactionDTO {
 
-    private int line_id;
+    private int line_id, product_id;
     private String sku_code, name;
     private int qty_expected, qty_received;
     private float unit_price;
@@ -15,8 +15,9 @@ public class Response_LineTransactionDTO {
     public Response_LineTransactionDTO() {
     }
 
-    public Response_LineTransactionDTO(int line_id, String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
+    public Response_LineTransactionDTO(int line_id, int product_id, String sku_code, String name, int qty_expected, int qty_received, float unit_price, String note, String location) {
         this.line_id = line_id;
+        this.product_id = product_id;
         this.sku_code = sku_code;
         this.name = name;
         this.qty_expected = qty_expected;
@@ -32,6 +33,14 @@ public class Response_LineTransactionDTO {
 
     public void setLine_id(int line_id) {
         this.line_id = line_id;
+    }
+
+    public int getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
     }
 
     public String getSku_code() {

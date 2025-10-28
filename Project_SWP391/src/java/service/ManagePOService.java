@@ -36,8 +36,8 @@ public class ManagePOService {
         return list;
     }
 
-    public List<Response_ProductDTO> get_list_product() {
-        List<Response_ProductDTO> list = product_dao.list_product();
+    public List<Response_ProductDTO> get_list_product_sku() {
+        List<Response_ProductDTO> list = product_dao.list_product_sku();
         return list;
     }
 
@@ -73,7 +73,7 @@ public class ManagePOService {
     }
 
     private int add_header(String po_code, int supplier_id, float total_po, String note) {
-        Purchase_orders order = new Purchase_orders(-1, "PO-20252310-1", supplier_id, 6, null, null, total_po, note);
+        Purchase_orders order = new Purchase_orders(-1, po_code, supplier_id, 6, null, null, total_po, note);
         return po_dao.add_purchase_order(order);
     }
 
@@ -99,7 +99,6 @@ public class ManagePOService {
         } else {
             no = cache.no() + 1;
         }
-        System.out.println(no);
         cache.update(no);
     }
 

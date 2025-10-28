@@ -271,7 +271,7 @@
                                                     <select name="product">
                                                         <option value="">Choose product</option>
                                                         <c:forEach var="pl" items="${pList}">
-                                                            <option value="${pl.product_id}">${pl.name}</option>
+                                                            <option value="${pl.product_id}">${pl.sku_code}</option>
                                                         </c:forEach>
                                                     </select>
                                                 </div>
@@ -370,11 +370,6 @@
             </div>
         </footer>
         <script>
-            /* Simple calculator for your PO form
-             - Không format tiền, hiển thị số với 2 chữ số thập phân.
-             - Đọc discount chung từ dòng "Discount" trong Summary (nếu có).
-             - Đọc tax % từ nhãn "Tax (10%)" nếu có, mặc định 0%.
-             */
             (function () {
                 const table = document.querySelector('.line-items-table');
                 if (!table)
@@ -463,9 +458,9 @@
                                 <div class="form-group">
                                     <select name="product">
                                         <option value="">Choose product</option>
-            <c:forEach var="pl" items="${pList}">
-                                                <option value="${pl.product_id}">${pl.name}</option>
-            </c:forEach>
+                                        <c:forEach var="pl" items="${pList}">
+                                            <option value="${pl.product_id}">${pl.sku_code}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
                             </td>
@@ -496,8 +491,6 @@
                             const span = document.createElement('span');
                             span.textContent = formatNumber(v);
                             input.replaceWith(span);
-                            // rebind
-                            // note: we don't reattach dblclick to keep code tiny; user can refresh to rebind
                             recalcAll();
                         }
                         input.addEventListener('blur', commit);
@@ -508,51 +501,8 @@
                     });
                 }
 
-                // tax label change not handled dynamically; recalc now
                 recalcAll();
             })();
-
-            (function () {
-                const PREFIX = 'PO';
-
-                function pad(num, size = 2) {
-                    return String(num).padStart(size, '0');
-                }
-
-                function getTodayStr() {
-                    const now = new Date();
-                    return now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
-                }
-
-                function getNextPOCode() {
-                    const today = getTodayStr();
-                    const key = `po_counter_${today}`;
-                    const current = parseInt(localStorage.getItem(key) || '0', 10);
-                    const next = current + 1;
-                    localStorage.setItem(key, next);
-                    return PREFIX + `-` + today + `-` + next;
-                            }
-
-                            // Xử lý khi submit form
-                            document.getElementById('create-po').addEventListener('submit', function (e) {
-                                e.preventDefault(); // không reload trang
-
-                                const code = getNextPOCode();
-                                document.getElementById('po-code').textContent = code;
-
-                            });
-
-                            // 🧹 Xoá counter cũ khi sang ngày mới (đảm bảo reset)
-                            window.addEventListener('load', () => {
-                                const today = getTodayStr();
-                                Object.keys(localStorage).forEach(k => {
-                                    if (k.startsWith('po_counter_') && !k.endsWith(today)) {
-                                        localStorage.removeItem(k);
-                                    }
-                                });
-                            });
-                        })();
         </script>
-
     </body>
 </html>

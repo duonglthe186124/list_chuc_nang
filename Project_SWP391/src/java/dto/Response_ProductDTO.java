@@ -7,14 +7,14 @@ package dto;
 public class Response_ProductDTO {
 
     private int product_id;
-    private String name;
-
-    public Response_ProductDTO(int product_id, String name) {
-        this.product_id = product_id;
-        this.name = name;
-    }
+    private String sku_code;
 
     public Response_ProductDTO() {
+    }
+
+    public Response_ProductDTO(int product_id, String sku_code) {
+        this.product_id = product_id;
+        this.sku_code = sku_code;
     }
 
     public int getProduct_id() {
@@ -25,12 +25,12 @@ public class Response_ProductDTO {
         this.product_id = product_id;
     }
 
-    public String getName() {
-        return name;
+    public String getSku_code() {
+        return sku_code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSku_code(String sku_code) {
+        this.sku_code = sku_code;
     }
 
 }

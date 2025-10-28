@@ -26,8 +26,8 @@ public class ViewTransactionService {
         return dao.transaction_line(receipt_id);
     }
 
-    public List<Response_SerialTransactionDTO> get_transaction_unit(int receipt_id) {
-        return dao.transaction_units(receipt_id);
+    public List<Response_SerialTransactionDTO> get_transaction_unit(int receipt_id, int product_id) {
+        return dao.transaction_units(receipt_id, product_id);
     }
 
     public static void main(String[] args) {

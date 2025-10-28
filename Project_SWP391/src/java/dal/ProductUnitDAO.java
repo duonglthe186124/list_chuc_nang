@@ -7,10 +7,11 @@ package dal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import model.Product_units;
 import util.DBContext;
-
 
 public class ProductUnitDAO extends DBContext {
 
@@ -20,8 +21,8 @@ public class ProductUnitDAO extends DBContext {
         ResultSet rs = null;
 
         try {
-            String countSql = "SELECT COUNT(*) as quantity FROM Product_units pu " +
-                             "WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'";
+            String countSql = "SELECT COUNT(*) as quantity FROM Product_units pu "
+                    + "WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'";
             stm = connection.prepareStatement(countSql);
             stm.setInt(1, productId);
             rs = stm.executeQuery();
@@ -37,9 +38,9 @@ public class ProductUnitDAO extends DBContext {
             }
 
             // Lấy danh sách unit_id ngẫu nhiên
-            String sql = "SELECT TOP (?) unit_id FROM Product_units " +
-                         "WHERE product_id = ? AND status = 'AVAILABLE' " +
-                         "ORDER BY NEWID()";
+            String sql = "SELECT TOP (?) unit_id FROM Product_units "
+                    + "WHERE product_id = ? AND status = 'AVAILABLE' "
+                    + "ORDER BY NEWID()";
             stm = connection.prepareStatement(sql);
             stm.setInt(1, qty);
             stm.setInt(2, productId);
@@ -72,14 +73,13 @@ public class ProductUnitDAO extends DBContext {
         return unitIds;
     }
 
-
     public void updateUnitStatus(List<Integer> unitIds) throws SQLException {
         PreparedStatement stm = null;
 
         try {
             if (unitIds != null && !unitIds.isEmpty()) {
-                String sql = "UPDATE Product_units SET status = 'SOLD', updated_at = SYSUTCDATETIME() " +
-                             "WHERE unit_id = ?";
+                String sql = "UPDATE Product_units SET status = 'SOLD', updated_at = SYSUTCDATETIME() "
+                        + "WHERE unit_id = ?";
                 stm = connection.prepareStatement(sql);
 
                 for (int unitId : unitIds) {
@@ -99,5 +99,42 @@ public class ProductUnitDAO extends DBContext {
                 }
             }
         }
+    }
+
+    /**
+     * Create new units
+     *
+     * @param list
+     */
+    public int create_new_unit(Product_units line) {
+        int unit_id = -1;
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO Product_units(imei, serial_number, warranty_start, "
+                + "warranty_end, product_id, purchase_price, container_id, status)\n"
+                + "VALUES(?, ?, ?, ?, ?, ? ,?, ?)");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, line.getImei());
+            ps.setString(2, line.getSerial_number());
+            ps.setDate(3, (java.sql.Date) line.getWarranty_start());
+            ps.setDate(4, (java.sql.Date) line.getWarranty_end());
+            ps.setInt(5, line.getProduct_id());
+            ps.setFloat(6, line.getPurchase_price());
+            ps.setInt(7, line.getContainer_id());
+            ps.setString(8, line.getStatus());
+
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        unit_id = rs.getInt(1);
+                    }
+                }
+            }
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return unit_id;
     }
 }
