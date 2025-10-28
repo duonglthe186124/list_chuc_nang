@@ -3,10 +3,51 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/SWP391/list_chuc_nang/Project_SWP391/src/java/service/ReceiptService.java</file>
-            <file>file:/D:/Project/SWP391/list_chuc_nang/Project_SWP391/src/java/dal/ReceiptDAO.java</file>
-            <file>file:/D:/Project/SWP391/list_chuc_nang/Project_SWP391/src/java/controller/createReceiptServlet.java</file>
-            <file>file:/D:/Project/SWP391/list_chuc_nang/Project_SWP391/src/java/dal/ProductUnitDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/searchProductController.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/Response_ProductDTO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/ProductOrderInfo.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/orderProduct.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/getRoleBySetIdDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/ProductInfo.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_screen.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/OrderInfoDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/SpecsOptions.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/OrderListDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/util/DBContext.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/productController.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/viewTransactionServlet.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/error_page.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/PrepareShip.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/UserToCheckTask.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/createReceiptServlet.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/Response_TransactionDTO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/web.xml</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/PriceRange.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/CheckFormDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/order_list.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/ProductSpecsDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_purchase_order.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/OrderDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/ListProductDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/ProductDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/orderListController.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/ProductUnitInfo.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/OrderInfoDTO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/StatusDTO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/ProductUnitDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/SearchProductDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/UserCheckDAOTest.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/home_page.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_order.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/order_success.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_search_filter.jsp</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/OrderList.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dto/Response_ViewTransactionDTO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/StatusDAO.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/CreateShipController.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/createPurchaseOrderServlet.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/controller/CreateOrderController.java</file>
+            <file>file:/C:/SWP_4/list_chuc_nang/Project_SWP391/src/java/dal/ProductOrderInfoDAO.java</file>
         </group>
     </open-files>
 </project-private>
