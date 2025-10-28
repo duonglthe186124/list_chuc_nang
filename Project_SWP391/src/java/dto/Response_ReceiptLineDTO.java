@@ -7,18 +7,19 @@ package dto;
 public class Response_ReceiptLineDTO {
 
     private int product_id;
-    private String product_name;
+    private String sku_code, product_name;
     private float unit_price;
     private int qty;
 
-    public Response_ReceiptLineDTO(int product_id, String product_name, float unit_price, int qty) {
+    public Response_ReceiptLineDTO() {
+    }
+
+    public Response_ReceiptLineDTO(int product_id, String sku_code, String product_name, float unit_price, int qty) {
         this.product_id = product_id;
+        this.sku_code = sku_code;
         this.product_name = product_name;
         this.unit_price = unit_price;
         this.qty = qty;
-    }
-
-    public Response_ReceiptLineDTO() {
     }
 
     public int getProduct_id() {
@@ -27,6 +28,14 @@ public class Response_ReceiptLineDTO {
 
     public void setProduct_id(int product_id) {
         this.product_id = product_id;
+    }
+
+    public String getSku_code() {
+        return sku_code;
+    }
+
+    public void setSku_code(String sku_code) {
+        this.sku_code = sku_code;
     }
 
     public String getProduct_name() {

@@ -8,10 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import service.ManagePOService;
 
@@ -28,16 +25,20 @@ public class createPurchaseOrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String po_code = service.get_auto_po_code();
         supplier_list = service.get_list_supplier();
-        product_list = service.get_list_product();
+        product_list = service.get_list_product_sku();
+
         request.setAttribute("sList", supplier_list);
         request.setAttribute("pList", product_list);
+        request.setAttribute("po_code", po_code);
         request.getRequestDispatcher("/WEB-INF/view/create_purchase_order.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String po_code = request.getParameter("po_code");
         String raw_supplier = request.getParameter("supplier");
         String raw_date = request.getParameter("delivery_date");
         String note = request.getParameter("note");
@@ -45,32 +46,100 @@ public class createPurchaseOrderServlet extends HttpServlet {
         String[] raw_qty = request.getParameterValues("qty");
         String[] raw_unit_price = request.getParameterValues("unit_price");
 
+        String error = "";
+
+        if (raw_supplier == null || raw_supplier.trim().isEmpty()) {
+            error = "Please choose supplier";
+            request.setAttribute("error", error);
+            doGet(request, response);
+            return;
+        }
+
         int supplier_id;
-        Date date;
-        int[] product_id = new int[raw_product.length];
-        int[] qty = new int[raw_qty.length];
+        try {
+            supplier_id = Integer.parseInt(raw_supplier);
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        int length = raw_product.length;
+        if (raw_product.length != length || raw_qty.length != length || raw_unit_price.length != length) {
+            error = "Please enter all fields";
+            request.setAttribute("error", error);
+            doGet(request, response);
+            return;
+        }
+
+        int[] product_id = new int[length];
+        try {
+            for (int i = 0; i < raw_product.length; i++) {
+                if (raw_product[i] == null || raw_product[i].trim().isEmpty()) {
+                    error = "Please choose the products";
+                    request.setAttribute("error", error);
+                    doGet(request, response);
+                    return;
+                }
+                product_id[i] = Integer.parseInt(raw_product[i]);
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        int[] qty = new int[length];
+        try {
+            for (int i = 0; i < raw_qty.length; i++) {
+                if (raw_qty[i] == null || raw_qty[i].trim().isEmpty()) {
+                    error = "Please enter all quantity";
+                    request.setAttribute("error", error);
+                    doGet(request, response);
+                    return;
+                }
+
+                qty[i] = Integer.parseInt(raw_qty[i]);
+
+                if (qty[i] < 1) {
+                    error = "Quantity must be more than 1";
+                    request.setAttribute("error", error);
+                    doGet(request, response);
+                    return;
+                }
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
         float[] unit_price = new float[raw_unit_price.length];
+        try {
+            for (int i = 0; i < raw_unit_price.length; i++) {
+                if (raw_unit_price[i] == null || raw_unit_price[i].trim().isEmpty()) {
+                    error = "Please enter unit_price of product";
+                    request.setAttribute("error", error);
+                    doGet(request, response);
+                    return;
+                }
 
-        supplier_id = Integer.parseInt(raw_supplier);
+                unit_price[i] = Float.parseFloat(raw_unit_price[i]);
 
-        LocalDate localDate = LocalDate.parse(raw_date);
-        date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        for (int i = 0; i < raw_product.length; i++) {
-            product_id[i] = Integer.parseInt(raw_product[i]);
+                if (unit_price[i] <= 0) {
+                    error = "Unit price must be positive";
+                    request.setAttribute("error", error);
+                    doGet(request, response);
+                    return;
+                }
+            }
+        } catch (NumberFormatException e) {
+            error = "Price is not correct statement";
+            request.setAttribute("error", error);
+            doGet(request, response);
+            return;
         }
 
-        for (int i = 0; i < raw_qty.length; i++) {
-            qty[i] = Integer.parseInt(raw_qty[i]);
-        }
+        service.add_purchase_order(po_code, supplier_id, note, product_id, qty, unit_price);
 
-        for (int i = 0; i < raw_unit_price.length; i++) {
-            unit_price[i] = Float.parseFloat(raw_unit_price[i]);
-        }
-
-        service.add_purchase_order(supplier_id, date, note, product_id, qty, unit_price);
-
-        response.sendRedirect(request.getContextPath() + "/inbound/transaction");
+        response.sendRedirect(request.getContextPath() + "/inbound/transactions");
     }
 
     @Override
