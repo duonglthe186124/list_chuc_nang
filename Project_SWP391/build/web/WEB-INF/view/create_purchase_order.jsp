@@ -175,19 +175,21 @@
                                         <input
                                             type="text"
                                             id="po-code"
-                                            value="PO-20251001-001"
-                                            disabled
+                                            name="po_code"
+                                            value="${po_code}"
+                                            readonly=""
                                             />
                                     </div>
                                     <div class="form-group">
                                         <label for="supplier">Supplier</label>
                                         <select id="supplier" name="supplier">
-                                            <option>Select a supplier</option>
+                                            <option value="">Select a supplier</option>
                                             <c:forEach var="sl" items="${sList}">
                                                 <option value="${sl.supplier_id}">${sl.supplier_name}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
+                                    <%--
                                     <div class="form-group">
                                         <label for="delivery-date">Expected Delivery Date</label>
                                         <input type="date" id="delivery-date" name="delivery_date"/>
@@ -214,7 +216,7 @@
                                             id="delivery-location"
                                             value="Main Warehouse - B2"
                                             />
-                                    </div>
+                                    </div> --%>
                                 </div>
                                 <div class="form-group">
                                     <label for="po-note">Note</label>
@@ -267,15 +269,15 @@
                                             <td>
                                                 <div class="form-group">
                                                     <select name="product">
-                                                        <option>Choose product</option>
+                                                        <option value="">Choose product</option>
                                                         <c:forEach var="pl" items="${pList}">
-                                                            <option value="${pl.product_id}">${pl.name}</option>
+                                                            <option value="${pl.product_id}">${pl.sku_code}</option>
                                                         </c:forEach>
                                                     </select>
                                                 </div>
                                             </td>
                                             <td><input type="number" value="1" name="qty"/></td>
-                                            <td><input type="text" value="0.00" name="unit_price"/></td>
+                                            <td><input type="text" value="0" name="unit_price"/></td>
                                             <td></td>
                                             <td class="action-cell"></td>
                                         </tr>
@@ -286,6 +288,7 @@
                         </div>
 
                         <div class="form-actions">
+                            <p style="color: red; margin: 0; padding-top: 7px">${not empty error? error : ""}</p>
                             <button type="button" class="btn-cancel">Cancel</button>
                             <button type="submit" class="btn-create-po" id="create-po">Create Purchase Order</button>
                         </div>
@@ -367,11 +370,6 @@
             </div>
         </footer>
         <script>
-            /* Simple calculator for your PO form
-             - Không format tiền, hiển thị số với 2 chữ số thập phân.
-             - Đọc discount chung từ dòng "Discount" trong Summary (nếu có).
-             - Đọc tax % từ nhãn "Tax (10%)" nếu có, mặc định 0%.
-             */
             (function () {
                 const table = document.querySelector('.line-items-table');
                 if (!table)
@@ -458,16 +456,16 @@
                         newRow.innerHTML = `
                             <td>
                                 <div class="form-group">
-                                    <select>
-                                        <option>Choose product</option>
-            <c:forEach var="pl" items="${pList}">
-                                                <option value="${pl.product_id}">${pl.name}</option>
-            </c:forEach>
+                                    <select name="product">
+                                        <option value="">Choose product</option>
+                                        <c:forEach var="pl" items="${pList}">
+                                            <option value="${pl.product_id}">${pl.sku_code}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
                             </td>
-                            <td><input type="number" value="1" min="0"></td>
-                            <td><input type="text" value="0"></td>
+                            <td><input type="number" value="1" name="qty"/></td>
+                            <td><input type="text" value="0" name="unit_price"/></td>
                             <td>0.00</td>
                             <td class="action-cell"><button class="btn-delete-item">✕</button></td>
                         `;
@@ -493,8 +491,6 @@
                             const span = document.createElement('span');
                             span.textContent = formatNumber(v);
                             input.replaceWith(span);
-                            // rebind
-                            // note: we don't reattach dblclick to keep code tiny; user can refresh to rebind
                             recalcAll();
                         }
                         input.addEventListener('blur', commit);
@@ -505,51 +501,8 @@
                     });
                 }
 
-                // tax label change not handled dynamically; recalc now
                 recalcAll();
             })();
-
-            (function () {
-                const PREFIX = 'PO';
-
-                function pad(num, size = 2) {
-                    return String(num).padStart(size, '0');
-                }
-
-                function getTodayStr() {
-                    const now = new Date();
-                    return now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
-                }
-
-                function getNextPOCode() {
-                    const today = getTodayStr();
-                    const key = `po_counter_${today}`;
-                    const current = parseInt(localStorage.getItem(key) || '0', 10);
-                    const next = current + 1;
-                    localStorage.setItem(key, next);
-                    return PREFIX + `-` + today + `-` + next;
-                            }
-
-                            // Xử lý khi submit form
-                            document.getElementById('create-po').addEventListener('submit', function (e) {
-                                e.preventDefault(); // không reload trang
-
-                                const code = getNextPOCode();
-                                document.getElementById('po-code').textContent = code;
-
-                            });
-
-                            // 🧹 Xoá counter cũ khi sang ngày mới (đảm bảo reset)
-                            window.addEventListener('load', () => {
-                                const today = getTodayStr();
-                                Object.keys(localStorage).forEach(k => {
-                                    if (k.startsWith('po_counter_') && !k.endsWith(today)) {
-                                        localStorage.removeItem(k);
-                                    }
-                                });
-                            });
-                        })();
         </script>
-
     </body>
 </html>

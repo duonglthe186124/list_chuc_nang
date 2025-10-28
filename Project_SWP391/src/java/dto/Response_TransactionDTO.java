@@ -15,6 +15,9 @@ public class Response_TransactionDTO {
     private int total_line, total_expected, total_received;
     private float total;
 
+    public Response_TransactionDTO() {
+    }
+
     public Response_TransactionDTO(int receipt_id, String receipt_no, String status, Date received_at, String received_by, String supplier, int total_line, int total_expected, int total_received, float total) {
         this.receipt_id = receipt_id;
         this.receipt_no = receipt_no;

@@ -18,8 +18,16 @@ import service.TransactionService;
 public class transactionServlet extends HttpServlet {
 
     private List<Response_TransactionDTO> tx_list;
-    private static final TransactionService service = new TransactionService();
+    private TransactionService service = new TransactionService();
+    
+    public transactionServlet(TransactionService service) {
+        this.service = service;
+    }
 
+    public transactionServlet() {
+        this.service = new TransactionService();
+    }
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -31,6 +39,7 @@ public class transactionServlet extends HttpServlet {
 
         String search = null, status = null;
         int page_size = 10, page_no = 1, total_lines;
+        String error = "";
 
         if (raw_search != null && !raw_search.isEmpty()) {
             search = raw_search.trim();
@@ -49,14 +58,22 @@ public class transactionServlet extends HttpServlet {
         if (raw_page_size != null && !raw_page_size.isEmpty()) {
             page_size = Integer.parseInt(raw_page_size);
         }
-
+        
+        total_lines = service.get_total_lines(search, status);
+        
         if (raw_page_input != null && !raw_page_input.trim().isEmpty()) {
             page_no = Integer.parseInt(raw_page_input);
+            if(page_no > (int) Math.ceil((double) total_lines / page_size) || page_no < 1)
+            {
+                page_no = 1;
+                error = "Page does not exists";
+                request.setAttribute("error", error);
+            }
         } else if ((raw_page_input == null || raw_page_input.trim().isEmpty()) && raw_page_no != null) {
             page_no = Integer.parseInt(raw_page_no);
         }
 
-        total_lines = service.get_total_lines(search, status);
+        
         tx_list = service.get_transactions(search, status, page_no, page_size);
         request.setAttribute("tx_list", tx_list);
         request.setAttribute("searchInput", search);

@@ -290,7 +290,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <c:forEach var="u" items="${unit}">
+                                                <c:forEach var="u" items="${unit[l.product_id]}">
                                                     <tr>
                                                         <td>${u.imei}</td>
                                                         <td>${u.serial_number}</td>
@@ -397,16 +397,12 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const statusEl = document.querySelector(".status");
                 if (statusEl) {
-                    const statusText = statusEl.textContent.trim().toLowerCase(); // ví dụ: "received"
+                    const statusText = statusEl.textContent.trim().toLowerCase();
                     statusEl.classList.add(`status-` + statusText);
                 }
             });
-            // app.js - tính toán summary dựa trên bảng lines, điều khiển hiển thị serials
             (function () {
-
-                // Helper parsing/formatting
                 function parseNumber(v) {
-                    // loại bỏ khoảng trắng, ký tự không phải số/.- rồi parse
                     if (v === null || v === undefined)
                         return 0;
                     const s = String(v).replace(/[, ]+/g, "");
@@ -417,7 +413,6 @@
                     return Number(v).toFixed(2);
                 }
 
-                // Recalculate a single line (tr element)
                 function recalcLine(tr) {
                     const qtyExpected = parseNumber(
                             tr.querySelector(".qty-expected")?.textContent
@@ -445,7 +440,6 @@
                     return {qtyExpected, qtyReceived, lineTotal, discrepancy};
                 }
 
-                // Recalculate whole table and update summary areas
                 function recalcAll() {
                     const rows = Array.from(
                             document.querySelectorAll("#lines-table tbody tr.line-row")
@@ -466,7 +460,6 @@
 
                     const pct = sumExpected === 0 ? 0 : (sumReceived / sumExpected) * 100;
 
-                    // update header summary (right)
                     document.getElementById("sum-expected").textContent = sumExpected;
                     document.getElementById("sum-received").textContent = sumReceived;
                     document.getElementById("sum-money").textContent = formatMoney(sumMoney);
@@ -474,7 +467,6 @@
                     document.getElementById("rows-discrep").textContent = rowsWithDisc;
                 }
 
-                // Toggle serials rows (show/hide the serials-row that follows a line)
                 document.querySelectorAll(".toggle-serials").forEach((btn) => {
                     btn.addEventListener("click", function () {
                         // tìm dòng cha (closest .line-row)
@@ -498,10 +490,8 @@
                     });
                 });
 
-                // Initial calc
                 recalcAll();
 
-                // OPTIONAL: If dynamic rows are added later, you can call `rebind()` to reattach listeners.
                 window.receiptRecalc = recalcAll;
             })();
 

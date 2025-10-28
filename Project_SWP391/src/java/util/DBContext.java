@@ -26,7 +26,7 @@ public class DBContext {
 
             // Connect
             connection = DriverManager.getConnection(url, user, pass);
-            System.out.println("[DBContext] Database connected successfully.");
+            //System.out.println("[DBContext] Database connected successfully.");
         } catch (ClassNotFoundException e) {
             System.err.println("[DBContext] JDBC Driver not found: " + e.getMessage());
             e.printStackTrace();

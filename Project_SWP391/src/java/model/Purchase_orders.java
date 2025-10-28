@@ -6,15 +6,16 @@ public class Purchase_orders {
 
     private int po_id;
     private String po_code;
-    private int supplier_id;
-    private Date created_by, created_at;
+    private int supplier_id, created_by;
+    private Date created_at;
     private String status;
     private float total_amount;
+    private String note;
 
     public Purchase_orders() {
     }
 
-    public Purchase_orders(int po_id, String po_code, int supplier_id, Date created_by, Date created_at, String status, float total_amount) {
+    public Purchase_orders(int po_id, String po_code, int supplier_id, int created_by, Date created_at, String status, float total_amount, String note) {
         this.po_id = po_id;
         this.po_code = po_code;
         this.supplier_id = supplier_id;
@@ -22,6 +23,7 @@ public class Purchase_orders {
         this.created_at = created_at;
         this.status = status;
         this.total_amount = total_amount;
+        this.note = note;
     }
 
     public int getPo_id() {
@@ -48,11 +50,11 @@ public class Purchase_orders {
         this.supplier_id = supplier_id;
     }
 
-    public Date getCreated_by() {
+    public int getCreated_by() {
         return created_by;
     }
 
-    public void setCreated_by(Date created_by) {
+    public void setCreated_by(int created_by) {
         this.created_by = created_by;
     }
 
@@ -78,6 +80,14 @@ public class Purchase_orders {
 
     public void setTotal_amount(float total_amount) {
         this.total_amount = total_amount;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
 }
