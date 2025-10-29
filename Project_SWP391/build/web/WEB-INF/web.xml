@@ -53,6 +53,20 @@
         <servlet-class>controller.errorPage</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>NewServlet</servlet-name>
+        <servlet-class>controller.NewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EmployeeController</servlet-name>
+        <servlet-class>controller.EmployeeController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PayrollController</servlet-name>
+        <servlet-class>controller.PayrollController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ShiftController</servlet-name>
+        <servlet-class>controller.ShiftController</servlet-class>
         <servlet-name>InventoryListServlet</servlet-name>
         <servlet-class>controller.InventoryListServlet</servlet-class>
     </servlet>
@@ -121,6 +135,20 @@
         <url-pattern>/404</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>NewServlet</servlet-name>
+        <url-pattern>/NewServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EmployeeController</servlet-name>
+        <url-pattern>/employee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PayrollController</servlet-name>
+        <url-pattern>/payroll</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShiftController</servlet-name>
+        <url-pattern>/shifts</url-pattern>
         <servlet-name>InventoryListServlet</servlet-name>
         <url-pattern>/warehouse/inventory</url-pattern>
     </servlet-mapping>
