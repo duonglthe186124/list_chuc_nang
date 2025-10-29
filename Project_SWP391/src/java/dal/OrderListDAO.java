@@ -14,7 +14,7 @@ import util.DBContext;
 public class OrderListDAO extends DBContext {
 
     public ArrayList<OrderList> getAllOrders() throws SQLException {
-        ArrayList<OrderList> orders = new ArrayList<>();
+    ArrayList<OrderList> orders = new ArrayList<>();
         String sql = "SELECT \n"
                 + "    o.order_id AS Order_Number,\n"
                 + "    p.name AS Product_Name,\n"
