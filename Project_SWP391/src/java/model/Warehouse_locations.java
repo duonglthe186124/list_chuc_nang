@@ -6,20 +6,21 @@ public class Warehouse_locations {
 
     private int location_id;
     private String code, area, aisle, slot;
-    private int capacity;
+    private int capacity, current_capacity;
     private String description;
     private Date created_at;
 
     public Warehouse_locations() {
     }
 
-    public Warehouse_locations(int location_id, String code, String area, String aisle, String slot, int capacity, String description, Date created_at) {
+    public Warehouse_locations(int location_id, String code, String area, String aisle, String slot, int capacity, int current_capacity, String description, Date created_at) {
         this.location_id = location_id;
         this.code = code;
         this.area = area;
         this.aisle = aisle;
         this.slot = slot;
         this.capacity = capacity;
+        this.current_capacity = current_capacity;
         this.description = description;
         this.created_at = created_at;
     }
@@ -70,6 +71,14 @@ public class Warehouse_locations {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public int getCurrent_capacity() {
+        return current_capacity;
+    }
+
+    public void setCurrent_capacity(int current_capacity) {
+        this.current_capacity = current_capacity;
     }
 
     public String getDescription() {

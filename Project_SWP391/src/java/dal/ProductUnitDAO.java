@@ -137,4 +137,66 @@ public class ProductUnitDAO extends DBContext {
         }
         return unit_id;
     }
+
+    public List<Integer> get_n_unit_id(int product_id, int qty) {
+        List<Integer> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT TOP (?) unit_id\n"
+                + "FROM Product_units\n"
+                + "WHERE product_id = ?\n"
+                + "ORDER BY received_date ASC, unit_id ASC;");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, qty);
+            ps.setInt(2, product_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(rs.getInt(1));
+                }
+                ps.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        sql = new StringBuilder("UPDATE Product_units\n"
+                + "SET status = 'RESERVED',\n"
+                + "    updated_at = SYSUTCDATETIME()\n"
+                + "WHERE unit_id IN (\n"
+                + "    SELECT TOP (?) unit_id\n"
+                + "    FROM Product_units\n"
+                + "    WHERE product_id = ? AND status = 'AVAILABLE'\n"
+                + "    ORDER BY received_date ASC\n"
+                + ");");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, qty);
+            ps.setInt(2, product_id);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void add_shipment_unit(int line_id, List<Integer> unit_id) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO Shipment_units(line_id, unit_id)\n"
+                + "VALUES(?, ?)");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (Integer i : unit_id) {
+                ps.setInt(1, line_id);
+                ps.setInt(2, i);
+
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

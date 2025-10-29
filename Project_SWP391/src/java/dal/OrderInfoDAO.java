@@ -5,10 +5,12 @@
 package dal;
 
 import dto.OrderInfoDTO;
-import jakarta.enterprise.concurrent.ContextServiceDefinition.List;
+import dto.Response_OrderInfoDTO;
 import util.DBContext;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -61,14 +63,67 @@ public class OrderInfoDAO extends DBContext {
                 dto.setCusAddress(rs.getString("cus_address"));
                 dto.setOrderDate(rs.getTimestamp("order_date"));
                 dto.setStatus(rs.getString("status"));
-                dto.setUnitId(rs.getInt("representative_unit_id")); 
+                dto.setUnitId(rs.getInt("representative_unit_id"));
                 return dto;
             }
         }
         return null;
     }
-    
-    
-    
 
+    public List<Integer> get_order_id() {
+        List<Integer> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT o.order_id FROM Orders o\n"
+                + "WHERE o.status = 'CONFIRMED'");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString()); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int line = rs.getInt(1);
+                list.add(line);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Response_OrderInfoDTO get_order_info(int order_id) {
+        Response_OrderInfoDTO line = null;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT\n"
+                + "	u.fullname,\n"
+                + "	o.order_date,\n"
+                + "	o.status,\n"
+                + "	COUNT(DISTINCT pu.unit_id) AS line_count,\n"
+                + "	SUM(qty) AS total_qty,\n"
+                + "	SUM(line_amount) AS total_value\n"
+                + "FROM Orders o\n"
+                + "LEFT JOIN Users u ON o.user_id = u.user_id\n"
+                + "LEFT JOIN Order_details od ON o.order_id = od.order_id\n"
+                + "LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id\n"
+                + "WHERE o.status = 'CONFIRMED' AND o.order_id = ?\n"
+                + "GROUP BY\n"
+                + "	u.fullname,\n"
+                + "	o.order_date,\n"
+                + "	o.status");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, order_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    line = new Response_OrderInfoDTO(
+                            rs.getString("fullname"),
+                            rs.getObject("order_date", LocalDateTime.class),
+                            rs.getString("status"),
+                            rs.getInt("line_count"),
+                            rs.getInt("total_qty"),
+                            rs.getFloat("total_value"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return line;
+    }
 }

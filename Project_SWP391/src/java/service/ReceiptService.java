@@ -91,7 +91,7 @@ public class ReceiptService {
         List<Response_ReceiptLineDTO> lists = get_po_line(po_id);
 
         for (int i = 0; i < lists.size(); i++) {
-            if (lists.get(i).getQty() < received_qty[i]) {
+            if (lists.get(i).getQty() > received_qty[i]) {
                 status = "PARTIAL";
             }
         }

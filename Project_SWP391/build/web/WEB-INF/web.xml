@@ -14,19 +14,19 @@
     </servlet>
     <servlet>
         <servlet-name>transactionServlet</servlet-name>
-        <servlet-class>controller.transactionServlet</servlet-class>
+        <servlet-class>controller.TransactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewTransactionServlet</servlet-name>
-        <servlet-class>controller.viewTransactionServlet</servlet-class>
+        <servlet-class>controller.ViewTransactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
-        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
+        <servlet-class>controller.CreatePurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createReceiptServlet</servlet-name>
-        <servlet-class>controller.createReceiptServlet</servlet-class>
+        <servlet-class>controller.CreateReceiptServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>productController</servlet-name>
@@ -87,6 +87,10 @@
     <servlet>
         <servlet-name>WarehouseReportServlet</servlet-name>
         <servlet-class>controller.WarehouseReportServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateShipmentServlet</servlet-name>
+        <servlet-class>controller.CreateShipmentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -167,6 +171,10 @@
     <servlet-mapping>
         <servlet-name>WarehouseReportServlet</servlet-name>
         <url-pattern>/warehouse/report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateShipmentServlet</servlet-name>
+        <url-pattern>/create-shipment</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

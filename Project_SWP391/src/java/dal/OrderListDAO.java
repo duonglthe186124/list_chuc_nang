@@ -1,10 +1,12 @@
 package dal;
 
 import dto.OrderList;
+import dto.Response_OrderListDTO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import util.DBContext;
 
 /**
@@ -12,9 +14,9 @@ import util.DBContext;
  * @author hoang
  */
 public class OrderListDAO extends DBContext {
-
+    
     public ArrayList<OrderList> getAllOrders() throws SQLException {
-    ArrayList<OrderList> orders = new ArrayList<>();
+        ArrayList<OrderList> orders = new ArrayList<>();
         String sql = "SELECT \n"
                 + "    o.order_id AS Order_Number,\n"
                 + "    p.name AS Product_Name,\n"
@@ -69,7 +71,7 @@ public class OrderListDAO extends DBContext {
                 + "ORDER BY o.order_id, p.name;";
         PreparedStatement stm = connection.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
-
+        
         try {
             while (rs.next()) {
                 OrderList order = mapResultSet(rs);
@@ -83,10 +85,10 @@ public class OrderListDAO extends DBContext {
                 stm.close();
             }
         }
-
+        
         return orders;
     }
-
+    
     public ArrayList<OrderList> getOrdersByUserId(int userId) throws SQLException {
         ArrayList<OrderList> orders = new ArrayList<>();
         String sql = "SELECT \n"
@@ -146,7 +148,7 @@ public class OrderListDAO extends DBContext {
         stm.setInt(1, userId);
         stm.setInt(2, userId);
         ResultSet rs = stm.executeQuery();
-
+        
         try {
             while (rs.next()) {
                 OrderList order = mapResultSet(rs);
@@ -160,10 +162,10 @@ public class OrderListDAO extends DBContext {
                 stm.close();
             }
         }
-
+        
         return orders;
     }
-
+    
     public ArrayList<OrderList> getAllOrdersByPage(int pageIndex, int pageSize) throws SQLException {
         ArrayList<OrderList> allOrders = getAllOrders();
         ArrayList<OrderList> pageOrders = new ArrayList<>();
@@ -174,7 +176,7 @@ public class OrderListDAO extends DBContext {
         }
         return pageOrders;
     }
-
+    
     public ArrayList<OrderList> getOrdersByUserIdPage(int userId, int pageIndex, int pageSize) throws SQLException {
         ArrayList<OrderList> allOrders = getOrdersByUserId(userId);
         ArrayList<OrderList> pageOrders = new ArrayList<>();
@@ -185,15 +187,15 @@ public class OrderListDAO extends DBContext {
         }
         return pageOrders;
     }
-
+    
     public int countAllOrders() throws SQLException {
         return getAllOrders().size();
     }
-
+    
     public int countOrdersByUserId(int userId) throws SQLException {
         return getOrdersByUserId(userId).size();
     }
-
+    
     public ArrayList<OrderList> getAllOrdersSorted(String sortBy) throws SQLException {
         ArrayList<OrderList> allOrders = getAllOrders();
         allOrders.sort((o1, o2) -> {
@@ -248,7 +250,7 @@ public class OrderListDAO extends DBContext {
         });
         return allOrders;
     }
-
+    
     public ArrayList<OrderList> getOrdersByUserIdSorted(int userId, String sortBy) throws SQLException {
         ArrayList<OrderList> allOrders = getOrdersByUserId(userId);
         allOrders.sort((o1, o2) -> {
@@ -303,7 +305,7 @@ public class OrderListDAO extends DBContext {
         });
         return allOrders;
     }
-
+    
     public ArrayList<OrderList> getAllOrdersByPageSorted(int pageIndex, int pageSize, String sortBy) throws SQLException {
         ArrayList<OrderList> allOrders = getAllOrdersSorted(sortBy);
         ArrayList<OrderList> pageOrders = new ArrayList<>();
@@ -314,7 +316,7 @@ public class OrderListDAO extends DBContext {
         }
         return pageOrders;
     }
-
+    
     public ArrayList<OrderList> getOrdersByUserIdPageSorted(int userId, int pageIndex, int pageSize, String sortBy) throws SQLException {
         ArrayList<OrderList> allOrders = getOrdersByUserIdSorted(userId, sortBy);
         ArrayList<OrderList> pageOrders = new ArrayList<>();
@@ -325,7 +327,7 @@ public class OrderListDAO extends DBContext {
         }
         return pageOrders;
     }
-
+    
     private OrderList mapResultSet(ResultSet rs) throws SQLException {
         OrderList order = new OrderList();
         order.setOrderNumber(rs.getInt("Order_Number") == 0 && rs.wasNull() ? null : rs.getInt("Order_Number"));
@@ -348,5 +350,48 @@ public class OrderListDAO extends DBContext {
         order.setProductUnitPrice(rs.getBigDecimal("Product_Unit_Price"));
         order.setOrderAmount(rs.getBigDecimal("Order_Line_Amount"));
         return order;
+    }
+    
+    public List<Response_OrderListDTO> get_order_details(int order_id) {
+        List<Response_OrderListDTO> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT\n"
+                + "  p.product_id,\n"
+                + "  p.sku_code,\n"
+                + "  p.name,\n"
+                + "  od.unit_price,\n"
+                + "  SUM(od.qty) AS qty,\n"
+                + "  SUM(od.line_amount) AS total_price\n"
+                + "FROM Order_details od\n"
+                + "LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id\n"
+                + "LEFT JOIN Products p ON pu.product_id = p.product_id\n"
+                + "WHERE od.order_id = ?\n"
+                + "GROUP BY p.product_id, p.sku_code, p.name, od.unit_price\n"
+                + "ORDER BY p.product_id, od.unit_price;");
+        
+        try(PreparedStatement ps = connection.prepareStatement(sql.toString()))
+        {
+            ps.setInt(1, order_id);
+            
+            try(ResultSet rs = ps.executeQuery())
+            {
+                while(rs.next())
+                {
+                    Response_OrderListDTO line = new Response_OrderListDTO(
+                                rs.getInt("product_id"),
+                                rs.getString("sku_code"),
+                                rs.getString("name"),
+                                rs.getFloat("unit_price"),
+                                rs.getInt("qty"),
+                                rs.getFloat("total_price"));
+                    list.add(line);
+                }
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

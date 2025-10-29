@@ -12,7 +12,25 @@ public class WarehouseLocationDAO extends DBContext {
 
     public List<Warehouse_locations> getAllLocations() {
         List<Warehouse_locations> list = new ArrayList<>();
-        String sql = "SELECT location_id, code, area, aisle, slot, capacity, description FROM Warehouse_locations ORDER BY location_id";
+        String sql = "SELECT \n"
+                + "    wl.*,\n"
+                + "    COUNT(pu.unit_id) AS current_quantity\n"
+                + "FROM Warehouse_locations AS wl\n"
+                + "LEFT JOIN Containers AS c\n"
+                + "    ON c.location_id = wl.location_id\n"
+                + "LEFT JOIN Product_units AS pu\n"
+                + "    ON pu.container_id = c.container_id\n"
+                + "    AND pu.status = 'AVAILABLE'\n"
+                + "GROUP BY \n"
+                + "    wl.location_id,\n"
+                + "    wl.code,\n"
+                + "    wl.area,\n"
+                + "    wl.aisle,\n"
+                + "    wl.slot,\n"
+                + "    wl.capacity,\n"
+                + "    wl.description,\n"
+                + "    wl.created_at\n"
+                + "ORDER BY wl.location_id;";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -24,6 +42,7 @@ public class WarehouseLocationDAO extends DBContext {
                             rs.getString("aisle"),
                             rs.getString("slot"),
                             rs.getInt("capacity"),
+                            rs.getInt("current_quantity"),
                             rs.getString("description"),
                             null
                     );
