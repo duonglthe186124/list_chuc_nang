@@ -67,6 +67,28 @@
     <servlet>
         <servlet-name>ShiftController</servlet-name>
         <servlet-class>controller.ShiftController</servlet-class>
+        <servlet-name>InventoryListServlet</servlet-name>
+        <servlet-class>controller.InventoryListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>QualityInspectionServlet</servlet-name>
+        <servlet-class>controller.QualityInspectionServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WarehouseIssueServlet</servlet-name>
+        <servlet-class>controller.WarehouseIssueServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WarehouseLocationServlet</servlet-name>
+        <servlet-class>controller.WarehouseLocationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WarehouseReceiptServlet</servlet-name>
+        <servlet-class>controller.WarehouseReceiptServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WarehouseReportServlet</servlet-name>
+        <servlet-class>controller.WarehouseReportServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -127,6 +149,28 @@
     <servlet-mapping>
         <servlet-name>ShiftController</servlet-name>
         <url-pattern>/shifts</url-pattern>
+        <servlet-name>InventoryListServlet</servlet-name>
+        <url-pattern>/warehouse/inventory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QualityInspectionServlet</servlet-name>
+        <url-pattern>/warehouse/inspections</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WarehouseIssueServlet</servlet-name>
+        <url-pattern>/warehouse/issue</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WarehouseLocationServlet</servlet-name>
+        <url-pattern>/warehouse/locations</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WarehouseReceiptServlet</servlet-name>
+        <url-pattern>/warehouse/receipt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WarehouseReportServlet</servlet-name>
+        <url-pattern>/warehouse/report</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
