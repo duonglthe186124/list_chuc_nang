@@ -11,6 +11,7 @@ import util.DBContext;
  *
  * @author hoang
  */
+
 public class ListProductDAO extends DBContext {
 
     public ArrayList<ProductInfo> getProductsByPage(int pageIndex, int pageSize) throws SQLException {
@@ -18,7 +19,7 @@ public class ListProductDAO extends DBContext {
 
         String sql = """
                      SELECT 
-                             p.product_id,
+                             distinct p.product_id,
                              p.[name],
                              p.sku_code,
                              b.brand_name,
@@ -77,59 +78,5 @@ public class ListProductDAO extends DBContext {
             return rs.getInt("total");
         }
         return 0;
-    }
-
-    // Thêm phương thức để lấy số lượng hiện tại
-    public int getQuantityById(int productId) throws SQLException {
-        String sql = """
-                     SELECT ISNULL((
-                         SELECT COUNT(*) 
-                         FROM Product_units pu 
-                         WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'
-                     ), 0) AS available_quantity""";
-        PreparedStatement stm = connection.prepareStatement(sql);
-        stm.setInt(1, productId);
-        ResultSet rs = stm.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("available_quantity");
-        }
-        return 0;
-    }
-
-    // Thêm phương thức để cập nhật số lượng
-    public void updateQuantity(int productId, int newQty) throws SQLException {
-        // Đếm số lượng hiện tại của các đơn vị AVAILABLE
-        int currentQty = getQuantityById(productId);
-        int unitsToUpdate = newQty; // Số đơn vị cần cập nhật trạng thái
-
-        if (unitsToUpdate < 0) {
-            throw new SQLException("Insufficient quantity in stock.");
-        }
-
-        // Bắt đầu giao dịch
-        connection.setAutoCommit(false);
-        try {
-            // Cập nhật trạng thái của các đơn vị từ AVAILABLE sang khác (ví dụ: SOLD) để giảm số lượng
-            String sql = """
-                         UPDATE TOP (?) pu
-                         SET pu.status = 'SOLD'
-                         FROM Product_units pu
-                         WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'""";
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, currentQty - unitsToUpdate); // Số đơn vị cần chuyển
-            stm.setInt(2, productId);
-            int rowsAffected = stm.executeUpdate();
-
-            if (rowsAffected != (currentQty - unitsToUpdate)) {
-                throw new SQLException("Failed to update quantity.");
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
-        }
     }
 }

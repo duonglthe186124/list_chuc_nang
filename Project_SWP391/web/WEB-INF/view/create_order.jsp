@@ -8,13 +8,13 @@
         <title>Create Order</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css"/>
         <style>
-/*            .container {
-                max-width: 600px;
-                margin: 20px auto;
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }*/
+            /*            .container {
+                            max-width: 600px;
+                            margin: 20px auto;
+                            padding: 20px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                        }*/
             .product-info img {
                 max-width: 150px;
                 height: auto;
@@ -71,7 +71,8 @@
 
                 // Tính total_amount
                 var total = purchasePrice * qty;
-                totalAmountElement.textContent = total.toFixed(2); // Hiển thị 2 chữ số thập phân
+                totalAmountInput.value = total.toFixed(2); // Lưu vào input ẩn
+                displayTotalAmount.textContent = total.toFixed(2);
             }
         </script>
     </head>
@@ -259,8 +260,10 @@
 
                         <div class="form-group">
                             <label><strong>Total Amount:</strong></label>
-                            <span id="totalAmount">0.00</span> USD
+                            <input type="hidden" name="totalAmount" id="totalAmountInput" value="0.00" />
+                            <span id="displayTotalAmount">0.00</span> USD
                         </div>
+
 
                         <button type="submit">Create Order</button>
                     </form>
