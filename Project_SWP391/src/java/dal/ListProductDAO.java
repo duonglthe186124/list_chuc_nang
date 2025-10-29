@@ -100,7 +100,7 @@ public class ListProductDAO extends DBContext {
     public void updateQuantity(int productId, int newQty) throws SQLException {
         // Đếm số lượng hiện tại của các đơn vị AVAILABLE
         int currentQty = getQuantityById(productId);
-        int unitsToUpdate = currentQty - newQty; // Số đơn vị cần cập nhật trạng thái
+        int unitsToUpdate = newQty; // Số đơn vị cần cập nhật trạng thái
 
         if (unitsToUpdate < 0) {
             throw new SQLException("Insufficient quantity in stock.");

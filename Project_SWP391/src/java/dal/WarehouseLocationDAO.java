@@ -36,18 +36,15 @@ public class WarehouseLocationDAO extends DBContext {
         return list;
     }
 
-public class WarehouseLocationDAO extends DBContext {
-
     // Lấy tất cả vị trí kho
-    public List<Warehouse_locations> getAllLocations() {
+    public List<Warehouse_locations> getAllLocationsHR() {
         List<Warehouse_locations> list = new ArrayList<>();
         String query = "SELECT location_id, code, area, aisle, slot, capacity, description FROM Warehouse_locations";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
-            ps = conn.prepareStatement(query);
+            ps = connection.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
                 Warehouse_locations loc = new Warehouse_locations();
@@ -64,10 +61,18 @@ public class WarehouseLocationDAO extends DBContext {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
-            } catch (Exception e) { e.printStackTrace(); }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
@@ -75,11 +80,10 @@ public class WarehouseLocationDAO extends DBContext {
     // Thêm vị trí mới
     public boolean addLocation(Warehouse_locations loc) {
         String query = "INSERT INTO Warehouse_locations (code, area, aisle, slot, capacity, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
 
         try {
-            ps = conn.prepareStatement(query);
+            ps = connection.prepareStatement(query);
             // ĐÃ SỬA: Dùng đúng getter
             ps.setString(1, loc.getCode());
             ps.setString(2, loc.getArea());
@@ -87,16 +91,22 @@ public class WarehouseLocationDAO extends DBContext {
             ps.setString(4, loc.getSlot());
             ps.setInt(5, loc.getCapacity());
             ps.setString(6, loc.getDescription());
-            ps.setDate(7, new java.sql.Date(loc.getCreated_at().getTime())); 
-            
+            ps.setDate(7, new java.sql.Date(loc.getCreated_at().getTime()));
+
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
-            } catch (Exception e) { e.printStackTrace(); }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }

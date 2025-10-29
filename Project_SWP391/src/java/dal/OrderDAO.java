@@ -65,7 +65,7 @@ public class OrderDAO extends DBContext {
                 String sql = "INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) " +
                              "VALUES (?, ?, ?, ?, ?)";
                 stm = connection.prepareStatement(sql);
-
+                
                 // Phân bổ qty thực tế từ người dùng, nhưng hiện tại mỗi unit_id chỉ chứa 1 sản phẩm
                 int unitsPerItem = qty / unitIds.size();
                 int remaining = qty % unitIds.size();
@@ -73,7 +73,7 @@ public class OrderDAO extends DBContext {
                 for (int i = 0; i < unitIds.size(); i++) {
                     int currentQty = unitsPerItem + (i < remaining ? 1 : 0); // Phân bổ đều qty
                     BigDecimal lineAmount = purchasePrice.multiply(BigDecimal.valueOf(currentQty));
-
+                    
                     stm.setInt(1, orderId);
                     stm.setInt(2, unitIds.get(i));
                     stm.setInt(3, currentQty); // Sử dụng qty thực tế
@@ -108,7 +108,7 @@ public class OrderDAO extends DBContext {
         try {
             ProductUnitDAO productUnitDAO = new ProductUnitDAO();
             List<Integer> unitIds = productUnitDAO.getRandomUnitIds(productId, qty);
-
+            
             BigDecimal totalAmount = purchasePrice.multiply(BigDecimal.valueOf(qty));
             orderId = insertOrder(userId, totalAmount);
 
