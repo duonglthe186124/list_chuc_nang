@@ -144,6 +144,26 @@ CREATE TABLE Product_units
 	CONSTRAINT CHK_Product_units_status CHECK (status IN ('AVAILABLE','RESERVED','SOLD','DAMAGED','RETURNED'))
 )
 
+CREATE TABLE Orders
+(
+	order_id INT IDENTITY(1,1) PRIMARY KEY,
+	user_id INT NULL REFERENCES Users(user_id),
+	total_amount DECIMAL(18,2) NOT NULL,
+	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
+	order_date DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+	CONSTRAINT CHK_Orders_status CHECK (status IN ('PENDING','CONFIRMED','SHIPPED','CANCELLED'))
+)
+
+CREATE TABLE Order_details
+(
+	order_no INT IDENTITY(1,1) PRIMARY KEY,
+	order_id INT NULL REFERENCES Orders(order_id),
+	unit_id INT NULL REFERENCES Product_units(unit_id),
+	qty INT NOT NULL,
+	unit_price DECIMAL(18,2) NOT NULL,
+	line_amount DECIMAL(18,2) NOT NULL
+)
+
 CREATE TABLE Suppliers
 (
 	supplier_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -213,7 +233,7 @@ CREATE TABLE Shipments
 (
 	shipment_id INT IDENTITY(1,1) PRIMARY KEY,
 	shipment_no NVARCHAR(50) NOT NULL UNIQUE,
-	user_id INT NOT NULL REFERENCES Users(user_id),
+	order_id INT NOT NULL REFERENCES Orders(order_id),
 	created_by INT NOT NULL REFERENCES Employees(employee_id),
 	requested_at DATETIME2(0) DEFAULT SYSUTCDATETIME(),
 	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
@@ -299,25 +319,7 @@ CREATE TABLE Salary_components
 	amount DECIMAL(18,2) NOT NULL
 )
 
-CREATE TABLE Orders
-(
-	order_id INT IDENTITY(1,1) PRIMARY KEY,
-	user_id INT NULL REFERENCES Users(user_id),
-	total_amount DECIMAL(18,2) NOT NULL,
-	status NVARCHAR(50) NOT NULL DEFAULT 'PENDING',
-	order_date DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-	CONSTRAINT CHK_Orders_status CHECK (status IN ('PENDING','CONFIRMED','SHIPPED','CANCELLED'))
-)
 
-CREATE TABLE Order_details
-(
-	order_no INT IDENTITY(1,1) PRIMARY KEY,
-	order_id INT NULL REFERENCES Orders(order_id),
-	unit_id INT NULL REFERENCES Product_units(unit_id),
-	qty INT NOT NULL,
-	unit_price DECIMAL(18,2) NOT NULL,
-	line_amount DECIMAL(18,2) NOT NULL
-)
 
 CREATE TABLE Returns (
     return_id INT IDENTITY(1,1) PRIMARY KEY,
@@ -564,6 +566,33 @@ INSERT INTO Product_units (imei, serial_number, warranty_start, warranty_end, pr
 ('IMEI022', 'SN022', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE'),
 ('IMEI023', 'SN023', '2024-08-01', '2025-08-01', 20, 599.99, '2024-08-01', 10, 'AVAILABLE');
 
+-- Insert data into Orders
+INSERT INTO Orders (user_id, total_amount, status, order_date) VALUES
+(4, 1999.98, 'SHIPPED', '2023-01-01'),
+(4, 2699.97, 'CONFIRMED', '2023-02-01'),
+(4, 3199.96, 'PENDING', '2023-03-01'),
+(4, 3499.95, 'SHIPPED', '2023-04-01'),
+(4, 599.99, 'CANCELLED', '2023-05-01'),
+(4, 2199.98, 'SHIPPED', '2023-06-01'),
+(4, 2999.97, 'CONFIRMED', '2023-07-01'),
+(4, 1999.96, 'SHIPPED', '2023-08-01'),
+(4, 1999.95, 'PENDING', '2023-09-01'),
+(4, 1799.98, 'SHIPPED', '2023-10-01');
+
+-- Insert data into Order_details
+INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) VALUES
+(1, 1, 2, 999.99, 1999.98),
+(2, 2, 3, 899.99, 2699.97),
+(3, 3, 4, 799.99, 3199.96),
+(4, 4, 5, 699.99, 3499.95),
+(5, 5, 1, 599.99, 599.99),
+(6, 6, 2, 1099.99, 2199.98),
+(7, 7, 3, 999.99, 2999.97),
+(8, 8, 4, 499.99, 1999.96),
+(9, 9, 5, 399.99, 1999.95),
+(10, 10, 2, 899.99, 1799.98);
+
+
 -- Insert data into Suppliers
 INSERT INTO Suppliers (supplier_name, display_name, address, phone, email, representative, payment_method, note) VALUES
 ('TechSupply', 'Tech Supply Co.', '123 Tech Rd', '0123456789', 'contact@techsupply.com', 'John Supplier', 'Bank Transfer', NULL),
@@ -638,7 +667,7 @@ INSERT INTO Receipt_units (line_id, unit_id) VALUES
 (6, 6), (7, 7), (8, 8), (9, 9), (10, 10), (10, 11), (10, 12);
 
 -- Insert data into Shipments
-INSERT INTO Shipments (shipment_no, user_id, created_by, requested_at, status, note) VALUES
+INSERT INTO Shipments (shipment_no, order_id, created_by, requested_at, status, note) VALUES
 ('SHP001', 4, 8, '2023-01-05', 'SHIPPED', 'Shipped to customer'),
 ('SHP002', 4, 8, '2023-02-05', 'PICKED', 'Ready for shipping'),
 ('SHP003', 4, 8, '2023-03-05', 'PENDING', NULL),
@@ -681,18 +710,6 @@ INSERT INTO Stock_adjustments (adjustment_no, product_id, unit_id, qty_before, q
 ('ADJ009', 9, 9, 10, 7, -3, 'Damaged units', 3),
 ('ADJ010', 10, 10, 10, 9, -1, 'Lost unit', 3);
 
--- Insert data into Stock_audit_logs
-INSERT INTO Stock_audit_logs (event_time, user_id, event_type, reference_table, reference_id, unit_cost, monetary_value, detail, note) VALUES
-('2023-01-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 1, 999.99, 1999.98, 'Damaged units removed', NULL),
-('2023-02-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 2, 899.99, 899.99, 'Lost unit', NULL),
-('2023-03-01 10:00:00', 3, 'QC CHECK', 'Products', 3, 799.99, 0.00, 'Stock check', NULL),
-('2023-04-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 4, 699.99, 1399.98, 'Found units', NULL),
-('2023-05-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 5, 599.99, 1199.98, 'Theft reported', NULL),
-('2023-06-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 6, 1099.99, 1099.99, 'Damaged unit', NULL),
-('2023-07-01 10:00:00', 3, 'QC CHECK', 'Products', 7, 999.99, 0.00, 'Stock verification', NULL),
-('2023-08-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 8, 499.99, 499.99, 'Extra unit found', NULL),
-('2023-09-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 9, 399.99, 1199.97, 'Damaged units', NULL),
-('2023-10-01 10:00:00', 3, 'ADJUSTMENT', 'Stock_adjustments', 10, 899.99, 899.99, 'Lost unit', NULL);
 
 -- Insert data into Shifts
 INSERT INTO Shifts (name, start_time, end_time, note) VALUES
@@ -759,31 +776,6 @@ INSERT INTO Salary_components (payroll_id, comp_type, amount) VALUES
 (6, 'Base Salary', 3200.00),
 (7, 'Base Salary', 3800.00);
 
--- Insert data into Orders
-INSERT INTO Orders (user_id, total_amount, status, order_date) VALUES
-(4, 1999.98, 'SHIPPED', '2023-01-01'),
-(4, 2699.97, 'CONFIRMED', '2023-02-01'),
-(4, 3199.96, 'PENDING', '2023-03-01'),
-(4, 3499.95, 'SHIPPED', '2023-04-01'),
-(4, 599.99, 'CANCELLED', '2023-05-01'),
-(4, 2199.98, 'SHIPPED', '2023-06-01'),
-(4, 2999.97, 'CONFIRMED', '2023-07-01'),
-(4, 1999.96, 'SHIPPED', '2023-08-01'),
-(4, 1999.95, 'PENDING', '2023-09-01'),
-(4, 1799.98, 'SHIPPED', '2023-10-01');
-
--- Insert data into Order_details
-INSERT INTO Order_details (order_id, unit_id, qty, unit_price, line_amount) VALUES
-(1, 1, 2, 999.99, 1999.98),
-(2, 2, 3, 899.99, 2699.97),
-(3, 3, 4, 799.99, 3199.96),
-(4, 4, 5, 699.99, 3499.95),
-(5, 5, 1, 599.99, 599.99),
-(6, 6, 2, 1099.99, 2199.98),
-(7, 7, 3, 999.99, 2999.97),
-(8, 8, 4, 499.99, 1999.96),
-(9, 9, 5, 399.99, 1999.95),
-(10, 10, 2, 899.99, 1799.98);
 
 -- Insert data into Returns
 INSERT INTO Returns (return_no, order_id, created_by, created_at, status) VALUES
