@@ -14,19 +14,19 @@
     </servlet>
     <servlet>
         <servlet-name>transactionServlet</servlet-name>
-        <servlet-class>controller.TransactionServlet</servlet-class>
+        <servlet-class>controller.transactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewTransactionServlet</servlet-name>
-        <servlet-class>controller.ViewTransactionServlet</servlet-class>
+        <servlet-class>controller.viewTransactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
-        <servlet-class>controller.CreatePurchaseOrderServlet</servlet-class>
+        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createReceiptServlet</servlet-name>
-        <servlet-class>controller.CreateReceiptServlet</servlet-class>
+        <servlet-class>controller.createReceiptServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>productController</servlet-name>
