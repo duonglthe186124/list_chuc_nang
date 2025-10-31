@@ -18,30 +18,24 @@ import java.util.List;
  */
 public class OrderInfoDAO extends DBContext {
 
-    public OrderInfoDTO getOrderDetailWithRepUnit(int orderId) throws SQLException {
+    public OrderInfoDTO getOrderDetailInfo(int orderId) throws SQLException {
         String sql = """
-        SELECT 
-            od.order_id, od.order_no, od.qty, od.unit_price, od.line_amount,
-            pu.product_id, p.name AS product_name,
-            o.user_id AS customer_user_id,
-            u.fullname AS cus_name, u.email AS cus_email, u.phone AS cus_phone, u.address AS cus_address,
-            o.order_date, o.status,
-            rep_unit.unit_id AS representative_unit_id
-        FROM Order_details od
-        JOIN Product_units pu ON od.unit_id = pu.unit_id
-        JOIN Products p ON pu.product_id = p.product_id
-        JOIN Orders o ON od.order_id = o.order_id
-        JOIN Users u ON o.user_id = u.user_id
-        CROSS APPLY (
-            SELECT TOP 1 pu2.unit_id
-            FROM Product_units pu2
-            JOIN Order_details od2 ON pu2.unit_id = od2.unit_id
-            WHERE pu2.product_id = pu.product_id
-              AND od2.order_id = od.order_id
-              AND pu2.status = 'SOLD'
-            ORDER BY pu2.unit_id
-        ) rep_unit
-        WHERE od.order_id = ?
+     SELECT 
+         o.order_id,
+     	p.product_id,
+         p.[name] AS product_name,
+         SUM(ot.qty) AS total_qty,
+         ot.unit_price,
+         o.total_amount,
+     	u.user_id,
+     	u.fullname AS cus_name, u.email AS cus_email, u.phone AS cus_phone, u.address AS cus_address,o.order_date,o.status
+     FROM Orders o
+     LEFT JOIN Order_details ot ON o.order_id = ot.order_id
+     JOIN Product_units pu ON ot.unit_id = pu.unit_id
+     JOIN Products p ON pu.product_id = p.product_id
+     JOIN Users u ON o.user_id = u.user_id
+     where o.order_id = ?
+     GROUP BY o.order_id, p.[name], ot.unit_price, o.total_amount, u.fullname, u.email, u.phone, u.address, o.status, p.product_id, u.user_id, o.order_date;
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -50,25 +44,57 @@ public class OrderInfoDAO extends DBContext {
             if (rs.next()) {
                 OrderInfoDTO dto = new OrderInfoDTO();
                 dto.setOrderId(rs.getInt("order_id"));
-                dto.setOrderNo(rs.getInt("order_no"));
-                dto.setQty(rs.getInt("qty"));
+                dto.setQty(rs.getInt("total_qty"));
                 dto.setUnitPrice(rs.getBigDecimal("unit_price"));
-                dto.setLineAmount(rs.getBigDecimal("line_amount"));
+                dto.setLineAmount(rs.getBigDecimal("total_amount"));
                 dto.setProductId(rs.getInt("product_id"));
                 dto.setProductName(rs.getString("product_name"));
-                dto.setUserId(rs.getInt("customer_user_id"));
+                dto.setUserId(rs.getInt("user_id"));
                 dto.setCusName(rs.getString("cus_name"));
                 dto.setCusEmail(rs.getString("cus_email"));
                 dto.setCusPhone(rs.getString("cus_phone"));
                 dto.setCusAddress(rs.getString("cus_address"));
                 dto.setOrderDate(rs.getTimestamp("order_date"));
                 dto.setStatus(rs.getString("status"));
-                dto.setUnitId(rs.getInt("representative_unit_id"));
                 return dto;
             }
         }
         return null;
     }
+
+    public List<Integer> getSoldUnitIdsForShipment(int productId, int qty) throws SQLException {
+        List<Integer> unitIds = new ArrayList<>();
+        String sql = """
+        SELECT TOP(?) unit_id 
+        FROM Product_units 
+        WHERE product_id = ? AND status = 'SOLD'
+        ORDER BY unit_id
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, qty);
+            ps.setInt(2, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    unitIds.add(rs.getInt("unit_id"));
+                }
+            }
+        }
+        return unitIds;
+    }
+    
+    
+    public List<String> getAllShipmentNos() throws SQLException {
+    List<String> list = new ArrayList<>();
+    String sql = "SELECT shipment_no FROM Shipments";
+    try (PreparedStatement ps = connection.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            list.add(rs.getString("shipment_no"));
+        }
+    }
+    return list;
+}
 
     public List<Integer> get_order_id() {
         List<Integer> list = new ArrayList();
