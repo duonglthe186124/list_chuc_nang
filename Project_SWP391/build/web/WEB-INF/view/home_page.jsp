@@ -7,438 +7,568 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi" class="scroll-smooth">
     <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/home.css" />
-        <title>Stock Phone Management</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WMS Pro - Giải pháp Quản lý Kho Điện thoại Thông minh</title>
+        <!-- Tải Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tải Font Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+            />
+
+        <style>
+            /* Sử dụng font Inter làm mặc định */
+            body {
+                font-family: "Inter", sans-serif;
+            }
+
+            /* Lớp CSS cho hiệu ứng cuộn */
+            .reveal-on-scroll {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            }
+
+            .reveal-on-scroll.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        </style>
     </head>
-    <body>
-        <!-- NAVBAR -->
-        <nav class="nav">
-            <div class="brand">
-                <a href="home.html">
-                    <div class="logo" aria-hidden>
-                        <!-- simple monogram -->
+    <body class="bg-white text-gray-800">
+        <!-- ===== HEADER ===== -->
+        <header
+            class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm"
+            >
+            <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <!-- Logo -->
+                    <a
+                        href="#"
+                        class="flex items-center gap-2 text-2xl font-bold text-gray-900"
+                        >
+                        <!-- Icon SVG đơn giản -->
                         <svg
-                            width="26"
-                            height="26"
-                            viewBox="0 0 24 24"
-                            fill="none"
+                            class="h-8 w-8 text-indigo-600"
                             xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
                             >
-                        <rect
-                            x="2"
-                            y="2"
-                            width="20"
-                            height="20"
-                            rx="4"
-                            fill="black"
-                            opacity="0.12"
-                            />
                         <path
-                            d="M6 16V8h4l4 4v4"
-                            stroke="#06121a"
-                            stroke-width="1.2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
                             />
                         </svg>
+                        <span>WMS Pro</span>
+                    </a>
+
+                    <!-- Menu Desktop -->
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a
+                            href="#gioi-thieu"
+                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                            >Giới thiệu</a
+                        >
+                        <a
+                            href="${pageContext.request.contextPath}/products"
+                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                            >Sản phẩm</a
+                        >
+                        <a
+                            href="#tinh-nang"
+                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                            >Tính năng</a
+                        >
+                        <a
+                            href="#lien-he"
+                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                            >Liên hệ</a
+                        >
+                        <a
+                            href="/login"
+                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                            Đăng nhập
+                        </a>
+                    </nav>
+
+                    <!-- Nút Menu Mobile -->
+                    <div class="md:hidden">
+                        <button
+                            id="mobile-menu-button"
+                            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                            >
+                            <span class="sr-only">Mở menu chính</span>
+                            <svg
+                                class="h-6 w-6"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                                />
+                            </svg>
+                        </button>
                     </div>
-                </a>
-                <div>
-                    <h1>StockPhone</h1>
-                    <p>Phone Stock Management</p>
+                </div>
+
+                <!-- Menu Mobile (Ẩn mặc định) -->
+                <div id="mobile-menu" class="hidden md:hidden pb-4">
+                    <div class="space-y-1">
+                        <a
+                            href="#gioi-thieu"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Giới thiệu</a
+                        >
+                        <a
+                            href="#tinh-nang"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Tính năng</a
+                        >
+                        <a
+                            href="#lien-he"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Liên hệ</a
+                        >
+                        <a
+                            href="/login"
+                            class="mt-2 block w-full rounded-md bg-indigo-600 px-4 py-2 text-center text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                            >
+                            Đăng nhập
+                        </a>
+                    </div>
                 </div>
             </div>
+        </header>
 
-            <div class="navlinks" role="navigation" aria-label="Primary">
-                <a href="${pageContext.request.contextPath}/home">Home</a>
-                <a href="${pageContext.request.contextPath}/products">Products</a>
-                <a href="${pageContext.request.contextPath}/about">About</a>
-                <a href="${pageContext.request.contextPath}/policy">Policy</a>
-                <a href="${pageContext.request.contextPath}/report">Reports</a>
-            </div>
-
-            <div class="cta">
-                <button class="icon-btn" title="Tìm kiếm" aria-label="Tìm kiếm">
-                    <!-- search icon -->
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M21 21l-4.35-4.35"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    <circle
-                        cx="11"
-                        cy="11"
-                        r="6"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    </svg>
-                </button>
-
-                <a
-                    class="icon-btn"
-                    href="${pageContext.request.contextPath}/login"
-                    title="Đăng nhập"
-                    aria-label="Đăng nhập"
-                    >
-                    <!-- user icon -->
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    <circle
-                        cx="12"
-                        cy="7"
-                        r="4"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    </svg>
-                </a>
-
-                <button
-                    class="hamburger"
-                    id="hamburger"
-                    aria-controls="mobileMenu"
-                    aria-expanded="false"
-                    >
-                    <svg
-                        width="26"
-                        height="26"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M4 7h16M4 12h16M4 17h16"
-                        stroke="currentColor"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        />
-                    </svg>
-                </button>
-            </div>
-        </nav>
-
-        <!-- MOBILE MENU (hidden on desktop) -->
-        <div class="mobile-menu container" id="mobileMenu" hidden>
-            <a href="/">Home</a>
-            <a href="${pageContext.request.contextPath}/products">Products</a>
-            <a href="/products/new">Add product</a>
-            <a href="/about">About</a>
-            <a href="/policy">Policy</a>
-            <a href="/reports">Reports</a>
-            <div style="display: flex; gap: 8px; margin-top: 8px">
-                <a href="/login" class="icon-btn" style="width: auto; padding: 8px 12px"
-                   >Đăng nhập</a
+        <!-- ===== HERO SECTION ===== -->
+        <main>
+            <section
+                class="relative bg-gray-900 pt-24 pb-20 md:pt-32 md:pb-28 text-white overflow-hidden"
                 >
-            </div>
-        </div>
-
-        <!-- sample page content -->
-        <main
-            class="container"
-            style="max-width: 1100px; margin: auto auto; padding: 0 20px"
-            >
-            <section style="padding: 24px; background: #f9fafb; border-radius: 12px">
-                <h2 style="margin-top: 0">Demo trang chính</h2>
-                <p style="color: var(--muted)">
-                    Phần nội dung nằm ở đây. Thanh navbar bên trên phục vụ điều hướng đến
-                    chức năng quản lý kho, sản phẩm, báo cáo, và các chính sách. Lorem
-                    ipsum dolor, sit amet consectetur adipisicing elit. Ratione nemo fuga
-                    quos, esse rerum ullam harum quibusdam, quidem eum voluptate minima
-                    animi laudantium alias dignissimos eius maxime sequi, repudiandae
-                    consectetur. Culpa, error accusantium minima et, nulla cum deserunt
-                    accusamus quia voluptatibus modi velit a neque. Excepturi beatae
-                    nesciunt quam perspiciatis fugit earum corrupti cumque nisi eaque
-                    modi, aut blanditiis fugiat? Dolores voluptas ipsa totam dolore quas
-                    corrupti vel exercitationem, delectus voluptatem nesciunt et iusto
-                    ducimus eos aut eligendi quos earum itaque doloribus? Nemo,
-                    perspiciatis sapiente cupiditate amet dolorum ipsam quam? Quam
-                    provident perspiciatis praesentium inventore culpa dicta facilis quod
-                    eaque nihil consequatur tempore, possimus, reprehenderit, voluptatem
-                    suscipit quae ullam mollitia libero? Obcaecati quisquam vitae
-                    doloremque reiciendis consequatur error magni aperiam! Ratione quia
-                    sunt officiis eum dolorum impedit officia, itaque suscipit, et eaque
-                    non nulla vitae iste porro excepturi temporibus voluptatibus explicabo
-                    at ut qui consequatur reiciendis. Doloribus deleniti expedita velit.
-                    Omnis iure quia dolores vitae quaerat reprehenderit. Ducimus
-                    dignissimos necessitatibus, aperiam excepturi earum fugiat aut
-                    explicabo quibusdam repudiandae? Natus necessitatibus facere quasi
-                    quia adipisci nihil cupiditate ullam officia deleniti amet! Nesciunt
-                    facilis placeat molestiae quisquam! Sed accusantium numquam facere!
-                    Ratione, quibusdam? Laudantium in, nisi corrupti delectus esse veniam
-                    est neque obcaecati. Quasi beatae natus debitis itaque asperiores quam
-                    obcaecati eaque? Nam ab nemo maiores inventore blanditiis voluptas
-                    ipsum, a nobis praesentium eum, consectetur hic quos nostrum dolorum
-                    illum tempore. Ipsa similique nulla quas saepe amet debitis quasi
-                    ratione iste suscipit? Modi quam molestiae aut in! Debitis eveniet
-                    labore qui eligendi explicabo vel provident recusandae laborum quasi
-                    cum, quia quisquam, beatae iusto laudantium aliquid maiores, molestiae
-                    minus dolore voluptatum dolorum? Quo. Nisi nulla debitis modi sequi!
-                    Facilis soluta excepturi ullam porro ea fuga laborum recusandae totam
-                    reprehenderit sunt, natus laudantium aut incidunt illum nam quis iusto
-                    enim dicta! Odio, architecto culpa. Quisquam perferendis dolores eos
-                    voluptate laborum quia eligendi incidunt autem quae doloremque id
-                    reiciendis blanditiis error hic nostrum ipsam distinctio
-                    exercitationem iusto, culpa sit! Inventore esse sunt blanditiis odit
-                    adipisci. Enim, tempora fugiat dolores ratione iusto non. Aut odit
-                    praesentium commodi, aliquid aspernatur adipisci quo fugit ipsam nemo
-                    earum tempora vero laborum at provident in quisquam nisi molestiae
-                    tenetur perferendis? Voluptates libero illo, fugit quis quaerat ullam
-                    facilis odit! Corrupti delectus rerum id, maxime velit dolores rem
-                    reprehenderit molestias ad provident nesciunt dolore, consectetur
-                    repellat itaque, assumenda qui suscipit quibusdam! Debitis officiis
-                    dolores inventore labore. Eveniet provident suscipit ratione, minus
-                    eligendi dolores a veritatis eos, quae laudantium voluptatem,
-                    doloremque obcaecati recusandae? Mollitia quam earum consequatur hic
-                    autem fuga inventore cumque! Vel, tempore! Atque perspiciatis ea sunt
-                    facere voluptate officia magni nobis sapiente suscipit aliquid natus,
-                    delectus, molestias tenetur nam sit veniam in dolorem nihil iste vel
-                    dolorum tempora. Veritatis, sed. Doloremque eius nesciunt illum id
-                    quidem cupiditate labore placeat accusantium minima nemo eveniet,
-                    consectetur voluptatem facilis fugiat sed harum veniam eaque dolor
-                    voluptates ex dolores laudantium. Officiis provident vel dignissimos.
-                    Odio repellendus sapiente tempore porro beatae quidem aut consectetur
-                    sequi aspernatur! Pariatur dolorum id ipsam quibusdam, quasi
-                    necessitatibus cupiditate totam natus deleniti maxime, optio tenetur
-                    debitis quis ut. Voluptate, deleniti? Quia dolorem deleniti vitae
-                    distinctio nesciunt odio repellat itaque magni accusantium doloribus.
-                    Iusto consectetur, ullam eaque quod nobis ipsam, dolorum suscipit
-                    sapiente quo nulla omnis recusandae natus quas voluptatum obcaecati?
-                    Dignissimos eos nulla repudiandae inventore doloremque culpa ut, illum
-                    assumenda expedita tenetur. Distinctio, cumque consequuntur.
-                    Perferendis nobis, ipsum dignissimos velit exercitationem, dolor animi
-                    magni dicta excepturi libero cumque maxime quisquam. At iure optio
-                    labore unde, aut quos incidunt eum? Veritatis in sit, excepturi
-                    aperiam at voluptatibus et nesciunt quam omnis nemo ad reprehenderit
-                    fugit earum culpa illo aut sed amet. Aliquam minus nemo excepturi ut
-                    sunt debitis. Voluptate earum voluptatum dolorum recusandae libero?
-                    Rerum expedita perferendis praesentium, commodi incidunt repellendus
-                    amet, qui explicabo tempora ipsa, maiores pariatur. Dolore, dolorem
-                    molestiae. Perspiciatis dolorum tenetur sequi perferendis incidunt
-                    expedita cumque atque quae? Quisquam quod nulla at ab. Labore ab,
-                    illum possimus dolores animi esse, cupiditate cumque tenetur commodi
-                    quia odit explicabo reprehenderit? Possimus repellendus dolore
-                    necessitatibus ipsam harum magni incidunt nam qui libero voluptatum
-                    repudiandae consectetur quo consequatur rerum, voluptate voluptatem
-                    vero nemo molestias temporibus deleniti dolor natus facere quae sequi.
-                    Obcaecati. Consectetur, nobis tenetur perspiciatis vero illo tempore
-                    doloremque incidunt dignissimos dolorem laudantium modi quas adipisci
-                    repellat porro saepe eius exercitationem eos nemo autem magnam quam
-                    enim voluptas omnis quia. Cupiditate? Vero nisi neque quasi? Porro
-                    molestiae ipsam eaque autem ratione ex natus eum voluptates, vitae
-                    similique vero reiciendis dignissimos in blanditiis quod mollitia eius
-                    perspiciatis. Voluptas officia et itaque deserunt. Officia ut magnam
-                    cumque labore ipsa cupiditate nihil sequi deleniti, sed similique, eos
-                    commodi suscipit, fuga veritatis dignissimos nulla et iure dolores
-                    ipsum eum iusto quod nemo aperiam! Odio, voluptate. Id, quod dolorum.
-                    Repellat nihil incidunt dolorum commodi ad ratione consequatur quaerat
-                    quae repudiandae et, id maiores corporis eius suscipit fuga quam sit
-                    alias provident atque odit voluptas rerum quisquam. Soluta vitae
-                    tenetur minima, commodi rerum laborum, rem, nobis voluptas assumenda
-                    fugit est molestias dicta sed officiis tempore ratione modi esse aut
-                    iusto doloribus? Fugit dolorum eaque delectus aperiam unde. Impedit
-                    numquam illo, aut, dignissimos nam excepturi necessitatibus aperiam
-                    delectus inventore dolores distinctio ex molestias architecto?
-                    Adipisci inventore laudantium quisquam vitae, nulla voluptates!
-                    Consectetur veniam quam molestias nobis? Officiis, possimus. Ut,
-                    dolore. Nesciunt sunt impedit possimus fugit quos et illo nulla
-                    temporibus veniam rerum beatae praesentium perferendis at adipisci
-                    labore quia libero animi quam dolor delectus, sapiente laboriosam
-                    perspiciatis fugiat? Vel rem quisquam enim accusantium natus
-                    laudantium porro esse similique. Facilis tempore sed veniam adipisci
-                    ullam dolorum? Consequuntur adipisci, optio maiores error ipsa
-                    perspiciatis quasi dicta ducimus fuga obcaecati iste! Quam,
-                    consectetur dolorem officia placeat ipsa quibusdam enim dicta ex odit
-                    reprehenderit eius blanditiis minus sit beatae eaque accusamus
-                    laboriosam molestias harum laudantium animi suscipit veritatis. Quam
-                    aliquam quibusdam expedita? Labore nam facere, molestias magnam, neque
-                    doloremque veniam vero et accusamus cupiditate at pariatur corporis
-                    ut. Atque error cupiditate architecto, optio distinctio alias
-                    pariatur, minima dolorum itaque omnis vero deleniti. Cupiditate ullam
-                    rerum recusandae dolorem, nobis delectus nam vel corrupti sapiente
-                    amet repellat enim incidunt nihil magnam at. Sequi, vitae id labore
-                    assumenda nobis ab optio sunt. Hic, alias sapiente. Neque, repellat
-                    sit? Debitis magni ullam, eos placeat incidunt repellat vero qui
-                    necessitatibus? Voluptate fugit qui expedita? Laboriosam cum nam non
-                    voluptates culpa, repudiandae quisquam incidunt, perspiciatis
-                    laudantium laborum quod! Sunt consequatur laborum dolores perferendis!
-                    Vitae quidem itaque id autem sint repudiandae ullam consequuntur nam
-                    corporis. Culpa totam ex quia perferendis aspernatur, at unde tenetur
-                    quis, blanditiis, veritatis velit sint? Quo impedit, culpa distinctio
-                    earum dolorum pariatur. Nulla accusantium deserunt eligendi cumque
-                    veritatis accusamus, eos tempora harum ipsum possimus iusto quis
-                    voluptatum ab numquam neque tempore, facere a architecto aliquam?
-                    Assumenda ea nesciunt iure similique saepe consequuntur. In vel
-                    suscipit dolores iusto ipsam amet eum quasi, quas numquam ducimus
-                    molestiae explicabo possimus placeat dolor, cupiditate quos deserunt
-                    quaerat ipsa quisquam. Eligendi quo doloremque saepe, voluptatibus
-                    iste eaque? Temporibus sunt fuga id vitae sequi inventore quidem
-                    expedita beatae, odit autem itaque aperiam nostrum deserunt maiores ea
-                    eaque voluptates officiis repellendus magnam? Eaque fuga provident
-                    placeat at hic dolorem, voluptas dolorum voluptatibus temporibus optio
-                    iusto ipsum reprehenderit nihil, minus soluta neque earum. Nobis, sint
-                    laboriosam? Omnis debitis sunt dolorem fugiat cum vero. Praesentium
-                    velit iste, perspiciatis nobis accusantium temporibus iusto quaerat
-                    totam nam ad assumenda necessitatibus, porro qui error quidem eaque
-                    corrupti unde, deserunt impedit architecto eum sequi veniam? Neque,
-                    fugiat illo. At eveniet ullam cumque assumenda repudiandae minus
-                    soluta nihil repellat suscipit voluptas, optio voluptate nemo
-                    inventore praesentium modi voluptatum quia blanditiis eum obcaecati
-                    rerum quisquam excepturi aperiam tempora. Ducimus, excepturi. Unde
-                    amet libero explicabo, ullam quam optio harum eaque esse repudiandae
-                    illum tempora tenetur, facere rerum! Voluptate quis doloribus
-                    quibusdam velit ullam, sunt similique eos laborum reprehenderit
-                    officia tenetur necessitatibus. Quisquam ea beatae commodi libero
-                    assumenda deserunt alias nisi aliquid aliquam eligendi est quas cum
-                    ratione iusto tenetur sunt, quia praesentium tempora voluptatibus
-                    possimus quidem distinctio necessitatibus rem! Officia, facilis. Natus
-                    delectus recusandae quaerat placeat provident, laudantium atque quas
-                    laborum? Saepe earum eos impedit harum nostrum assumenda, reiciendis
-                    tempora facilis eveniet nihil modi incidunt nobis quo, et cupiditate
-                    magni temporibus. Unde doloremque fugit natus officia consequuntur
-                    reprehenderit quas qui, at accusantium in quo cum quisquam assumenda
-                    distinctio laborum nisi nostrum, exercitationem quis sequi, itaque
-                    temporibus. Iusto exercitationem hic provident cum? Iure tempore dolor
-                    ut numquam. Saepe, at. Consequatur quibusdam deleniti natus magnam
-                    quaerat. Sed, deserunt impedit asperiores blanditiis deleniti
-                    laudantium quisquam! Repellendus provident beatae excepturi nulla
-                    veritatis ab quidem vitae? Possimus, praesentium modi officiis, labore
-                    porro mollitia magnam cupiditate aliquam, quia ad fugiat natus
-                    doloribus fuga. Commodi praesentium alias, doloremque amet eligendi
-                    placeat eum error incidunt quae doloribus hic cumque. Vero, facilis
-                    culpa nisi magnam consequuntur fugit, dolorum obcaecati sequi
-                    assumenda quibusdam maiores ipsa quisquam voluptatibus laboriosam
-                    itaque cum. Culpa suscipit doloremque perspiciatis, itaque ex in error
-                    et eaque modi. Tenetur saepe, dignissimos ullam nostrum asperiores,
-                    animi nulla amet aut, unde omnis architecto exercitationem? Atque,
-                    vitae libero! Placeat qui cupiditate beatae voluptatum, cum cumque
-                    iste. Consequuntur facilis aspernatur veniam necessitatibus.
-                </p>
-            </section>
-        </main>
-
-        <div class="divider container" style="max-width: 1100px"></div>
-
-        <!-- FOOTER -->
-        <footer>
-            <div class="container" style="max-width: 1100px">
-                <div class="footer-grid">
-                    <div>
-                        <h4>StockPhone</h4>
-                        <p class="small">
-                            Hệ thống quản lý kho chuyên cho cửa hàng điện thoại. Quản lý tồn
-                            kho, đơn nhập/xuất, báo cáo và người dùng.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h4>Quick links</h4>
-                        <a href="home.html">Home</a>
-                        <a href="/products">Products</a>
-                        <a href="/reports">Reports</a>
-                        <a href="/login">Đăng nhập</a>
-                    </div>
-
-                    <div>
-                        <h4>Hỗ trợ & Policy</h4>
-                        <a href="/policy">Privacy & Policy</a>
-                        <a href="/terms">Terms of Service</a>
-                        <a href="/help">Help Center</a>
-                    </div>
-
-                    <div>
-                        <h4>Contact</h4>
-                        <div class="small">Email: support@stockphone.example</div>
-                        <div class="small" style="margin-top: 6px">
-                            SĐT: +84 912 345 678
-                        </div>
-                        <div style="margin-top: 10px">
-                            <a
-                                href="#"
-                                style="
-                                margin-right: 8px;
-                                text-decoration: none;
-                                color: var(--muted);
-                                "
-                                >Twitter</a
-                            >
-                            <a
-                                href="#"
-                                style="
-                                margin-right: 8px;
-                                text-decoration: none;
-                                color: var(--muted);
-                                "
-                                >Facebook</a
-                            >
-                            <a href="#" style="text-decoration: none; color: var(--muted)"
-                               >LinkedIn</a
-                            >
-                        </div>
-                    </div>
+                <!-- Lớp phủ mờ + ảnh nền kho hàng -->
+                <div class="absolute inset-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1565610222536-02758f3589e5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80"
+                        alt="Kho hàng điện thoại"
+                        class="h-full w-full object-cover opacity-30"
+                        onerror="this.style.display='none'"
+                        />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent"
+                        ></div>
                 </div>
 
                 <div
-                    style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top: 18px;
-                    flex-wrap: wrap;
-                    "
+                    class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10"
                     >
-                    <div class="small">
-                        © " + new Date().getFullYear() + " StockPhone. All rights reserved.
+                    <div class="max-w-3xl text-center mx-auto">
+                        <h1
+                            class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl reveal-on-scroll"
+                            >
+                            Quản lý kho điện thoại chính xác từng IMEI
+                        </h1>
+                        <p
+                            class="mt-6 text-lg max-w-2xl mx-auto text-gray-300 reveal-on-scroll"
+                            style="transition-delay: 200ms"
+                            >
+                            WMS Pro giúp bạn kiểm soát toàn bộ quy trình xuất – nhập – tồn kho
+                            điện thoại, quản lý theo IMEI/Serial, giảm thất thoát và tối ưu
+                            tốc độ xử lý đơn hàng.
+                        </p>
+                        <div
+                            class="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal-on-scroll"
+                            style="transition-delay: 400ms"
+                            >
+                            <a
+                                href="/login"
+                                class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                >
+                                Đăng nhập hệ thống
+                            </a>
+                            <a
+                                href="#tinh-nang"
+                                class="rounded-md border border-indigo-400 bg-indigo-500/10 px-6 py-3 text-base font-medium text-indigo-300 shadow-sm hover:bg-indigo-500/20"
+                                >
+                                Xem tính năng
+                            </a>
+                        </div>
                     </div>
-                    <div class="small">Designed for warehouse management</div>
+                </div>
+            </section>
+
+            <!-- ===== GIỚI THIỆU (ABOUT) ===== -->
+            <section id="gioi-thieu" class="py-16 md:py-24 bg-white">
+                <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center"
+                        >
+                        <div class="reveal-on-scroll">
+                            <span
+                                class="text-base font-semibold uppercase tracking-wide text-indigo-600"
+                                >Giới thiệu WMS Pro</span
+                            >
+                            <h2
+                                class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl"
+                                >
+                                Hệ thống chuyên biệt cho ngành hàng điện tử
+                            </h2>
+                            <p class="mt-4 text-lg text-gray-600">
+                                WMS Pro là hệ thống quản lý kho toàn diện, cho phép theo dõi tồn
+                                kho theo thời gian thực, quản lý nghiêm ngặt theo từng số
+                                <strong>IMEI/Serial</strong>, tự động hóa quy trình nhập/xuất và
+                                cung cấp báo cáo chính xác.
+                            </p>
+                            <p class="mt-4 text-lg text-gray-600">
+                                Hệ thống phù hợp cho mọi quy mô: từ cửa hàng nhỏ lẻ, chuỗi cửa
+                                hàng, đến nhà phân phối và trung tâm bảo hành lớn.
+                            </p>
+                        </div>
+                        <div class="reveal-on-scroll" style="transition-delay: 200ms">
+                            <img
+                                src="https://placehold.co/600x450/e2e8f0/64748b?text=Giao+diện+Quản+lý+IMEI"
+                                alt="Giao diện Dashboard WMS Pro"
+                                class="rounded-lg shadow-xl aspect-video object-cover"
+                                />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== TÍNH NĂNG NỔI BẬT (FEATURES) ===== -->
+            <section id="tinh-nang" class="py-16 md:py-24 bg-gray-50">
+                <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto">
+                        <h2
+                            class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl reveal-on-scroll"
+                            >
+                            Tính năng cốt lõi
+                        </h2>
+                        <p
+                            class="mt-4 text-lg text-gray-600 reveal-on-scroll"
+                            style="transition-delay: 150ms"
+                            >
+                            Được thiết kế để giải quyết các vấn đề đặc thù của kho hàng điện
+                            thoại, điện tử.
+                        </p>
+                    </div>
+
+                    <div
+                        class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+                        >
+                        <!-- Tính năng 1: Quản lý IMEI -->
+                        <div class="bg-white p-6 rounded-lg shadow-lg reveal-on-scroll">
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-indigo-100 text-indigo-600"
+                                    >
+                                    <svg
+                                        class="h-6 w-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.75 4.875c0-1.036.84-1.875 1.875-1.875h13.5c1.036 0 1.875.84 1.875 1.875v14.25c0 1.036-.84 1.875-1.875 1.875H5.625c-1.036 0-1.875-.84-1.875-1.875V4.875ZM3.75 18.75h16.5M7.5 12h9m-9 3.75h9M7.5 6.75h3"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="mt-4 text-xl font-bold text-gray-900">
+                                Quản lý IMEI/Serial
+                            </h3>
+                            <p class="mt-2 text-base text-gray-600">
+                                Theo dõi chính xác từng sản phẩm. Truy xuất lịch sử nhập, xuất,
+                                bảo hành của từng IMEI chỉ trong vài giây.
+                            </p>
+                        </div>
+
+                        <!-- Tính năng 2: Quản lý Vị trí -->
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg reveal-on-scroll"
+                            style="transition-delay: 100ms"
+                            >
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-indigo-100 text-indigo-600"
+                                    >
+                                    <svg
+                                        class="h-6 w-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                        />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="mt-4 text-xl font-bold text-gray-900">
+                                Tồn kho & Vị trí
+                            </h3>
+                            <p class="mt-2 text-base text-gray-600">
+                                Biết chính xác sản phẩm đang ở đâu (kho, kệ, khu vực). Tối ưu
+                                việc sắp xếp và tìm kiếm hàng hóa.
+                            </p>
+                        </div>
+
+                        <!-- Tính năng 3: Nhập/Xuất kho -->
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg reveal-on-scroll"
+                            style="transition-delay: 200ms"
+                            >
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-indigo-100 text-indigo-600"
+                                    >
+                                    <svg
+                                        class="h-6 w-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="mt-4 text-xl font-bold text-gray-900">
+                                Phiếu Nhập/Xuất/Chuyển
+                            </h3>
+                            <p class="mt-2 text-base text-gray-600">
+                                Tạo và quản lý phiếu tự động. Hỗ trợ quét Barcode/QR Code bằng
+                                điện thoại hoặc máy quét chuyên dụng.
+                            </p>
+                        </div>
+
+                        <!-- Tính năng 4: Báo cáo -->
+                        <div
+                            class="bg-white p-6 rounded-lg shadow-lg reveal-on-scroll"
+                            style="transition-delay: 300ms"
+                            >
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-indigo-100 text-indigo-600"
+                                    >
+                                    <svg
+                                        class="h-6 w-6"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h12M3.75 3h16.5v11.25c0 1.242-.99 2.25-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 14.25V3M3.75 21h16.5M16.5 3.75h.008v.008H16.5V3.75Z"
+                                        />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="mt-4 text-xl font-bold text-gray-900">
+                                Báo cáo & Cảnh báo
+                            </h3>
+                            <p class="mt-2 text-base text-gray-600">
+                                Báo cáo tồn kho real-time, hàng tồn lâu, hàng bán chạy. Cảnh báo
+                                tự động khi tồn kho dưới mức an toàn.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== LỢI ÍCH (BENEFITS) ===== -->
+            <section class="py-16 md:py-24 bg-white">
+                <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto">
+                        <h2
+                            class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl reveal-on-scroll"
+                            >
+                            Hiệu quả thực tế
+                        </h2>
+                    </div>
+                    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div class="p-6 reveal-on-scroll">
+                            <span class="block text-5xl font-bold text-indigo-600"
+                                  >99.9%</span
+                            >
+                            <span class="mt-2 block text-lg font-medium text-gray-700"
+                                  >Giảm thất thoát</span
+                            >
+                            <p class="mt-1 text-gray-600">
+                                Không còn tình trạng mất hàng, nhầm IMEI hay sai sót trong kiểm
+                                kê.
+                            </p>
+                        </div>
+                        <div class="p-6 reveal-on-scroll" style="transition-delay: 150ms">
+                            <span class="block text-5xl font-bold text-indigo-600">50%</span>
+                            <span class="mt-2 block text-lg font-medium text-gray-700"
+                                  >Tăng tốc độ xử lý</span
+                            >
+                            <p class="mt-1 text-gray-600">
+                                Giảm một nửa thời gian cho việc nhập hàng, xuất hàng và tìm kiếm
+                                sản phẩm.
+                            </p>
+                        </div>
+                        <div class="p-6 reveal-on-scroll" style="transition-delay: 300ms">
+                            <span class="block text-5xl font-bold text-indigo-600">100%</span>
+                            <span class="mt-2 block text-lg font-medium text-gray-700"
+                                  >Minh bạch dữ liệu</span
+                            >
+                            <p class="mt-1 text-gray-600">
+                                Tất cả nhân viên, quản lý đều làm việc trên một hệ thống dữ liệu
+                                real-time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== CALL TO ACTION (CTA) ===== -->
+            <section id="lien-he" class="bg-gray-900">
+                <div
+                    class="container mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-24 lg:px-8"
+                    >
+                    <div class="max-w-2xl mx-auto text-center">
+                        <h2
+                            class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl reveal-on-scroll"
+                            >
+                            Sẵn sàng số hóa kho hàng điện thoại của bạn?
+                        </h2>
+                        <p
+                            class="mt-4 text-lg text-gray-300 reveal-on-scroll"
+                            style="transition-delay: 150ms"
+                            >
+                            Trải nghiệm giải pháp WMS Pro hoặc liên hệ với chúng tôi để được
+                            tư vấn lộ trình triển khai.
+                        </p>
+                        <div
+                            class="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal-on-scroll"
+                            style="transition-delay: 300ms"
+                            >
+                            <a
+                                href="/login"
+                                class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                >
+                                Dùng thử miễn phí
+                            </a>
+                            <a
+                                href="mailto:support@wms.vn"
+                                class="rounded-md border border-indigo-400 bg-transparent px-6 py-3 text-base font-medium text-indigo-300 shadow-sm hover:bg-indigo-500/20"
+                                >
+                                Liên hệ tư vấn
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="bg-gray-800 text-gray-400">
+            <div class="container mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center text-center md:text-left"
+                    >
+                    <p class="text-sm">&copy; 2025 WMS Pro. Mọi quyền được bảo lưu.</p>
+                    <div class="flex space-x-4 mt-4 md:mt-0">
+                        <a href="#" class="text-sm hover:text-white transition-colors"
+                           >Chính sách bảo mật</a
+                        >
+                        <a href="#" class="text-sm hover:text-white transition-colors"
+                           >Điều khoản dịch vụ</a
+                        >
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <p class="text-sm">
+                            Hotline:
+                            <a href="tel:19001234" class="hover:text-white">1900 1234</a>
+                        </p>
+                        <p class="text-sm">
+                            Email:
+                            <a href="mailto:support@wms.vn" class="hover:text-white"
+                               >support@wms.vn</a
+                            >
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>
 
+        <!-- ===== JAVASCRIPT ===== -->
         <script>
-            // Mobile menu toggle
-            const ham = document.getElementById("hamburger");
-            const mobile = document.getElementById("mobileMenu");
-            if (ham) {
-                ham.addEventListener("click", () => {
-                    const open = ham.getAttribute("aria-expanded") === "true";
-                    ham.setAttribute("aria-expanded", String(!open));
-                    if (mobile.hasAttribute("hidden"))
-                        mobile.removeAttribute("hidden");
-                    else
-                        mobile.setAttribute("hidden", "");
+            document.addEventListener("DOMContentLoaded", () => {
+                // Xử lý Mobile Menu
+                const menuButton = document.getElementById("mobile-menu-button");
+                const mobileMenu = document.getElementById("mobile-menu");
+
+                if (menuButton) {
+                    menuButton.addEventListener("click", () => {
+                        mobileMenu.classList.toggle("hidden");
+                    });
+                }
+
+                // Xử lý hiệu ứng cuộn (Intersection Observer)
+                const revealElements = document.querySelectorAll(".reveal-on-scroll");
+
+                const revealObserver = new IntersectionObserver(
+                        (entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("is-visible");
+                            // Tùy chọn: Dừng quan sát sau khi đã hiển thị
+                            // observer.unobserve(entry.target);
+                        }
+                        // Tùy chọn: Xóa lớp nếu cuộn ra khỏi tầm nhìn (để hiệu ứng lặp lại)
+                        // else {
+                        //     entry.target.classList.remove('is-visible');
+                        // }
+                    });
+                },
+                        {
+                            root: null, // Quan sát so với viewport
+                            threshold: 0.1, // Kích hoạt khi 10% phần tử hiển thị
+                        }
+                );
+
+                revealElements.forEach((el) => {
+                    revealObserver.observe(el);
                 });
-            }
+            });
         </script>
     </body>
 </html>
-
