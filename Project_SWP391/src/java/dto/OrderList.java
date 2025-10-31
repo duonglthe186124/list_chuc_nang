@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * @author hoang
  */
 public class OrderList {
-    private Integer orderNumber, orderQuantity, shipMentId, shippedQuantity;
+    private Integer orderId, orderNumber, orderQuantity, shipMentId, shippedQuantity;
     private String productName, cusName, cusEmail, cusPhone, cusAddress;
     private String orderStatus, shipmentStatus, shipmentNote;
     private String shipperName, shipperEmail, shipperPhone;
@@ -18,7 +18,8 @@ public class OrderList {
     public OrderList() {
     }
 
-    public OrderList(Integer orderNumber, Integer orderQuantity, Integer shipMentId, Integer shippedQuantity, String productName, String cusName, String cusEmail, String cusPhone, String cusAddress, String orderStatus, String shipmentStatus, String shipmentNote, String shipperName, String shipperEmail, String shipperPhone, BigDecimal productUnitPrice, BigDecimal orderAmount, Timestamp orderDate, Timestamp shipmentDate) {
+    public OrderList(Integer orderId, Integer orderNumber, Integer orderQuantity, Integer shipMentId, Integer shippedQuantity, String productName, String cusName, String cusEmail, String cusPhone, String cusAddress, String orderStatus, String shipmentStatus, String shipmentNote, String shipperName, String shipperEmail, String shipperPhone, BigDecimal productUnitPrice, BigDecimal orderAmount, Timestamp orderDate, Timestamp shipmentDate) {
+        this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.orderQuantity = orderQuantity;
         this.shipMentId = shipMentId;
@@ -39,6 +40,15 @@ public class OrderList {
         this.orderDate = orderDate;
         this.shipmentDate = shipmentDate;
     }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
 
     public Integer getOrderNumber() {
         return orderNumber;
