@@ -29,7 +29,7 @@ public class CreateShipController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-       String orderIdParam = req.getParameter("orderId");
+        String orderIdParam = req.getParameter("orderId");
 
         // === KIỂM TRA orderId ===
         if (orderIdParam == null || orderIdParam.trim().isEmpty()) {
@@ -50,7 +50,6 @@ public class CreateShipController extends HttpServlet {
         OrderInfoDAO orderInfoDAO = new OrderInfoDAO();
         StatusDAO statusDAO = new StatusDAO();
         ShipEmployeesDAO dao = new ShipEmployeesDAO();
-            
 
         try {
             // 1. LẤY THÔNG TIN ĐƠN HÀNG
@@ -61,23 +60,21 @@ public class CreateShipController extends HttpServlet {
                 req.getRequestDispatcher("/order/list").forward(req, resp);
                 return;
             }
-            
+
             //2. unit_id qty
             List<Integer> unitIds = orderInfoDAO.getSoldUnitIdsForShipment(order.getProductId(), order.getQty());
 
-        if (unitIds.size() < order.getQty()) {
-            req.setAttribute("errorMessage", "Không đủ hàng SOLD để giao! Cần: " + order.getQty() + ", Có: " + unitIds.size());
-            req.getRequestDispatcher("/order/list").forward(req, resp);
-            return;
-        }
+            if (unitIds.size() < order.getQty()) {
+                req.setAttribute("errorMessage", "Không đủ hàng SOLD để giao! Cần: " + order.getQty() + ", Có: " + unitIds.size());
+                req.getRequestDispatcher("/order/list").forward(req, resp);
+                return;
+            }
 
             // 3. LẤY DANH SÁCH STATUS
             List<StatusDTO> statusList = statusDAO.getAllOrderStatuses();
-            
+
             // 4. list ship employees
             List<ShipEmployeesDTO> list = dao.getShipEmployees();
-            
-
 
             // 5. GỬI DỮ LIỆU VÀO JSP
             req.setAttribute("order", order);
@@ -93,7 +90,4 @@ public class CreateShipController extends HttpServlet {
             req.getRequestDispatcher("WEB-INF/view/order_list.jsp").forward(req, resp);
         }
     }
-    }
-
-
-
+}

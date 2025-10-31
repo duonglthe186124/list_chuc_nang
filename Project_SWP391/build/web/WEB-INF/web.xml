@@ -92,6 +92,14 @@
         <servlet-name>CreateShipmentServlet</servlet-name>
         <servlet-class>controller.CreateShipmentServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CompleteShipController</servlet-name>
+        <servlet-class>controller.CompleteShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateShipControlller</servlet-name>
+        <servlet-class>controller.CreateShipController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -175,6 +183,14 @@
     <servlet-mapping>
         <servlet-name>CreateShipmentServlet</servlet-name>
         <url-pattern>/create-shipment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CompleteShipController</servlet-name>
+        <url-pattern>/complete/ship</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateShipControlller</servlet-name>
+        <url-pattern>/process/ship</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
