@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  * @author hoang
  */
 public class OrderInfoDTO {
-    private int orderId, orderNo,userId, qty, unitId, productId;
+    private int orderId,userId,qty,productId;
     private BigDecimal unitPrice, lineAmount;
     private String productName, cusName, cusEmail, cusPhone, cusAddress, status;
     private Timestamp orderDate;
@@ -20,12 +20,10 @@ public class OrderInfoDTO {
     public OrderInfoDTO() {
     }
 
-    public OrderInfoDTO(int orderId, int orderNo, int userId, int qty, int unitId, int productId, BigDecimal unitPrice, BigDecimal lineAmount, String productName, String cusName, String cusEmail, String cusPhone, String cusAddress, String status, Timestamp orderDate) {
+    public OrderInfoDTO(int orderId, int userId, int qty, int productId, BigDecimal unitPrice, BigDecimal lineAmount, String productName, String cusName, String cusEmail, String cusPhone, String cusAddress, String status, Timestamp orderDate) {
         this.orderId = orderId;
-        this.orderNo = orderNo;
         this.userId = userId;
         this.qty = qty;
-        this.unitId = unitId;
         this.productId = productId;
         this.unitPrice = unitPrice;
         this.lineAmount = lineAmount;
@@ -46,14 +44,6 @@ public class OrderInfoDTO {
         this.orderId = orderId;
     }
 
-    public int getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(int orderNo) {
-        this.orderNo = orderNo;
-    }
-
     public int getUserId() {
         return userId;
     }
@@ -68,14 +58,6 @@ public class OrderInfoDTO {
 
     public void setQty(int qty) {
         this.qty = qty;
-    }
-
-    public int getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(int unitId) {
-        this.unitId = unitId;
     }
 
     public int getProductId() {
@@ -157,6 +139,9 @@ public class OrderInfoDTO {
     public void setOrderDate(Timestamp orderDate) {
         this.orderDate = orderDate;
     }
+
+   
+   
     
     
     

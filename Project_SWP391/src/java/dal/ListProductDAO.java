@@ -18,7 +18,7 @@ public class ListProductDAO extends DBContext {
 
         String sql = """
                      SELECT 
-                             p.product_id,
+                            distinct p.product_id,
                              p.[name],
                              p.sku_code,
                              b.brand_name,
