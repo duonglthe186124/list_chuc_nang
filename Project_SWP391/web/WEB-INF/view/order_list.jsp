@@ -254,6 +254,12 @@
                                     <td><fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
                                     <td>${order.orderStatus}</td>
                                     <td>
+                                        <c:if test="${empty order.shipMentId || order.shipMentId == 0}">
+                                            <form action="${pageContext.request.contextPath}/process/ship" method="post" style="display:inline;">
+                                                <input type="hidden" name="orderId" value="${order.orderNumber}">
+                                                <button type="submit" class="btn-process">Process</button>
+                                            </form>
+                                        </c:if>
                                         <button type="button" onclick="toggleDetail(${loop.index})">👁️ View Detail</button>
                                     </td>
                                 </tr>
