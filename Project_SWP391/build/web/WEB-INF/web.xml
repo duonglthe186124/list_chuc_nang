@@ -100,6 +100,18 @@
         <servlet-name>CreateShipControlller</servlet-name>
         <servlet-class>controller.CreateShipController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateShipController</servlet-name>
+        <servlet-class>controller.UpdateShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ConfirmShipController</servlet-name>
+        <servlet-class>controller.ConfirmShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProductViewController</servlet-name>
+        <servlet-class>controller.ProductViewController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -191,6 +203,18 @@
     <servlet-mapping>
         <servlet-name>CreateShipControlller</servlet-name>
         <url-pattern>/process/ship</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateShipController</servlet-name>
+        <url-pattern>/ship/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConfirmShipController</servlet-name>
+        <url-pattern>/confirm/ship</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductViewController</servlet-name>
+        <url-pattern>/products/view</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

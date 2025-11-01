@@ -277,6 +277,7 @@
                                                 <th>Shipper Name</th>
                                                 <th>Shipper Email</th>
                                                 <th>Shipper Phone</th>
+                                                <th>Action</th>
                                             </tr>
                                             <tr>
                                                 <td>${order.shipMentId}</td>
@@ -287,6 +288,24 @@
                                                 <td>${order.shipperName}</td>
                                                 <td>${order.shipperEmail}</td>
                                                 <td>${order.shipperPhone}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${order.shipmentStatus != 'SHIPPED' and order.shipmentStatus != 'CANCELLED'}">
+                                                            <form action="${pageContext.request.contextPath}/ship/update" method="post" style="display:inline;">
+                                                                <input type="hidden" name="shipmentId" value="${order.shipMentId}">
+                                                                <input type="hidden" name="shipmentStatus" value="${order.shipmentStatus}">
+                                                                <input type="hidden" name="shipmentQty" value="${order.shippedQuantity}">
+                                                                <input type="hidden" name="shipmentNote" value="${order.shipmentNote}">
+                                                                
+                                                                <button type="submit" class="btn-update">⚙️ delivery process update</button>
+                                                            </form>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span style="color:green;">End of delivery process</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+
                                             </tr>
                                         </table>
                                     </td>
