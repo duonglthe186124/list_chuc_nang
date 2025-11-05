@@ -11,15 +11,19 @@ package dto;
 public class UserToCheckTask {
     private int userId;
     private int roleId;
+    private String fullname, rolename; 
 
     public UserToCheckTask() {
     }
 
-    public UserToCheckTask(int userId, int roleId) {
+    public UserToCheckTask(int userId, int roleId, String fullname, String rolename) {
         this.userId = userId;
         this.roleId = roleId;
+        this.fullname = fullname;
+        this.rolename = rolename;
     }
 
+    
     public int getUserId() {
         return userId;
     }
@@ -35,6 +39,24 @@ public class UserToCheckTask {
     public void setRoleId(int roleId) {
         this.roleId = roleId;
     }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getRolename() {
+        return rolename;
+    }
+
+    public void setRolename(String rolename) {
+        this.rolename = rolename;
+    }
+    
+    
 
     
 }

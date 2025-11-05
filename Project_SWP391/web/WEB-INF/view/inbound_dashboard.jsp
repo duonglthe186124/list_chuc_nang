@@ -1,29 +1,28 @@
 <%-- 
-    Document   : view_transaction
-    Created on : Oct 12, 2025, 2:57:23 PM
+    Document   : inbound_dashboard
+    Created on : Oct 30, 2025, 3:22:42 PM
     Author     : ASUS
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Transaction detail</title>
+        <title>Dashboard - WMS Pro</title>
+        <!-- Tải Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tải Font Inter -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             />
+        <!-- Tải Chart.js -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/view_transaction.css"/>
 
         <style>
             body {
@@ -46,7 +45,6 @@
             #sidebar {
                 z-index: 50;
                 transition: width 300ms ease-in-out;
-                width: 256px;
             }
 
             /* Ẩn chữ khi sidebar thu gọn */
@@ -85,23 +83,11 @@
             .submenu-expanded .submenu-toggle-icon {
                 transform: rotate(90deg);
             }
-
-            /* Ghi đè CSS của layout.css để tương thích với Tailwind layout */
-            .layout {
-                display: block; /* Vô hiệu hóa grid của layout.css */
-            }
-            .main {
-                margin-left: 0; /* Vô hiệu hóa margin của layout.css */
-                padding: 0; /* Reset padding để main content của dashboard xử lý */
-            }
-            aside.sidebar {
-                display: none; /* Ẩn sidebar cũ từ layout.css */
-            }
         </style>
     </head>
     <body class="bg-gray-100">
         <div class="flex h-screen bg-gray-100 overflow-hidden">
-            <!-- SIDEBAR -->
+            <!-- ===== SIDEBAR (Thanh điều hướng bên trái) ===== -->
             <aside
                 id="sidebar"
                 class="bg-gray-900 text-gray-300 flex-shrink-0 fixed h-full"
@@ -112,7 +98,7 @@
                             <li>
                                 <a
                                     href="${pageContext.request.contextPath}/inbound/dashboard"
-                                    class="sidebar-link flex items-center px-6 py-3 hover:bg-gray-700 hover:text-white rounded-r-full"
+                                    class="sidebar-link flex items-center px-6 py-3 text-white bg-indigo-700 rounded-r-full shadow-lg"
                                     >
                                     <svg
                                         class="h-6 w-6"
@@ -234,7 +220,7 @@
                                         <li>
                                             <a
                                                 href="${pageContext.request.contextPath}/inbound/transactions"
-                                                class="block py-2 px-6 text-sm text-white bg-indigo-700 rounded-r-full shadow-lg sidebar-text"
+                                                class="block py-2 px-6 text-sm text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-r-full sidebar-text"
                                                 >Danh sách phiếu nhập</a
                                             >
                                         </li>
@@ -385,10 +371,13 @@
                 </div>
             </aside>
 
+            <!-- ===== MAIN CONTENT (Nội dung chính) ===== -->
             <div id="main-content" class="flex-1 flex flex-col overflow-hidden">
+                <!-- ===== TOPBAR (Thanh trên cùng) - CHỨA LOGO ===== -->
                 <header
                     class="h-16 bg-white shadow-sm flex items-center justify-between px-6 flex-shrink-0"
                     >
+                    <!-- Logo -->
                     <div class="flex items-center">
                         <a
                             href="#"
@@ -412,6 +401,7 @@
                         </a>
                     </div>
 
+                    <!-- Ô tìm kiếm nhanh -->
                     <div class="relative hidden md:block">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg
@@ -436,7 +426,9 @@
                             />
                     </div>
 
+                    <!-- Thông báo & User Menu -->
                     <div class="flex items-center space-x-4">
+                        <!-- Nút Thông báo -->
                         <button
                             class="p-2 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none"
                             >
@@ -457,6 +449,7 @@
                             </svg>
                         </button>
 
+                        <!-- User Menu Dropdown -->
                         <div class="relative" id="user-menu-container">
                             <button
                                 id="user-menu-button"
@@ -485,6 +478,7 @@
                                     />
                                 </svg>
                             </button>
+                            <!-- Dropdown Menu (Ẩn) -->
                             <div
                                 id="user-menu-dropdown"
                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20"
@@ -510,175 +504,482 @@
                     </div>
                 </header>
 
-                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6" id="receipt">
-                    <div class="main-header" id="main-header">
-                        <h3>
-                            Transaction No
-                            <span class="receipt-no">${view.receipt_no}</span>
+                <!-- ===== Nội dung Trang Tổng quan ===== -->
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                        Tổng quan Quy trình
+                    </h1>
+
+                    <!-- 1. Thống kê nhanh (Stats Cards) - TẬP TRUNG VÀO PHIẾU CHỜ -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Card 1: Phiếu PO Chờ Duyệt -->
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between border-b-4 border-indigo-500"
+                            >
+                            <div>
+                                <span class="text-sm font-medium text-gray-500"
+                                      >Phiếu PO Chờ Duyệt</span
+                                >
+                                <p class="text-3xl font-bold text-indigo-600">12</p>
+                            </div>
+                            <div
+                                class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center"
+                                >
+                                <svg
+                                    class="h-6 w-6 text-indigo-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Card 2: Phiếu Nhập Draft/Tạo mới -->
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between border-b-4 border-yellow-500"
+                            >
+                            <div>
+                                <span class="text-sm font-medium text-gray-500"
+                                      >Phiếu Nhập Draft</span
+                                >
+                                <p class="text-3xl font-bold text-yellow-600">5</p>
+                            </div>
+                            <div
+                                class="h-12 w-12 rounded-full bg-yellow-100 flex items-center justify-center"
+                                >
+                                <svg
+                                    class="h-6 w-6 text-yellow-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931ZM18.75 6.75l-4.5-4.5"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Card 3: Phiếu Xuất Chờ Xử Lý -->
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between border-b-4 border-red-500"
+                            >
+                            <div>
+                                <span class="text-sm font-medium text-gray-500"
+                                      >Phiếu Xuất Chờ Xử Lý</span
+                                >
+                                <p class="text-3xl font-bold text-red-600">8</p>
+                            </div>
+                            <div
+                                class="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center"
+                                >
+                                <svg
+                                    class="h-6 w-6 text-red-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0 1 12 0v3"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Card 4: Tổng Phiếu Hoàn Thành (Hôm nay) -->
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center justify-between border-b-4 border-green-500"
+                            >
+                            <div>
+                                <span class="text-sm font-medium text-gray-500"
+                                      >Phiếu Hoàn Thành (Hôm nay)</span
+                                >
+                                <p class="text-3xl font-bold text-green-600">75</p>
+                            </div>
+                            <div
+                                class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center"
+                                >
+                                <svg
+                                    class="h-6 w-6 text-green-600"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Biểu đồ Nhập/Xuất Hàng (Bar Chart) - Có bộ chọn thời gian -->
+                    <div class="bg-white p-6 rounded-xl shadow-md mt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                Biểu đồ Lượng Phiếu Nhập - Xuất
+                            </h3>
+                            <div class="inline-flex rounded-md shadow-sm" role="group">
+                                <button
+                                    type="button"
+                                    data-period="week"
+                                    class="period-selector px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-600 rounded-l-lg hover:bg-indigo-700"
+                                    >
+                                    Theo Tuần
+                                </button>
+                                <button
+                                    type="button"
+                                    data-period="month"
+                                    class="period-selector px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100"
+                                    >
+                                    Theo Tháng
+                                </button>
+                                <button
+                                    type="button"
+                                    data-period="year"
+                                    class="period-selector px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100"
+                                    >
+                                    Theo Năm
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative h-80">
+                            <canvas id="nhapXuatChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 3. Bảng Phiếu đang chờ xử lý -->
+                    <div class="bg-white p-6 rounded-xl shadow-md mt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">
+                            Phiếu đang chờ xử lý (Draft/Chờ duyệt)
                         </h3>
-                    </div>
-
-                    <div class="header-info">
-                        <section class="header-card card">
-                            <h4 class="block-title">Header Information</h4>
-                            <div class="header-columns">
-                                <div class="col">
-                                    <dl>
-                                        <dt>PO No</dt>
-                                        <dd><a href="#" class="link">${view.po_code}</a></dd>
-                                        <dt>Received by</dt>
-                                        <dd>${view.fullname} — ${view.employee_code}</dd>
-                                        <dt>Supplier</dt>
-                                        <dd>${view.supplier_name}</dd>
-                                        <dt>Note / Reason</dt>
-                                        <c:if test="${not empty view.note}">
-                                            <dd>${view.note}</dd>
-                                        </c:if>
-                                        <c:if test="${empty view.note}">
-                                            <dd>There is no note here</dd>
-                                        </c:if>
-                                    </dl>
-                                </div>
-                                <div class="col">
-                                    <dl>
-                                        <dt>PO Date</dt>
-                                        <dd>${view.po_date}</dd>
-                                        <dt>Received At</dt>
-                                        <dd>${view.received_at}</dd>
-                                        <dt>Status</dt>
-                                        <dd>
-                                            <span class="status">${view.status}</span>
-                                        </dd>
-                                    </dl>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section class="summary-card card">
-                            <h4 class="block-title">Summary</h4>
-                            <div class="summary-content">
-                                <div class="summary-item">
-                                    <label>Tổng expected</label>
-                                    <div id="sum-expected">0</div>
-                                </div>
-                                <div class="summary-item">
-                                    <label>Tổng received</label>
-                                    <div id="sum-received">0</div>
-                                </div>
-                                <div class="summary-item">
-                                    <label>Tổng tiền</label>
-                                    <div id="sum-money">0.00</div>
-                                </div>
-                                <div class="summary-item">
-                                    <label>Tỉ lệ nhận</label>
-                                    <div id="pct-received">0%</div>
-                                </div>
-                                <div class="summary-item">
-                                    <label>Số dòng có discrepancy</label>
-                                    <div id="rows-discrep">0</div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    <hr class="separator" />
-
-                    <section class="lines card">
-                        <h4 class="block-title">Lines (Chi tiết dòng)</h4>
-                        <table class="lines-table" id="lines-table">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Product</th>
-                                    <th>Expected</th>
-                                    <th>Received</th>
-                                    <th>Unit Price</th>
-                                    <th>Line Total</th>
-                                    <th>Discrepancy</th>
-                                    <th>Bin</th>
-                                    <th>Note</th>
-                                    <th>Serials</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="l" items="${line}">
-                                    <tr class="line-row" data-line-id="${l.line_id}">
-                                        <td class="center">1</td> <td>
-                                            <div class="sku">${l.sku_code}</div>
-                                            <div class="prod-name">${l.name}</div>
+                        <div class="overflow-x-auto rounded-lg border border-gray-200">
+                            <table class="min-w-full table-fixed text-left text-sm">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th
+                                            class="w-1/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Loại Phiếu
+                                        </th>
+                                        <th
+                                            class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Mã Phiếu
+                                        </th>
+                                        <th
+                                            class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Trạng thái
+                                        </th>
+                                        <th
+                                            class="w-4/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Mô tả/Đối tác
+                                        </th>
+                                        <th
+                                            class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Ngày tạo
+                                        </th>
+                                        <th
+                                            class="w-1/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
+                                            >
+                                            Thao tác
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody
+                                    class="divide-y divide-gray-100"
+                                    id="pending-documents-table"
+                                    >
+                                    <!-- Dữ liệu mẫu sẽ được chèn ở đây -->
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-blue-600 font-semibold">PO</td>
+                                        <td class="py-3 px-4 font-medium text-gray-700 truncate">
+                                            #PO20251025-001
                                         </td>
-                                        <td class="center qty-expected">${l.qty_expected}</td>
-                                        <td class="center qty-received">${l.qty_received}</td>
-                                        <td class="right unit-price">${l.unit_price}</td>
-                                        <td class="right line-total"><fmt:formatNumber value="${l.qty_received * l.unit_price}" type="number" maxFractionDigits="2" /></td>
-                                        <td class="center discrepancy">${l.qty_received - l.qty_expected}</td>
-                                        <td class="center">${l.location}</td>
-                                        <td class="small">${l.note}</td>
-                                        <td class="center">
-                                            <button class="btn small-btn toggle-serials">
-                                                Show Serials (${l.qty_received})
+                                        <td class="py-3 px-4">
+                                            <span
+                                                class="inline-flex items-center justify-center rounded-lg bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 min-w-[90px] text-center"
+                                                >Chờ duyệt</span
+                                            >
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            Mua 100 iPhone 16 từ FPT Trading
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600">25/10/2025</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <button
+                                                class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                                >
+                                                Chi tiết
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr class="serials-row" data-parent-line="${l.line_id}" hidden>
-                                        <td colspan="10" class="serials-cell">
-                                            <div class="serials-title">Serials for ${l.sku_code}</div>
-                                            <table class="serial-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>IMEI</th>
-                                                        <th>SERIAL</th>
-                                                        <th>Warranty start</th>
-                                                        <th>Warranty end</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="u" items="${unit[l.product_id]}">
-                                                        <tr>
-                                                            <td>${u.imei}</td>
-                                                            <td>${u.serial_number}</td>
-                                                            <td>${u.warranty_start}</td>
-                                                            <td>${u.warranty_end}</td>
-                                                        </tr>
-                                                    </c:forEach>
-                                                </tbody>
-                                            </table>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-green-600 font-semibold">
+                                            Nhập hàng
+                                        </td>
+                                        <td class="py-3 px-4 font-medium text-gray-700 truncate">
+                                            #PN20251030-003
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span
+                                                class="inline-flex items-center justify-center rounded-lg bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800 min-w-[90px] text-center"
+                                                >Draft</span
+                                            >
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            Phiếu nhập linh kiện từ Nhà cung cấp A
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600">30/10/2025</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <button
+                                                class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                                >
+                                                Chi tiết
+                                            </button>
                                         </td>
                                     </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </section>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4 text-red-600 font-semibold">
+                                            Xuất hàng
+                                        </td>
+                                        <td class="py-3 px-4 font-medium text-gray-700 truncate">
+                                            #PX20251029-010
+                                        </td>
+                                        <td class="py-3 px-4">
+                                            <span
+                                                class="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-1 text-xs font-medium text-red-800 min-w-[90px] text-center"
+                                                >Chờ lấy hàng</span
+                                            >
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            Đơn hàng bán lẻ online (5 sản phẩm)
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600">29/10/2025</td>
+                                        <td class="py-3 px-4 text-right">
+                                            <button
+                                                class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                                >
+                                                Chi tiết
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                    <section class="summary-bottom card">
-                        <div class="actions-left">
-                            <a class="btn ghost" href="${pageContext.request.contextPath}/inbound/transactions">Go to previous page</a>
+                    <!-- 4. Hoạt động gần nhất (Giữ lại để theo dõi chi tiết) -->
+                    <div class="bg-white p-6 rounded-xl shadow-md mt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">
+                            Hoạt động hoàn thành gần nhất
+                        </h3>
+                        <div class="overflow-x-auto rounded-lg border border-gray-200">
+                            <table class="min-w-full table-fixed text-left text-sm">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th
+                                            class="w-2/24 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Loại
+                                        </th>
+                                        <th
+                                            class="w-2/24 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Mã phiếu
+                                        </th>
+                                        <th
+                                            class="w-8/24 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Sản phẩm
+                                        </th>
+                                        <th
+                                            class="w-2/24 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
+                                            >
+                                            Số lượng
+                                        </th>
+                                        <th
+                                            class="w-4/24 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Người thực hiện
+                                        </th>
+                                        <th
+                                            class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
+                                            >
+                                            Thời gian
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4">
+                                            <span
+                                                class="inline-flex items-center justify-center rounded-lg bg-green-100 px-3 py-1 text-xs font-medium text-green-800 min-w-[90px] text-center"
+                                                >Nhập hàng</span
+                                            >
+                                        </td>
+                                        <td class="py-3 px-4 font-medium text-gray-700 truncate">
+                                            #PN00123
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            20 x iPhone 15 Pro Max (256GB, Đen)
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 text-right">20</td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            Văn A (NV Kho)
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-500">10:32, 30/10/2025</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-3 px-4">
+                                            <span
+                                                class="inline-flex items-center justify-center rounded-lg bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 min-w-[90px] text-center"
+                                                >Xuất hàng</span
+                                            >
+                                        </td>
+                                        <td class="py-3 px-4 font-medium text-gray-700 truncate">
+                                            #PX00111
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            5 x Samsung S24 Ultra (512GB, Bạc)
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-600 text-right">5</td>
+                                        <td class="py-3 px-4 text-gray-600 truncate">
+                                            Thị B (NV Bán hàng)
+                                        </td>
+                                        <td class="py-3 px-4 text-gray-500">09:47, 30/10/2025</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="actions-right">
-                            <button class="btn">Print</button>
-                            <button class="btn">Export PDF</button>
-                            <button class="btn">Download CSV</button>
-                        </div>
-                    </section>
+                    </div>
                 </main>
             </div>
         </div>
 
         <script>
-            document.addEventListener("DOMContentLoaded", () => {
+            // Dữ liệu giả lập cho biểu đồ nhập/xuất theo thời gian
+            const chartData = {
+                week: {
+                    labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+                    inbound: [120, 150, 80, 200, 130, 90, 50], // Số lượng phiếu nhập
+                    outbound: [90, 110, 140, 180, 100, 120, 70], // Số lượng phiếu xuất
+                },
+                month: {
+                    labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
+                    inbound: [550, 620, 480, 710],
+                    outbound: [450, 580, 600, 550],
+                },
+                year: {
+                    labels: ["Q1", "Q2", "Q3", "Q4"],
+                    inbound: [6500, 7800, 7200, 8500],
+                    outbound: [5800, 7000, 8100, 9000],
+                },
+            };
 
-                // ===== 1. LOGIC THU GỌN SIDEBAR (Từ dashboard.html) =====
+            let currentChart;
+
+            function renderChart(period) {
+                const data = chartData[period];
+                const ctx = document.getElementById("nhapXuatChart").getContext("2d");
+
+                if (currentChart) {
+                    currentChart.destroy();
+                }
+
+                currentChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: "Phiếu Nhập",
+                                data: data.inbound,
+                                backgroundColor: "rgba(79, 70, 229, 0.7)", // Màu Indigo
+                                borderWidth: 0,
+                                borderRadius: 4,
+                            },
+                            {
+                                label: "Phiếu Xuất",
+                                data: data.outbound,
+                                backgroundColor: "rgba(59, 130, 246, 0.7)", // Màu Blue
+                                borderWidth: 0,
+                                borderRadius: 4,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Số lượng phiếu",
+                                },
+                                grid: {color: "rgba(203, 213, 225, 0.3)"},
+                            },
+                            x: {
+                                grid: {display: false},
+                            },
+                        },
+                        plugins: {
+                            legend: {
+                                position: "top",
+                                labels: {usePointStyle: true, padding: 20},
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        let label = context.dataset.label || "";
+                                        if (label) {
+                                            label += ": ";
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y.toLocaleString("vi-VN");
+                                        }
+                                        return label;
+                                    },
+                                },
+                            },
+                        },
+                    },
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                // Mặc định load biểu đồ theo Tuần
+                renderChart("week");
+
+                // ===== 1. LOGIC THU GỌN SIDEBAR =====
                 const sidebar = document.getElementById("sidebar");
                 const mainContent = document.getElementById("main-content");
                 const sidebarToggle = document.getElementById("sidebar-toggle");
                 const collapseIcon = sidebarToggle.querySelector("svg");
 
-                // Đảm bảo trạng thái ban đầu nhất quán
-                if (sidebar.classList.contains("collapsed")) {
-                    mainContent.style.marginLeft = "80px";
-                } else {
-                    mainContent.style.marginLeft = "256px";
-                }
+                mainContent.style.marginLeft = "256px";
 
                 sidebarToggle.addEventListener("click", () => {
                     sidebar.classList.toggle("collapsed");
@@ -686,17 +987,15 @@
                     if (sidebar.classList.contains("collapsed")) {
                         sidebar.style.width = "80px";
                         mainContent.style.marginLeft = "80px";
-                        // Sử dụng innerHTML với chuỗi đơn để tránh xung đột
-                        collapseIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />';
+                        collapseIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />`;
                     } else {
                         sidebar.style.width = "256px";
                         mainContent.style.marginLeft = "256px";
-                        // Sử dụng innerHTML với chuỗi đơn để tránh xung đột
-                        collapseIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />';
+                        collapseIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />`;
                     }
                 });
 
-                // ===== 2. LOGIC USER MENU DROPDOWN (Từ dashboard.html) =====
+                // ===== 2. LOGIC USER MENU DROPDOWN =====
                 const userMenuButton = document.getElementById("user-menu-button");
                 const userMenuDropdown = document.getElementById("user-menu-dropdown");
                 const userMenuContainer = document.getElementById(
@@ -713,7 +1012,7 @@
                     }
                 });
 
-                // ===== 3. LOGIC SUBMENU (Mục con) (Từ dashboard.html) =====
+                // ===== 3. LOGIC SUBMENU (Mục con) =====
                 document
                         .querySelectorAll(".sidebar-item button[data-target]")
                         .forEach((button) => {
@@ -726,118 +1025,46 @@
                             });
                         });
 
-                // ===== 4. LOGIC TỪ view_transaction.jsp =====
+                // ===== 4. LOGIC CHỌN KHOẢNG THỜI GIAN BIỂU ĐỒ =====
+                document.querySelectorAll(".period-selector").forEach((button) => {
+                    button.addEventListener("click", function () {
+                        const period = this.getAttribute("data-period");
 
-                // Logic đổi màu status
-                const statusEl = document.querySelector(".status");
-                if (statusEl) {
-                    const statusText = statusEl.textContent.trim().toLowerCase();
-                    statusEl.classList.add("status-" + statusText);
-                }
+                        // Cập nhật trạng thái Active cho nút
+                        document.querySelectorAll(".period-selector").forEach((btn) => {
+                            btn.classList.remove("bg-indigo-600", "text-white");
+                            btn.classList.add("bg-white", "text-gray-900", "border-gray-200");
+                        });
 
-                // Logic tính toán
-                function parseNumber(v) {
-                    if (v === null || v === undefined)
-                        return 0;
-                    const s = String(v).replace(/[, ]+/g, "");
-                    const n = parseFloat(s);
-                    return isNaN(n) ? 0 : n;
-                }
-                function formatMoney(v) {
-                    return Number(v).toFixed(2);
-                }
-
-                function recalcLine(tr) {
-                    const qtyExpected = parseNumber(
-                            tr.querySelector(".qty-expected")?.textContent
-                            );
-                    const qtyReceived = parseNumber(
-                            tr.querySelector(".qty-received")?.textContent
-                            );
-                    const unitPrice = parseNumber(tr.querySelector(".unit-price")?.textContent);
-                    const lineTotal = qtyReceived * unitPrice;
-
-                    const lineTotalEl = tr.querySelector(".line-total");
-                    lineTotalEl.textContent = formatMoney(lineTotal);
-                    const discrepancy = qtyReceived - qtyExpected;
-                    const discEl = tr.querySelector(".discrepancy");
-                    discEl.textContent = discrepancy > 0 ?
-                            "+" + discrepancy : discrepancy;
-                    discEl.classList.remove("pos", "neg", "zero");
-                    if (discrepancy === 0)
-                        discEl.classList.add("zero");
-                    else if (discrepancy > 0)
-                        discEl.classList.add("pos");
-                    else
-                        discEl.classList.add("neg");
-                    return {qtyExpected, qtyReceived, lineTotal, discrepancy};
-                }
-
-                function recalcAll() {
-                    const rows = Array.from(
-                            document.querySelectorAll("#lines-table tbody tr.line-row")
-                            );
-                    let sumExpected = 0,
-                            sumReceived = 0,
-                            sumMoney = 0,
-                            rowsWithDisc = 0;
-
-                    // Đánh số thứ tự
-                    let lineNo = 1;
-
-                    rows.forEach((tr) => {
-                        // Đặt số thứ tự cho dòng
-                        const lineNoEl = tr.querySelector("td:first-child");
-                        if (lineNoEl) {
-                            lineNoEl.textContent = lineNo++;
-                        }
-
-                        const r = recalcLine(tr);
-                        sumExpected += r.qtyExpected;
-                        sumReceived += r.qtyReceived;
-                        sumMoney += r.lineTotal;
-                        if (r.discrepancy !== 0)
-                            rowsWithDisc++;
-                    });
-                    const pct = sumExpected === 0 ? 0 : (sumReceived / sumExpected) * 100;
-
-                    document.getElementById("sum-expected").textContent = sumExpected;
-                    document.getElementById("sum-received").textContent = sumReceived;
-                    document.getElementById("sum-money").textContent = formatMoney(sumMoney);
-                    document.getElementById("pct-received").textContent = pct.toFixed(1) + "%";
-                    document.getElementById("rows-discrep").textContent = rowsWithDisc;
-                }
-
-                document.querySelectorAll(".toggle-serials").forEach((btn) => {
-                    btn.addEventListener("click", function () {
-                        // tìm dòng cha (closest .line-row)
-                        const tr = btn.closest("tr.line-row");
-                        if (!tr)
-                            return;
-                        const lineId = tr.dataset.lineId;
-
-                        const serialsRow = document.querySelector(
-                                'tr.serials-row[data-parent-line="' + lineId + '"]'
+                        this.classList.remove(
+                                "bg-white",
+                                "text-gray-900",
+                                "border-gray-200"
+                                );
+                        this.classList.add(
+                                "bg-indigo-600",
+                                "text-white",
+                                "border-indigo-600"
                                 );
 
-                        if (!serialsRow)
-                            return;
-                        const isHidden = serialsRow.hasAttribute("hidden");
-                        if (isHidden) {
-                            serialsRow.removeAttribute("hidden");
-                            btn.textContent = btn.textContent.replace(/Show/i, "Hide");
-                        } else {
-                            serialsRow.setAttribute("hidden", "");
-                            btn.textContent = btn.textContent.replace(/Hide/i, "Show");
+                        // Xử lý border đặc biệt cho nút giữa (Tháng)
+                        if (period === "month") {
+                            this.classList.remove("border-indigo-600");
+                            this.classList.add("border-t", "border-b", "border-indigo-600");
+                        } else if (period === "week") {
+                            this.classList.add("rounded-l-lg");
+                            this.classList.remove("rounded-r-md");
+                        } else if (period === "year") {
+                            this.classList.add("rounded-r-md");
+                            this.classList.remove("rounded-l-lg");
                         }
+
+                        // Tải lại biểu đồ
+                        renderChart(period);
                     });
                 });
-
-                recalcAll(); // Chạy tính toán lần đầu khi tải trang
-
-                window.receiptRecalc = recalcAll;
-
             });
         </script>
     </body>
 </html>
+

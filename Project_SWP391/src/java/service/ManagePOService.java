@@ -65,9 +65,9 @@ public class ManagePOService {
         for (int i = 0; i < product_id.length; i++) {
             total_po += qty[i] * unit_price[i];
         }
-        
+
         int po_id = add_header(po_code, supplier_id, total_po, note);
-        
+
         add_lines(po_id, product_id, qty, unit_price);
         update_po_code();
     }
@@ -85,9 +85,8 @@ public class ManagePOService {
         }
         po_dao.add_po_line(list);
     }
-    
-    private void update_po_code()
-    {
+
+    private void update_po_code() {
         int no;
 
         LocalDate today = LocalDate.now();
@@ -106,5 +105,6 @@ public class ManagePOService {
         ManagePOService a = new ManagePOService();
         System.out.println(a.get_auto_po_code());
         a.update_po_code();
+        System.out.println(a.get_auto_po_code());
     }
 }

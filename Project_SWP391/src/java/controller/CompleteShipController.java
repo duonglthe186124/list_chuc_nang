@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.CompleteShipDAO;
 import dal.OrderInfoDAO;
 import dal.ShipEmployeesDAO;
 import dal.StatusDAO;
@@ -38,11 +39,11 @@ public class CompleteShipController extends HttpServlet {
             int productId = Integer.parseInt(req.getParameter("productId"));
             int qty = Integer.parseInt(req.getParameter("qtyShipLine"));
             String shipNo = req.getParameter("ship_no");
-            int shipperId = Integer.parseInt(req.getParameter("shipperId"));
+            String shipperIdStr = req.getParameter("shipperId");
             String newStatus = req.getParameter("newStatus");
 
             OrderInfoDAO orderInfoDAO = new OrderInfoDAO();
-            
+
             // kiem tra cac ship code da ton tai
             List<String> existingShipNos = orderInfoDAO.getAllShipmentNos();
 
@@ -52,6 +53,29 @@ public class CompleteShipController extends HttpServlet {
                 error = "Mã giao hàng phải có dạng SHP + ít nhất 3 chữ số (vd: SHP123)";
             } else if (existingShipNos.contains(shipNo.trim())) {
                 error = "Mã giao hàng này đã tồn tại. Vui lòng nhập mã khác.";
+            }
+
+            // === VALIDATE shipperId ===
+            int shipperId = -1;
+            if (shipperIdStr == null || shipperIdStr.trim().isEmpty()) {
+                if (error.isEmpty()) {
+                    error = "Vui lòng chọn nhân viên giao hàng.";
+                }
+            } else {
+                try {
+                    shipperId = Integer.parseInt(shipperIdStr);
+                } catch (NumberFormatException e) {
+                    if (error.isEmpty()) {
+                        error = "ID nhân viên giao hàng không hợp lệ.";
+                    }
+                }
+            }
+
+            // === VALIDATE newStatus ===
+            if (newStatus == null || newStatus.trim().isEmpty()) {
+                if (error.isEmpty()) {
+                    error = "Vui lòng chọn trạng thái đơn hàng.";
+                }
             }
 
             if (!error.isEmpty()) {
@@ -82,6 +106,19 @@ public class CompleteShipController extends HttpServlet {
                 }
             }
 
+            // === Nếu hợp lệ, tiến hành insert vào DB ===
+            CompleteShipDAO shipDAO = new CompleteShipDAO();
+
+            // 1. Update trạng thái đơn hàng
+            shipDAO.updateOrderStatus(orderId, newStatus);
+
+            // 2. Insert vào Shipments -> lấy shipment_id
+            int shipmentId = shipDAO.insertShipment(orderId, shipNo, shipperId);
+
+            // 3. Insert vào Shipment_lines -> lấy line_id
+            int lineId = shipDAO.insertShipmentLine(shipmentId, productId, qty);
+
+            // 4. Insert các unit tương ứng
             String[] unitIdArray = req.getParameterValues("unitIds");
             List<Integer> unitIds = new ArrayList<>();
             if (unitIdArray != null) {
@@ -89,23 +126,20 @@ public class CompleteShipController extends HttpServlet {
                     unitIds.add(Integer.parseInt(id));
                 }
             }
+            shipDAO.insertShipmentUnits(lineId, unitIds);
 
-            out.println("=== DỮ LIỆU NHẬN ĐƯỢC TỪ FORM ===");
-            out.println("Order ID: " + orderId);
-            out.println("Product ID: " + productId);
-            out.println("Số lượng (Qty): " + qty);
-            out.println("Ship No: " + shipNo);
-            out.println("Shipper ID: " + shipperId);
-            out.println("New Status: " + newStatus);
-            out.println("--- Danh sách Unit IDs (" + unitIds.size() + ") ---");
-            for (int i = 0; i < unitIds.size(); i++) {
-                out.println((i + 1) + ". Unit ID: " + unitIds.get(i));
-            }
-            out.println("======================================");
+            // === Sau khi hoàn tất, chuyển hướng hoặc hiển thị thông báo ===
+            req.setAttribute("orderId", orderId);
+            req.setAttribute("shipNo", shipNo);
+            req.setAttribute("qty", qty);
+            req.setAttribute("newStatus", newStatus);
+            req.setAttribute("success", "Tạo shipment thành công cho đơn #" + orderId);
+            req.getRequestDispatcher("/WEB-INF/view/successShip.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            out.println("LỖI: " + e.getMessage());
             e.printStackTrace();
+            req.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+            req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
         }
     }
 
