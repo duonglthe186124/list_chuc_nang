@@ -257,10 +257,7 @@
                     <button type="submit">Apply Filter</button>
                     <button type="reset">Reset</button>
                 </form><br>
-
-                <a href="${pageContext.request.contextPath}/products/add">
-                    <button type="button">Add Product</button>
-                </a>
+            
 
                 <a href="${pageContext.request.contextPath}/order/list">
                     <button type="button">View Order List</button>
@@ -305,15 +302,11 @@
                             </td>
 
                             <td>
-                                <form action="${pageContext.request.contextPath}/products/view" method="post" style="display:inline;">
+                                <form action="${pageContext.request.contextPath}/products/view" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="${p.productId}">
                                     <button type="submit">View</button>
                                 </form>
                                     
-                                <form action="${pageContext.request.contextPath}/products/delete" method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="${p.productId}">
-                                    <button type="submit" onclick="return confirm('Are you sure to delete this product?')">Delete</button>
-                                </form>
 
                                 <form action="${pageContext.request.contextPath}/order" method="get" style="display:inline;">
                                     <input type="hidden" name="id" value="${p.productId}">

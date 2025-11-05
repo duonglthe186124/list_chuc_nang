@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -22,7 +23,7 @@ public class orderListController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Phương thức POST chưa được triển khai, có thể bỏ qua hoặc thêm logic nếu cần
+        doGet(req, resp);
     }
 
     @Override
@@ -30,8 +31,9 @@ public class orderListController extends HttpServlet {
         OrderListDAO db = new OrderListDAO();
         getRoleBySetIdDAO dbr = new getRoleBySetIdDAO();
         ArrayList<OrderList> orders = new ArrayList<>();
+        List<UserToCheckTask> userList = new ArrayList<>();
 
-        // Lấy tham số page
+        // ===== 1️⃣ Lấy tham số trang =====
         int pageIndex = 1;
         String pageParam = req.getParameter("page");
         if (pageParam != null && !pageParam.trim().isEmpty()) {
@@ -45,18 +47,28 @@ public class orderListController extends HttpServlet {
             }
         }
 
-        // Lấy tham số sort
+        // ===== 2️⃣ Lấy tham số sort =====
         String sortBy = req.getParameter("sort");
         if (sortBy == null || sortBy.trim().isEmpty()) {
             sortBy = "Earliest orders";
         }
 
-        // Lấy tham số success để hiển thị thông báo
+        // ===== 3️⃣ Lấy tham số success =====
         String successParam = req.getParameter("success");
         boolean showSuccess = "true".equalsIgnoreCase(successParam);
 
-        // UserId cố định 
-        int userId = 2;
+        // ===== 4️⃣ Lấy userId từ form hoặc giữ mặc định =====
+        String userIdParam = req.getParameter("userId");
+        int userId = 2; // mặc định tạm thời (nếu chưa chọn gì)
+        if (userIdParam != null && !userIdParam.trim().isEmpty()) {
+            try {
+                userId = Integer.parseInt(userIdParam);
+            } catch (NumberFormatException e) {
+                System.err.println("⚠️ userId không hợp lệ, dùng mặc định 2");
+            }
+        }
+
+        // ===== 5️⃣ Lấy thông tin user theo ID =====
         UserToCheckTask user = null;
         try {
             user = dbr.getUserById(userId);
@@ -66,18 +78,20 @@ public class orderListController extends HttpServlet {
                 return;
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             req.setAttribute("errorMessage", "Database error: " + e.getMessage());
             req.getRequestDispatcher("/WEB-INF/view/order_list.jsp").forward(req, resp);
             return;
         }
 
+        // ===== 6️⃣ Lấy danh sách order =====
         try {
             int totalOrders, totalPages;
 
-            if (user.getRoleId() != 2) { // Customer/Shipper
+            if (user.getRoleId() != 2) { // Không phải Manager
                 orders = db.getOrdersByUserIdPageSorted(user.getUserId(), pageIndex, PAGE_SIZE, sortBy);
                 totalOrders = db.countOrdersByUserId(user.getUserId());
-            } else { // Manager (role_id == 2)
+            } else { // Manager
                 orders = db.getAllOrdersByPageSorted(pageIndex, PAGE_SIZE, sortBy);
                 totalOrders = db.countAllOrders();
             }
@@ -92,20 +106,30 @@ public class orderListController extends HttpServlet {
                 }
             }
 
-            // Truyền dữ liệu đến JSP
+            // ===== 7️⃣ Lấy danh sách user để đổ vào dropdown =====
+            try {
+                userList = dbr.getAllUsersWithRoles();
+            } catch (SQLException e) {
+                System.err.println("⚠️ Lỗi lấy userList: " + e.getMessage());
+            }
+
+            // ===== 8️⃣ Gửi dữ liệu sang JSP =====
             req.setAttribute("orders", orders);
             req.setAttribute("currentPage", pageIndex);
             req.setAttribute("totalPages", totalPages);
             req.setAttribute("currentSort", sortBy);
-            // Truyền thông báo thành công nếu có
+            req.setAttribute("userList", userList);
+            req.setAttribute("selectedUserId", userId);
+
             if (showSuccess) {
                 req.setAttribute("successMessage", "Order created successfully! Your new order is now listed below.");
             }
+
         } catch (SQLException e) {
             req.setAttribute("errorMessage", "Failed to load orders due to database error: " + e.getMessage());
         }
 
-        // Forward đến JSP
+       
         req.getRequestDispatcher("/WEB-INF/view/order_list.jsp").forward(req, resp);
     }
 
