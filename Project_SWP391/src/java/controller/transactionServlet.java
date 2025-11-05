@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import service.TransactionService;
+import static util.Validation.*;
 
 /**
  *
@@ -19,7 +20,7 @@ public class transactionServlet extends HttpServlet {
 
     private List<Response_TransactionDTO> tx_list;
     private TransactionService service = new TransactionService();
-    
+
     public transactionServlet(TransactionService service) {
         this.service = service;
     }
@@ -27,7 +28,7 @@ public class transactionServlet extends HttpServlet {
     public transactionServlet() {
         this.service = new TransactionService();
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,43 +38,25 @@ public class transactionServlet extends HttpServlet {
         String raw_page_no = request.getParameter("pageNo");
         String raw_page_input = request.getParameter("pageInput");
 
-        String search = null, status = null;
-        int page_size = 10, page_no = 1, total_lines;
-        String error = "";
+        String search, status;
+        int page_size, page_no = 1, total_lines;
 
-        if (raw_search != null && !raw_search.isEmpty()) {
-            search = raw_search.trim();
-            if (search.length() > 30) {
-                search = search.substring(0, 15);
-            }
-        }
+        search = validate_string_input(raw_search);
+        status = validate_option_string_input(raw_status);
+        page_size = validate_option_integer_input(raw_page_size, 10);
 
-        if (raw_status != null && !raw_status.isEmpty()) {
-            List<String> allowedTypes = Arrays.asList("Pending", "Received", "Partial", "Cancelled");
-            if (allowedTypes.contains(raw_status)) {
-                status = raw_status;
-            }
-        }
-
-        if (raw_page_size != null && !raw_page_size.isEmpty()) {
-            page_size = Integer.parseInt(raw_page_size);
-        }
-        
         total_lines = service.get_total_lines(search, status);
-        
+
         if (raw_page_input != null && !raw_page_input.trim().isEmpty()) {
             page_no = Integer.parseInt(raw_page_input);
-            if(page_no > (int) Math.ceil((double) total_lines / page_size) || page_no < 1)
-            {
+            if (page_no > (int) Math.ceil((double) total_lines / page_size) || page_no < 1) {
                 page_no = 1;
-                error = "Page does not exists";
-                request.setAttribute("error", error);
+                request.setAttribute("errorPageInput", "Page does not exists");
             }
         } else if ((raw_page_input == null || raw_page_input.trim().isEmpty()) && raw_page_no != null) {
             page_no = Integer.parseInt(raw_page_no);
         }
 
-        
         tx_list = service.get_transactions(search, status, page_no, page_size);
         request.setAttribute("tx_list", tx_list);
         request.setAttribute("searchInput", search);
