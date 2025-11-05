@@ -27,11 +27,11 @@ public class WarehouseDAO extends DBContext {
                        "    p.product_id, " +
                        "    p.name, " +
                        "    p.sku_code, " +
-                       "    COUNT(u.product_unit_id) as StockQuantity " +
+                       "    COUNT(u.unit_id) as StockQuantity " +
                        "FROM " +
                        "    Products p " +
                        "LEFT JOIN " +
-                       "    Product_units u ON p.product_id = u.product_id AND u.status = 'Trong kho' " +
+                       "    Product_units u ON p.product_id = u.product_id AND u.status = 'AVAILABLE' " +
                        "GROUP BY " +
                        "    p.product_id, p.name, p.sku_code " +
                        "ORDER BY " +
