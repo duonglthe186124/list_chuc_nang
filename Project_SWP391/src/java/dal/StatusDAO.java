@@ -27,4 +27,19 @@ public class StatusDAO extends DBContext {
         }
         return statuses;
     }
+
+    public List<StatusDTO> getAllShipmentStatuses() throws SQLException {
+        List<StatusDTO> statuses = new ArrayList<>();
+        String sql = "SELECT DISTINCT [status] FROM Shipments";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                StatusDTO s = new StatusDTO();
+                s.setStatusCode(rs.getString("status"));
+                statuses.add(s);
+            }
+        }
+        return statuses;
+    }
+
 }

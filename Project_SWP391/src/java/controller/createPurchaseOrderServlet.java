@@ -9,8 +9,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import service.ManagePOService;
+import static util.Validation.*;
 
 /**
  *
@@ -46,37 +49,46 @@ public class createPurchaseOrderServlet extends HttpServlet {
         String[] raw_qty = request.getParameterValues("qty");
         String[] raw_unit_price = request.getParameterValues("unit_price");
 
-        String error = "";
+        Map<String, String> errors = new HashMap<>();
+        String error;
 
-        if (raw_supplier == null || raw_supplier.trim().isEmpty()) {
-            error = "Please choose supplier";
-            request.setAttribute("error", error);
+        int supplier_id;
+        try {
+            raw_supplier = validate_supplier_input(raw_supplier);
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("error", e.getMessage());
             doGet(request, response);
             return;
         }
 
-        int supplier_id;
         try {
-            supplier_id = Integer.parseInt(raw_supplier);
-        } catch (NumberFormatException e) {
+            supplier_id = validate_supplier_id(raw_supplier);
+        } catch (IllegalArgumentException e) {
             response.sendRedirect(request.getContextPath() + "/404");
             return;
         }
 
-        int length = raw_product.length;
-        if (raw_product.length != length || raw_qty.length != length || raw_unit_price.length != length) {
-            error = "Please enter all fields";
-            request.setAttribute("error", error);
+        if (raw_product == null) {
+            request.setAttribute("error", "Vui lòng thêm ít nhất 1 sản phẩm");
+            doGet(request, response);
+            return;
+        } else if (raw_qty == null) {
+            request.setAttribute("error", "Số lượng là bắt buộc ");
+            doGet(request, response);
+            return;
+        } else if (raw_unit_price == null) {
+            request.setAttribute("error", "Đơn giá là bắt buộc ");
             doGet(request, response);
             return;
         }
+
+        int length = Math.max(raw_product.length, Math.max(raw_qty.length, raw_unit_price.length));
 
         int[] product_id = new int[length];
         try {
             for (int i = 0; i < raw_product.length; i++) {
                 if (raw_product[i] == null || raw_product[i].trim().isEmpty()) {
-                    error = "Please choose the products";
-                    request.setAttribute("error", error);
+                    request.setAttribute("error", "Chưa chọn sản phẩm ở dòng " + (i + 1));
                     doGet(request, response);
                     return;
                 }
@@ -91,8 +103,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
         try {
             for (int i = 0; i < raw_qty.length; i++) {
                 if (raw_qty[i] == null || raw_qty[i].trim().isEmpty()) {
-                    error = "Please enter all quantity";
-                    request.setAttribute("error", error);
+                    request.setAttribute("error", "Chưa chọn số lượng ở dòng" + (i + 1));
                     doGet(request, response);
                     return;
                 }
@@ -100,8 +111,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
                 qty[i] = Integer.parseInt(raw_qty[i]);
 
                 if (qty[i] < 1) {
-                    error = "Quantity must be more than 1";
-                    request.setAttribute("error", error);
+                    request.setAttribute("error", "Số lượng sản phẩm ở dòng " + (i + 1) + " phải lớn hơn 1");
                     doGet(request, response);
                     return;
                 }
@@ -112,11 +122,11 @@ public class createPurchaseOrderServlet extends HttpServlet {
         }
 
         float[] unit_price = new float[raw_unit_price.length];
-        try {
-            for (int i = 0; i < raw_unit_price.length; i++) {
+        for (int i = 0; i < raw_unit_price.length; i++) {
+            try {
                 if (raw_unit_price[i] == null || raw_unit_price[i].trim().isEmpty()) {
                     error = "Please enter unit_price of product";
-                    request.setAttribute("error", error);
+                    request.setAttribute("error", "Chưa điền giá ở dòng " + (i + 1));
                     doGet(request, response);
                     return;
                 }
@@ -124,17 +134,15 @@ public class createPurchaseOrderServlet extends HttpServlet {
                 unit_price[i] = Float.parseFloat(raw_unit_price[i]);
 
                 if (unit_price[i] <= 0) {
-                    error = "Unit price must be positive";
-                    request.setAttribute("error", error);
+                    request.setAttribute("error", "Giá ở dòng " + (i + 1) + " phải là số dương");
                     doGet(request, response);
                     return;
                 }
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Lỗi định dạng giá ở dòng " + (i + 1));
+                doGet(request, response);
+                return;
             }
-        } catch (NumberFormatException e) {
-            error = "Price is not correct statement";
-            request.setAttribute("error", error);
-            doGet(request, response);
-            return;
         }
 
         service.add_purchase_order(po_code, supplier_id, note, product_id, qty, unit_price);
