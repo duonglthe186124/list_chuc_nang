@@ -93,6 +93,14 @@
         <servlet-class>controller.CreateShipmentServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CompleteShipController</servlet-name>
+        <servlet-class>controller.CompleteShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateShipControlller</servlet-name>
+        <servlet-class>controller.CreateShipController</servlet-class>
+      </servlet>
+    <servlet>
         <servlet-name>ChangePasswordServlet</servlet-name>
         <servlet-class>controller.ChangePasswordServlet</servlet-class>
     </servlet>
@@ -117,8 +125,16 @@
         <servlet-class>controller.LoginServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CompleteShipController</servlet-name>
-        <servlet-class>controller.CompleteShipController</servlet-class>
+        <servlet-name>UpdateShipController</servlet-name>
+        <servlet-class>controller.UpdateShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ConfirmShipController</servlet-name>
+        <servlet-class>controller.ConfirmShipController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProductViewController</servlet-name>
+        <servlet-class>controller.ProductViewController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CreateShipControlller</servlet-name>
@@ -213,6 +229,14 @@
         <url-pattern>/create-shipment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>CompleteShipController</servlet-name>
+        <url-pattern>/complete/ship</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateShipControlller</servlet-name>
+        <url-pattern>/process/ship</url-pattern>
+      </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ChangePasswordServlet</servlet-name>
         <url-pattern>/change-password</url-pattern>
     </servlet-mapping>
@@ -237,8 +261,16 @@
         <url-pattern>/loginStaff</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CompleteShipController</servlet-name>
-        <url-pattern>/complete/ship</url-pattern>
+        <servlet-name>UpdateShipController</servlet-name>
+        <url-pattern>/ship/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConfirmShipController</servlet-name>
+        <url-pattern>/confirm/ship</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductViewController</servlet-name>
+        <url-pattern>/products/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CreateShipControlller</servlet-name>
