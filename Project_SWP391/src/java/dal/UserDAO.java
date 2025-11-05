@@ -7,7 +7,10 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
+import java.util.ArrayList;
+import java.util.List;
+import model.Roles;
 
 public class UserDAO extends DBContext {
 
@@ -32,7 +35,8 @@ public class UserDAO extends DBContext {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(password.getBytes());
             byte[] digest = md.digest();
-            return DatatypeConverter.printHexBinary(digest).toUpperCase();
+            // Sử dụng Base64 thay vì DatatypeConverter
+            return Base64.getEncoder().encodeToString(digest);
         } catch (NoSuchAlgorithmException e) {
             System.out.println("Error hashing password: " + e.getMessage());
             return null;
@@ -60,7 +64,7 @@ public class UserDAO extends DBContext {
             ps.setString(4, user.getPhone());
             ps.setString(5, user.getAddress());
             ps.setString(6, user.getSec_address());
-            ps.setInt(7, 3); 
+            ps.setInt(7, user.getRole_id()); 
             ps.setBoolean(8, true); 
             ps.setBoolean(9, false); 
 
@@ -86,18 +90,18 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {
-                Users user = new Users(
-                    rs.getInt("user_id"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("fullname"),
-                    rs.getString("phone"),
-                    rs.getString("address"),
-                    rs.getString("sec_address"),
-                    rs.getInt("role_id"),
-                    rs.getBoolean("is_actived"),
-                    rs.getBoolean("is_deleted")
-                );
+                Users user = new Users();
+                user.setUser_id(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setFullname(rs.getString("fullname"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setSec_address(rs.getString("sec_address"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setIs_actived(rs.getBoolean("is_actived"));
+                user.setIs_deleted(rs.getBoolean("is_deleted"));
+                
                 return user;
             }
         } catch (SQLException e) {
@@ -114,7 +118,17 @@ public class UserDAO extends DBContext {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Users();
+                Users user = new Users();
+                user.setUser_id(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setAvatar_url(rs.getString("avatar_url"));
+                user.setToken_expiry(rs.getTimestamp("token_expiry"));
+                user.setReset_token(rs.getString("reset_token"));
+                return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,16 +154,22 @@ public class UserDAO extends DBContext {
     }
     
     public boolean updateUser(Users user) {
-        String sql = "UPDATE Users SET fullname = ?, phone = ?, address = ? WHERE user_id = ?";
+        String sql = "UPDATE Users SET fullname = ?, phone = ?, address = ?, avatar_url = ? WHERE user_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
+            
+            // 2. Gán các giá trị
             ps.setString(1, user.getFullname());
             ps.setString(2, user.getPhone());
             ps.setString(3, user.getAddress());
-            ps.setInt(4, user.getUser_id());
+            
+            // 3. BẮT BUỘC phải gán giá trị cho avatar_url
+            ps.setString(4, user.getAvatar_url()); 
+            
+            ps.setInt(5, user.getUser_id());
             
             int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0; 
+            return rowsAffected > 0;
             
         } catch (SQLException e) {
             System.err.println("Error updating user: " + e.getMessage());
@@ -175,16 +195,131 @@ public class UserDAO extends DBContext {
         return false;
     }
 
-    public void updatePassword(int userId, String newPassword) {
+    public boolean updatePassword(int userId, String newPassword) {
         String hashedPassword = hashPassword(newPassword);
         String sql = "UPDATE Users SET password = ? WHERE user_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, hashedPassword);
             ps.setInt(2, userId);
-            ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public List<Users> getAllUsers() {
+        List<Users> userList = new ArrayList<>();
+        // Lấy cả role_name từ bảng Roles
+        String sql = "SELECT u.*, r.role_name FROM Users u LEFT JOIN Roles r ON u.role_id = r.role_id";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Users user = new Users();
+                user.setUser_id(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setIs_actived(rs.getBoolean("is_actived"));
+                user.setIs_deleted(rs.getBoolean("is_deleted"));
+                user.setAvatar_url(rs.getString("avatar_url"));
+                user.setRoleName(rs.getString("role_name")); 
+                userList.add(user);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return userList;
+    }
+
+
+    /**
+     * Cập nhật vai trò của người dùng.
+     */
+    public boolean updateUserRole(int userId, int roleId) {
+        String sql = "UPDATE Users SET role_id = ? WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, roleId);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Vô hiệu hóa (disable) hoặc Kích hoạt (enable) tài khoản.
+     */
+    public boolean setUserActiveStatus(int userId, boolean isActive) {
+        String sql = "UPDATE Users SET is_actived = ? WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setBoolean(1, isActive);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Xóa vĩnh viễn người dùng.
+     */
+    public boolean deleteUser(int userId) {
+        String sql = "DELETE FROM Users WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public List<Roles> getAllRoles() {
+        List<Roles> roleList = new ArrayList<>();
+        String sql = "SELECT * FROM Roles";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Roles role = new Roles();
+                role.setRole_id(rs.getInt("role_id"));
+                role.setRole_name(rs.getString("role_name"));
+                role.setDescription(rs.getString("description"));
+                roleList.add(role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roleList;
+    }
+    
+    public List<Roles> getManageableRoles() {
+        List<Roles> roleList = new ArrayList<>();
+        // Lấy các vai trò bạn muốn admin có thể gán
+        String sql = "SELECT * FROM Roles WHERE role_name IN ('Admin', 'Employee', 'Guest')"; 
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Roles role = new Roles();
+                role.setRole_id(rs.getInt("role_id"));
+                role.setRole_name(rs.getString("role_name"));
+                roleList.add(role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roleList;
     }
 }
