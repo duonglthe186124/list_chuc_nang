@@ -18,8 +18,8 @@ public class DBContext {
                 // default (your local dev). Add ;encrypt=false to avoid TLS issues.
                 url = "jdbc:sqlserver://localhost:1433;databaseName=SWP391_WarehouseManagements;encrypt=false;trustServerCertificate=true";
             }
-            if (user == null || user.isEmpty()) user = "sa";
-            if (pass == null || pass.isEmpty()) pass = "123";
+            if (user == null || user.isEmpty()) user = "duonglt";
+            if (pass == null || pass.isEmpty()) pass = "12345";
 
             // Load driver
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
