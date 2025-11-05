@@ -80,7 +80,7 @@ public class ChangePasswordServlet extends HttpServlet {
         Users currentUser = (Users) session.getAttribute("account");
 
         if (currentUser == null) {
-            response.sendRedirect(request.getContextPath()+"/PersonalProfile");
+            response.sendRedirect(request.getContextPath() + "/loginStaff");
             return;
         }
 
@@ -95,7 +95,7 @@ public class ChangePasswordServlet extends HttpServlet {
         }
 
         UserDAO userDAO = new UserDAO();
-
+        
         boolean isOldPasswordCorrect = userDAO.verifyOldPassword(currentUser.getUser_id(), oldPassword);
         if (!isOldPasswordCorrect) {
             request.setAttribute("errorMessage", "Incorrect old password.");
@@ -103,6 +103,13 @@ public class ChangePasswordServlet extends HttpServlet {
             return;
         }
         
+        boolean updateSuccess = userDAO.updatePassword(currentUser.getUser_id(), newPassword);
+        if (updateSuccess) {
+            request.setAttribute("successMessage", "Password has changed successfully!");
+            request.setAttribute("redirectUrl", request.getContextPath() + "/PersonalProfile");
+        } else {
+            request.setAttribute("errorMessage", "An error occurred. Please try again.");
+        }
         request.getRequestDispatcher("WEB-INF/view/change_password.jsp").forward(request, response);
     }
 

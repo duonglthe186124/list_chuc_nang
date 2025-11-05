@@ -1,12 +1,17 @@
 package model;
 
+import java.sql.Timestamp;
+
 public class Users {
 
     private int user_id;
     private String email, password, fullname, phone, address, sec_address;
     private int role_id;
     private boolean is_actived, is_deleted;
-
+    private String avatar_url;
+    private String reset_token;
+    private Timestamp token_expiry;
+    private String roleName;
     public Users() {
     }
 
@@ -21,6 +26,7 @@ public class Users {
         this.role_id = role_id;
         this.is_actived = is_actived;
         this.is_deleted = is_deleted;
+        this.avatar_url = avatar_url;
     }
 
     public int getUser_id() {
@@ -101,6 +107,38 @@ public class Users {
 
     public void setIs_deleted(boolean is_deleted) {
         this.is_deleted = is_deleted;
+    }
+
+    public String getAvatar_url() {
+        return avatar_url;
+    }
+
+    public void setAvatar_url(String avatar_url) {
+        this.avatar_url = avatar_url;
+    }
+
+    public String getReset_token() {
+        return reset_token;
+    }
+
+    public void setReset_token(String reset_token) {
+        this.reset_token = reset_token;
+    }
+
+    public Timestamp getToken_expiry() {
+        return token_expiry;
+    }
+
+    public void setToken_expiry(Timestamp token_expiry) {
+        this.token_expiry = token_expiry;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
 }

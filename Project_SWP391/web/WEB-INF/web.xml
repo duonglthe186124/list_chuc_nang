@@ -148,6 +148,14 @@
         <servlet-name>InboundDashboardServlet</servlet-name>
         <servlet-class>controller.InboundDashboardServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>controller.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AccountManagementServlet</servlet-name>
+        <servlet-class>controller.AccountManagementServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -287,6 +295,14 @@
     <servlet-mapping>
         <servlet-name>TestUserController</servlet-name>
         <url-pattern>/test/user</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountManagementServlet</servlet-name>
+        <url-pattern>/account-management</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
