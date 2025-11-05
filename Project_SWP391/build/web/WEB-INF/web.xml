@@ -112,6 +112,14 @@
         <servlet-name>ProductViewController</servlet-name>
         <servlet-class>controller.ProductViewController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProductSearchUnit</servlet-name>
+        <servlet-class>controller.ProductSearchUnit</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestUserController</servlet-name>
+        <servlet-class>controller.TestUserController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -215,6 +223,14 @@
     <servlet-mapping>
         <servlet-name>ProductViewController</servlet-name>
         <url-pattern>/products/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProductSearchUnit</servlet-name>
+        <url-pattern>/product/viewUnit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestUserController</servlet-name>
+        <url-pattern>/test/user</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

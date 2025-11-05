@@ -5,18 +5,24 @@
         <group>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/UpdateShipDAO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/ConfirmShipController.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/errorPage.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/UpdateShipController.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/updateShip.jsp</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/CompleteShipDAO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/productViewDetail.jsp</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/product_search_filter.jsp</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/CreateOrderController.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/ProductSearchUnit.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/SearchProductDAO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dto/UnitViewDTO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/ProductViewController.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/getRoleBySetIdDAO.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/SalaryComponentDAO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dto/ProductViewDTO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/orderListController.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/order_list.jsp</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/searchProductController.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/UserCheckDAOTest.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/StatusDAO.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dal/TestShipE.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/create_order.jsp</file>
@@ -26,8 +32,10 @@
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dto/OrderList.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/web.xml</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/error_page.jsp</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/TestUserController.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/home_page.jsp</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/CreateShipController.java</file>
+            <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/dto/UserToCheckTask.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/src/java/controller/CompleteShipController.java</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/PrepareShip.jsp</file>
             <file>file:/C:/SWP_5/list_chuc_nang_new/Project_SWP391/web/WEB-INF/view/successShip.jsp</file>

@@ -5,20 +5,27 @@
 package dal;
 
 import dto.ShipEmployeesDTO;
+import dto.StatusDTO;
+import dto.UnitViewDTO;
+import dto.UserToCheckTask;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author hoang
  */
 public class TestShipE {
+
     public static void main(String[] args) {
-        try {
-        ShipEmployeesDAO dao = new ShipEmployeesDAO();
-        ArrayList<ShipEmployeesDTO> list = dao.getShipEmployees();
-        for (ShipEmployeesDTO s : list) {
-            System.out.println(s.geteId() + " | " + s.geteCode() + " | " + s.geteName());
-        }
+         try {
+        getRoleBySetIdDAO dao = new getRoleBySetIdDAO();
+        List<UserToCheckTask> list = dao.getAllUsersWithRoles();
+             for (UserToCheckTask u: list) {
+                 System.out.println(u.getUserId()+" "+u.getFullname()+" "+u.getRoleId()+" "+u.getRolename());
+             }
+
+       
     } catch (Exception e) {
         e.printStackTrace();
     }

@@ -6,6 +6,7 @@ package controller;
 
 import dal.ProductViewDAO;
 import dto.ProductViewDTO;
+import dto.StatusDTO;
 import dto.UnitViewDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,25 +24,31 @@ import java.sql.*;
 public class ProductViewController extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         try {
             int productId = Integer.parseInt(req.getParameter("id"));
+            int pageIndex = req.getParameter("page") != null ? Integer.parseInt(req.getParameter("page")) : 1;
+            int pageSize = 2;
 
             ProductViewDAO dao = new ProductViewDAO();
-            // Lấy thông tin chung
+
             ProductViewDTO product = dao.getProductCommonInfoById(productId);
+            List<UnitViewDTO> units = dao.getUnitsByProductIdPaged(productId, pageIndex, pageSize);
+            List<StatusDTO> status = dao.getAllStatusesUnit();
 
-            // Lấy danh sách unit riêng
-            List<UnitViewDTO> units = dao.getUnitsByProductId(productId);
+            int totalUnits = dao.countUnitsByProductId(productId);
+            int totalPages = (int) Math.ceil((double) totalUnits / pageSize);
 
-            // Gửi sang JSP
             req.setAttribute("product", product);
             req.setAttribute("units", units);
+            req.setAttribute("status", status);
+            req.setAttribute("pageIndex", pageIndex);
+            req.setAttribute("totalPages", totalPages);
 
             req.getRequestDispatcher("/WEB-INF/view/productViewDetail.jsp").forward(req, resp);
-        } catch (ServletException | IOException | SQLException e) {
-            req.setAttribute("error", "ID sản phẩm không hợp lệ!");
+        } catch (Exception e) {
+            req.setAttribute("error", "Lỗi khi tải dữ liệu sản phẩm!");
             req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
         }
 
