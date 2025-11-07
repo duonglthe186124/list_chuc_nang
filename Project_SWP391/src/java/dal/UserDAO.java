@@ -11,6 +11,8 @@ import java.util.Base64;
 import java.util.ArrayList;
 import java.util.List;
 import model.Roles;
+import java.sql.Timestamp;
+import java.util.Random;
 
 public class UserDAO extends DBContext {
 
@@ -101,6 +103,7 @@ public class UserDAO extends DBContext {
                 user.setRole_id(rs.getInt("role_id"));
                 user.setIs_actived(rs.getBoolean("is_actived"));
                 user.setIs_deleted(rs.getBoolean("is_deleted"));
+                user.setAvatar_url(rs.getString("avatar_url"));
                 
                 return user;
             }
@@ -111,23 +114,18 @@ public class UserDAO extends DBContext {
         return null; 
     }
     
-    public Users findUserByEmail(String email) {
-        String sql = "SELECT * FROM Users WHERE email = ?";
+    public Users findUserByEmailOrPhone(String credential) {
+        String sql = "SELECT * FROM Users WHERE (email = ? OR phone = ?) AND is_deleted = 0";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, email);
+            ps.setString(1, credential);
+            ps.setString(2, credential);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Users user = new Users();
                 user.setUser_id(rs.getInt("user_id"));
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("fullname"));
-                user.setPhone(rs.getString("phone"));
-                user.setAddress(rs.getString("address"));
-                user.setRole_id(rs.getInt("role_id"));
-                user.setAvatar_url(rs.getString("avatar_url"));
-                user.setToken_expiry(rs.getTimestamp("token_expiry"));
-                user.setReset_token(rs.getString("reset_token"));
                 return user;
             }
         } catch (SQLException e) {
@@ -136,7 +134,38 @@ public class UserDAO extends DBContext {
         return null;
     }
     
+    public Users findUserByResetToken(String token) {
+        String sql = "SELECT * FROM Users WHERE reset_token = ? AND is_deleted = 0";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Users user = new Users();
+                user.setUser_id(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setToken_expiry(rs.getTimestamp("token_expiry"));
+                user.setReset_token(rs.getString("reset_token"));
+                return user;
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return null;
+    }
     
+    public boolean saveResetToken(String email, String token, Timestamp expiryDate) {
+        String sql = "UPDATE Users SET reset_token = ?, token_expiry = ? WHERE email = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, token);
+            ps.setTimestamp(2, expiryDate);
+            ps.setString(3, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     
     
@@ -150,6 +179,20 @@ public class UserDAO extends DBContext {
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    
+    public boolean updatePasswordByEmail(String email, String newPassword) {
+        String hashedPassword = hashPassword(newPassword); 
+        String sql = "UPDATE Users SET password = ?, reset_token = NULL, token_expiry = NULL WHERE email = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, hashedPassword);
+            ps.setString(2, email);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
     
@@ -285,6 +328,7 @@ public class UserDAO extends DBContext {
         }
     }
     
+    
     public List<Roles> getAllRoles() {
         List<Roles> roleList = new ArrayList<>();
         String sql = "SELECT * FROM Roles";
@@ -321,5 +365,49 @@ public class UserDAO extends DBContext {
             e.printStackTrace();
         }
         return roleList;
+    }
+    
+    public Users findUserByGithubId(String githubId) {
+        String sql = "SELECT * FROM Users WHERE github_id = ? AND is_deleted = 0";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, githubId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Users user = new Users();
+                // (Tải đầy đủ thông tin user như trong hàm checkLogin)
+                user.setUser_id(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setFullname(rs.getString("fullname"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setAvatar_url(rs.getString("avatar_url"));
+                user.setGithubId(rs.getString("github_id"));
+                return user;
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return null;
+    }
+
+    // TẠO USER MỚI TỪ GITHUB
+    public boolean createGithubUser(Users user) {
+        String randomPassword = java.util.UUID.randomUUID().toString();
+        String hashedPassword = hashPassword(randomPassword); // Dùng hàm hash 
+
+        String sql = "INSERT INTO [Users] (email, password, fullname, phone, address, role_id, is_actived, is_deleted, github_id) VALUES (?, ?, ?, ?, ?, ?, 1, 0, ?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, user.getEmail());
+            ps.setString(2, hashedPassword);
+            ps.setString(3, user.getFullname());
+            ps.setString(4, "N/A"); // Phone
+            ps.setString(5, "N/A"); // Address
+            ps.setInt(6, 10); 
+            ps.setString(7, user.getGithubId());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

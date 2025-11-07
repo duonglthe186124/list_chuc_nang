@@ -15,12 +15,16 @@ import java.util.Set;
  * @author admin
  */
 @WebListener
-public class ContextListener {
+public class ContextListener implements ServletContextListener{
     public void contextInitialized(ServletContextEvent sce) {
         Set<Integer> activeUserSet = Collections.synchronizedSet(new HashSet<>());
         ServletContext context = sce.getServletContext();
         context.setAttribute("activeUserSet", activeUserSet);
+        System.out.println(">>> Active User Set has been initialized!");
     }
     public void contextDestroyed(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
+        context.removeAttribute("activeUserSet");
+        System.out.println(">>> ContextListener: Active User Set has been destroyed.");
     }
 }

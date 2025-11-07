@@ -73,20 +73,26 @@
                                     <div id="user-menu-dropdown"
                                          class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20">
                                         <a
-                                    href="${pageContext.request.contextPath}/PersonalProfile"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >Hồ sơ</a
-                                ><a
-                                    href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >Cài đặt</a
-                                >
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <a
-                                    href="${pageContext.request.contextPath}/loginStaff"
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                    >Đăng xuất</a
-                                >
+                                            href="${pageContext.request.contextPath}/PersonalProfile"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >Hồ sơ</a>
+                                            <c:if test="${sessionScope.account.role_id == 1}">
+                                                <a href="${pageContext.request.contextPath}/account-management"
+                                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                    Account Management
+                                                </a>
+                                            </c:if>
+                                        <a
+                                            href="#"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >Cài đặt</a
+                                        >
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <a
+                                            href="${pageContext.request.contextPath}/loginStaff"
+                                            class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >Đăng xuất</a
+                                        >
                                     </div>
                                 </div>
                             </c:otherwise>
@@ -208,5 +214,23 @@
                 </div>
             </div>
         </main>
+        <script>
+            window.onload = () => {
+                const userMenuButton = document.getElementById("user-menu-button");
+                const userMenuDropdown = document.getElementById("user-menu-dropdown");
+                if (userMenuButton) {
+                    userMenuButton.addEventListener("click", () => {
+                        userMenuDropdown.classList.toggle("hidden");
+                    });
+                    // Đóng menu khi click ra ngoài
+                    document.addEventListener("click", (event) => {
+                        const container = document.getElementById("user-menu-container");
+                        if (container && !container.contains(event.target)) {
+                            userMenuDropdown.classList.add("hidden");
+                        }
+                    });
+                }
+            };
+        </script>
     </body>
 </html>

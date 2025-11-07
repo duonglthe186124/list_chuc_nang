@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/nbproject/private/private.xml</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/reset_password.jsp</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_screen.jsp</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/model/Users.java</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/account_management.jsp</file>
+            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/util/EmailUtil.java</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/dal/UserDAO.java</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/util/DBContext.java</file>
             <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/js/password-strength.js</file>

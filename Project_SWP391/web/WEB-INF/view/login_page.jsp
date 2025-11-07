@@ -21,7 +21,6 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login_style.css"/>
         <style>
             /* Sử dụng font Inter làm mặc định */
             body {
@@ -156,60 +155,78 @@
         </header>
 
         <main class="pt-24 pb-16">
-            <div class="login-container">
-                <h2 class="text-5xl m-5">Sign in</h2>
+            <div class="max-w-lg mx-auto mt-10 p-10 bg-white rounded-lg shadow-xl">
+                
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Sign in</h2>
 
-                <form id="registerForm" action="loginStaff" method="post">
+                <form id="loginForm" action="${pageContext.request.contextPath}/loginStaff" method="post" class="space-y-6">
 
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
+                    <%-- Khu vực thông báo lỗi (nếu có) --%>
+                    <div class="min-h-[40px]">
+                        <c:if test="${not empty errorMessage}">
+                            <span class="block w-full p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300">
+                                ${errorMessage}
+                            </span>
+                        </c:if>
                     </div>
 
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                    <%-- Ô Email --%>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" name="email" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
-                    <div class="notification">
-                        <%
-                            String errorMessage = (String) request.getAttribute("errorMessage");
-                            if (errorMessage != null) {
-                        %>
-                        <span><%= errorMessage %></span>
-                        <%
-                            }
-                        %>
+                    <%-- Ô Password --%>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" name="password" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
-                    <div class="options-row">
-                        <div class="remember-me">
-                            <input type="checkbox" id="remember" name="remember">
-                            <label for="remember">Remember me</label>
+                    <%-- Hàng Remember me & Forgot password --%>
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                            <label for="remember" class="ml-2 text-gray-700">Remember me</label>
                         </div>
-                        <a href="${pageContext.request.contextPath}/forgot-password" class="forgot-password">Forgot password?</a>
+                        <a href="${pageContext.request.contextPath}/forgot-password" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</a>
                     </div>
 
-                    <p class="register-link">
-                        You don't have an account? <a href="${pageContext.request.contextPath}/RegisterStaff">Register</a>
+                    <%-- Link Đăng ký --%>
+                    <p class="text-center text-sm text-gray-600">
+                        You don't have an account? <a href="${pageContext.request.contextPath}/RegisterStaff" class="font-medium text-indigo-600 hover:text-indigo-500">Register</a>
                     </p>
 
-                    <button type="submit" class="signin-btn">Sign in</button>
+                    <%-- Nút Đăng nhập --%>
+                    <button type="submit" 
+                            class="w-full py-3 px-6 bg-black text-white font-bold text-lg rounded-full hover:bg-gray-800 transition duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
+                        Sign in
+                    </button>
                 </form>
 
-                <div class="separator">
-                    <span>OR</span>
+                <%-- Dấu gạch ngang "OR" --%>
+                <div class="flex items-center my-6">
+                    <hr class="flex-1 border-t border-gray-300">
+                    <span class="px-4 text-sm font-medium text-gray-500">OR</span>
+                    <hr class="flex-1 border-t border-gray-300">
                 </div>
 
-                <div class="social-login">
-                    <button type="button" class="social-btn google-btn">
-                        <img src="${pageContext.request.contextPath}/resources/img/google.webp" alt="Google Icon">
-                        Continue with Google
-                    </button>
-                    <button type="button" class="social-btn phone-btn">
-                        <img src="${pageContext.request.contextPath}/resources/img/phone.jpg" alt="Phone Icon">
-                        Continue with Phone number
-                    </button>
+                <%-- Đăng nhập mạng xã hội --%>
+                <div class="flex flex-col gap-4">
+                    <a href="${pageContext.request.contextPath}/login-google" 
+                       class="flex items-center justify-center gap-3 w-full py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-200">
+                        <img src="${pageContext.request.contextPath}/resources/img/google.webp" alt="Google Icon" class="w-5 h-5">
+                        <span class="font-medium text-gray-700">Continue with Google</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/login-github" 
+                       class="flex items-center justify-center gap-3 w-full py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-200">
+                        
+                        <img src="${pageContext.request.contextPath}/resources/img/github.png" 
+                             alt="GitHub Icon" class="w-11 h-7">
+                        
+                        <span class="font-medium text-gray-700">Continue with GitHub</span>
+                    </a>
                 </div>
             </div>
         </main>

@@ -7,9 +7,7 @@ package controller;
 import dal.UserDAO;
 import model.Users;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,8 +68,11 @@ public class LoginServlet extends HttpServlet {
         } else {
             HttpSession session = request.getSession();
             session.setAttribute("account", user); 
-            
-            response.sendRedirect(request.getContextPath() + "/PersonalProfile");    
+            Set<Integer> activeUserSet = (Set<Integer>) getServletContext().getAttribute("activeUserSet");
+            if (activeUserSet != null) {
+                activeUserSet.add(user.getUser_id());
+            }
+            response.sendRedirect(request.getContextPath() + "/home");    
         }
     }
 

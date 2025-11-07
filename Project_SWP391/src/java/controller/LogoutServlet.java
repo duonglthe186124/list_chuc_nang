@@ -49,6 +49,7 @@ public class LogoutServlet extends HttpServlet {
                 Set<Integer> activeUserSet = (Set<Integer>) getServletContext().getAttribute("activeUserSet");
                 if (activeUserSet != null) {
                     activeUserSet.remove(user.getUser_id());
+                    System.out.println(">>> User " + user.getUser_id() + " removed from Active Set.");
                 }
             }
             session.invalidate();

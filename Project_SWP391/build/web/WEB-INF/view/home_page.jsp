@@ -73,32 +73,60 @@
 
                     <!-- Menu Desktop -->
                     <nav class="hidden md:flex items-center space-x-6">
-                        <a
-                            href="#gioi-thieu"
-                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
-                            >Giới thiệu</a
-                        >
-                        <a
-                            href="${pageContext.request.contextPath}/products"
-                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
-                            >Sản phẩm</a
-                        >
-                        <a
-                            href="#tinh-nang"
-                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
-                            >Tính năng</a
-                        >
-                        <a
-                            href="#lien-he"
-                            class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
-                            >Liên hệ</a
-                        >
-                        <a
-                            href="${pageContext.request.contextPath}/loginStaff"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                            Đăng nhập
-                        </a>
+                        <c:choose>
+                            <%-- 1. NẾU CHƯA ĐĂNG NHẬP (session "account" bị rỗng) --%>
+                            <c:when test="${empty sessionScope.account}">
+                                <a href="#gioi-thieu" class="font-medium text-gray-600 hover:text-indigo-600">Giới thiệu</a>
+                                <a href="${pageContext.request.contextPath}/products" class="font-medium text-gray-600 hover:text-indigo-600">Sản phẩm</a>
+                                <a href="#tinh-nang" class="font-medium text-gray-600 hover:text-indigo-600">Tính năng</a>
+                                <a href="#lien-he" class="font-medium text-gray-600 hover:text-indigo-600">Liên hệ</a>
+                                <a href="${pageContext.request.contextPath}/loginStaff"
+                                   class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                                    Đăng nhập
+                                </a>
+                            </c:when>
+                            
+                            <%-- 2. NẾU ĐÃ ĐĂNG NHẬP --%>
+                            <c:otherwise>
+                                <a href="#gioi-thieu" class="font-medium text-gray-600 hover:text-indigo-600">Giới thiệu</a>
+                                <a href="${pageContext.request.contextPath}/products" class="font-medium text-gray-600 hover:text-indigo-600">Sản phẩm</a>
+                                <a href="#tinh-nang" class="font-medium text-gray-600 hover:text-indigo-600">Tính năng</a>
+                                <a href="#lien-he" class="font-medium text-gray-600 hover:text-indigo-600">Liên hệ</a>
+                                
+                                <div class="relative" id="user-menu-container">
+                                    <button id="user-menu-button"
+                                            class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
+                                        
+                                        <img class="h-8 w-8 rounded-full object-cover"
+                                             src="${pageContext.request.contextPath}/${not empty sessionScope.account.avatar_url ? sessionScope.account.avatar_url : 'resources/img/default-avatar.png'}"
+                                             alt="User Avatar" />
+                                        <span class="hidden md:inline text-sm font-medium text-gray-700">
+                                            ${sessionScope.account.fullname}
+                                        </span>
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                    
+                                    <div id="user-menu-dropdown"
+                                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20">
+                                        <a href="${pageContext.request.contextPath}/PersonalProfile"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hồ sơ</a>
+                                        
+                                        <c:if test="${sessionScope.account.role_id == 1}">
+                                            <a href="${pageContext.request.contextPath}/account-management"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Account Management
+                                            </a>
+                                        </c:if>
+                                        
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <a href="${pageContext.request.contextPath}/logout"
+                                           class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Đăng xuất</a>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
                     </nav>
 
                     <!-- Nút Menu Mobile -->
@@ -194,12 +222,14 @@
                             class="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal-on-scroll"
                             style="transition-delay: 400ms"
                             >
-                            <a
-                                href="${pageContext.request.contextPath}/loginStaff"
-                                class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-                                >
-                                Đăng nhập hệ thống
-                            </a>
+                            <c:if test="${empty sessionScope.account}">
+                                <a
+                                    href="${pageContext.request.contextPath}/loginStaff"
+                                    class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                    >
+                                    Đăng nhập hệ thống
+                                </a>
+                            </c:if>
                             <a
                                 href="#tinh-nang"
                                 class="rounded-md border border-indigo-400 bg-indigo-500/10 px-6 py-3 text-base font-medium text-indigo-300 shadow-sm hover:bg-indigo-500/20"
@@ -480,18 +510,21 @@
                             class="mt-10 flex flex-col sm:flex-row gap-4 justify-center reveal-on-scroll"
                             style="transition-delay: 300ms"
                             >
+                            <c:if test="${empty sessionScope.account}">
                             <a
                                 href="${pageContext.request.contextPath}/loginStaff"
                                 class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
                                 >
                                 Dùng thử miễn phí
                             </a>
+                            
                             <a
                                 href="mailto:support@wms.vn"
                                 class="rounded-md border border-indigo-400 bg-transparent px-6 py-3 text-base font-medium text-indigo-300 shadow-sm hover:bg-indigo-500/20"
                                 >
                                 Liên hệ tư vấn
                             </a>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -568,6 +601,20 @@
                 revealElements.forEach((el) => {
                     revealObserver.observe(el);
                 });
+                const userMenuButton = document.getElementById('user-menu-button');
+                const userDropdown = document.getElementById('user-menu-dropdown');
+
+                if (userMenuButton && userDropdown) {
+                    userMenuButton.addEventListener('click', function () {
+                        userDropdown.classList.toggle('hidden');
+                    });
+                    // Tự động đóng khi nhấn ra ngoài
+                    document.addEventListener('click', function (event) {
+                        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                            userDropdown.classList.add('hidden');
+                        }
+                    });
+                }
             });
         </script>
     </body>
