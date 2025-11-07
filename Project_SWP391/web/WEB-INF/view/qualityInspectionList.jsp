@@ -99,12 +99,14 @@
                                 <td>${qc.inspection_no}</td>
                                 <td>${qc.productName}</td>
                                 <td>${qc.imei}</td>
-                                <td>
+                                <td>${qc.result}</td>
+                                
+                                <!-- comment <td>
                                     <c:choose>
                                         <c:when test="${qc.result == 'Pass'}"><span class="result-pass">Đạt</span></c:when>
                                         <c:otherwise><span class="result-fail">Hỏng</span></c:otherwise>
                                     </c:choose>
-                                </td>
+                                </td>-->
                                 <td><fmt:formatDate value="${qc.inspected_date}" pattern="dd-MM-yyyy"/></td>
                                 <td>${qc.inspectorName}</td>
                                 <td>${qc.locationCode}</td>
