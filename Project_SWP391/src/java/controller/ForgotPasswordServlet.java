@@ -5,9 +5,13 @@
 
 package controller;
 
+import dal.UserDAO;
+import model.Users;
+import util.EmailUtil;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Random;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,22 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class ForgotPasswordServlet extends HttpServlet {
    
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private static final int EXPIRY_MINUTES = 2; //thời gian hết hạn là 2 PHÚT
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,14 +33,28 @@ public class ForgotPasswordServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String credential = request.getParameter("credential");
+        request.setCharacterEncoding("UTF-8");
+        String credential = request.getParameter("credential").trim();
+        UserDAO userDAO = new UserDAO();
+        
+        Users user = userDAO.findUserByEmailOrPhone(credential);
 
-        if (credential == null || credential.trim().isEmpty()) {
-            request.setAttribute("message", "Error: Please enter your email or phone number.");
-            request.getRequestDispatcher("/WEB-INF/view/forgot_password.jsp").forward(request, response);
-            return;
+        if (user != null) {
+            String resetCode = String.format("%06d", new Random().nextInt(999999));
+            // Đặt thời gian hết hạn là 2 PHÚT kể từ bây giờ
+            Timestamp expiryDate = new Timestamp(System.currentTimeMillis() + (EXPIRY_MINUTES * 60 * 1000)); 
+
+            userDAO.saveResetToken(user.getEmail(), resetCode, expiryDate);
+            EmailUtil.sendResetCode(user.getEmail(), resetCode);
+            
+            request.setAttribute("email", user.getEmail());
+            // Gửi mốc thời gian hết hạn (dưới dạng số) sang JSP để JavaScript bắt đầu đếm ngược
+            request.setAttribute("expiryTime", expiryDate.getTime());
+            
+            request.getRequestDispatcher("WEB-INF/view/reset_password.jsp").forward(request, response);
+        } else {
+            request.setAttribute("message", "Error: No account found with that email or phone number.");
+            request.getRequestDispatcher("WEB-INF/view/forgot_password.jsp").forward(request, response);
         }
-        request.setAttribute("email", credential); 
-        request.getRequestDispatcher("/WEB-INF/view/reset_password.jsp").forward(request, response);
     }
 }

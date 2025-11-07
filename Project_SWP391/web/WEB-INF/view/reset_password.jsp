@@ -39,22 +39,41 @@
                 transform: translateY(0);
             }
             .password-strength-indicator {
-                height: 5px; background-color: #eee; margin-top: 5px;
-                border-radius: 2.5px; overflow: hidden;
+                height: 5px;
+                background-color: #eee;
+                margin-top: 5px;
+                border-radius: 2.5px;
+                overflow: hidden;
             }
             .password-strength-indicator div {
-                height: 100%; width: 0%;
+                height: 100%;
+                width: 0%;
                 transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
             }
-            .strength-weak { background-color: #dc3545; }
-            .strength-medium { background-color: #ffc107; }
-            .strength-strong { background-color: #28a745; }
-            .strength-text {
-                font-size: 0.85em; margin-top: 5px; text-align: right; min-height: 1em;
+            .strength-weak {
+                background-color: #dc3545;
             }
-            .strength-text-weak { color: #dc3545; }
-            .strength-text-medium { color: #ffc107; }
-            .strength-text-strong { color: #28a745; }
+            .strength-medium {
+                background-color: #ffc107;
+            }
+            .strength-strong {
+                background-color: #28a745;
+            }
+            .strength-text {
+                font-size: 0.85em;
+                margin-top: 5px;
+                text-align: right;
+                min-height: 1em;
+            }
+            .strength-text-weak {
+                color: #dc3545;
+            }
+            .strength-text-medium {
+                color: #ffc107;
+            }
+            .strength-text-strong {
+                color: #28a745;
+            }
         </style>
     </head>
     <body class="bg-white text-gray-800">
@@ -171,55 +190,105 @@
             </div>
         </header>
         <main class="pt-24 pb-16">
-        <div class="max-w-md mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
-            <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Reset password</h2>
-            
-            <form action="${pageContext.request.contextPath}/reset-password" method="post" class="space-y-6">
-                <div class="min-h-[40px]">
-                    <% String error = (String) request.getAttribute("error");
-                       if (error != null) { %>
-                        <span class="block w-full p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300"></span>
-                    <% } %>
-                </div>
+            <div class="max-w-md mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">
+                    Reset password
+                </h2>
                 
-                <input type="hidden" name="email" value="${email}">
-
-                <div>
-                    <label for="reset_code" class="block text-sm font-medium text-gray-700">Reset code</label>
-                    <input type="text" id="reset_code" name="reset_code" 
-                               value="${param.reset_code != null ? param.reset_code : ''}" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                
-                <div>
-                    <label for="new_password" class="block text-sm font-medium text-gray-700">New password</label>
-                    <input type="password" name="new_password" id="new_password" 
-                        value="${param.new_password != null ? param.new_password : ''}" required
-                        class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <div class="password-strength-indicator"><div id="strength-bar"></div></div>
-                    <div id="strength-text" class="strength-text"></div>
-                </div>
-                
-                <div>
-                        <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
-                        <input type="password" name="confirm_password" id="confirm_password" 
-                               value="${param.confirm_password != null ? param.confirm_password : ''}" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <form id="reset-form" action="${pageContext.request.contextPath}/reset-password" method="post" class="space-y-6">
+                    
+                    <div class="min-h-[40px]">
+                        <c:if test="${not empty error}">
+                            <span class="block w-full p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300">
+                                ${error}
+                            </span>
+                        </c:if>
+                        <c:if test="${not empty successMessage}">
+                            <span class="block w-full p-3 text-sm rounded-lg text-green-700 bg-green-100 border border-green-300">
+                                ${successMessage}
+                            </span>
+                        </c:if>
                     </div>
-                
-                <div class="flex gap-4 pt-4">
-                    <a href="${pageContext.request.contextPath}/forgot-password" 
-                        class="flex-1 block py-3 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg text-center transition duration-200 hover:bg-gray-300">
-                        Cancel
-                    </a>
-                    <button type="submit" name="action" value="change"
-                        class="flex-1 py-3 px-4 bg-black text-white font-medium rounded-lg transition duration-200 hover:bg-gray-800">
-                        Change
-                    </button>
+                    
+                    <input type="hidden" name="email" value="${email}">
+
+                    <div>
+                        <label for="reset_code" class="block text-sm font-medium text-gray-700">Reset code (6 digits)</label>
+                        <input type="text" id="reset_code" name="reset_code" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm ...">
+                    </div>
+                    
+                    <div class="text-sm text-center">
+                        <span id="timer-text">Code expires in: <strong id="countdown" class="text-indigo-600">02:00</strong></span>
+                    </div>
+                    
+                    <div class="password-wrapper">
+                        <label for="new_password" class="block text-sm font-medium text-gray-700">New password</label>
+                        <input type="password" id="new_password" name="new_password" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 ...">
+                        <i class="fas fa-eye-slash toggle-password"></i>
+                        <div class="password-strength-indicator"><div id="strength-bar"></div></div>
+                        <div id="strength-text" class="strength-text"></div>
+                    </div>
+
+                    <div class="password-wrapper">
+                        <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                               class="mt-1 block w-full px-4 py-3 border border-gray-300 ...">
+                        <i class="fas fa-eye-slash toggle-password"></i>
+                    </div>
+                    
+                    <div class="flex gap-4 pt-4">
+                        <a href="${pageContext.request.contextPath}/forgot-password" class="flex-1 block py-3 px-4 bg-gray-200 ...">
+                           Cancel
+                        </a>
+                        <button type="submit" id="change-button" class="flex-1 py-3 px-4 bg-black text-white ...">
+                           Change
+                        </button>
+                    </div>
+                </form> 
+                           <div class="text-sm text-center mt-4">
+                    <form id="resend-form" action="${pageContext.request.contextPath}/resend-code" method="post" class="hidden">
+                        <input type="hidden" name="email" value="${email}">
+                        <button type="submit" class="font-medium text-indigo-600 hover:text-indigo-500">
+                            Resend code
+                        </button>
+                    </form>
                 </div>
-            </form>
-        </div>
+                
+            </div>
         </main>
         <script src="${pageContext.request.contextPath}/resources/js/password-strength.js"></script>
+        <script>
+            // Lấy mốc thời gian hết hạn (dưới dạng số) mà ForgotPasswordServlet đã gửi
+            const expiryTime = ${expiryTime}; 
+
+            const countdownElement = document.getElementById('countdown');
+            const timerTextElement = document.getElementById('timer-text');
+            const resendForm = document.getElementById('resend-form');
+            const changeButton = document.getElementById('change-button');
+
+            // Cập nhật bộ đếm ngược mỗi giây
+            const interval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = expiryTime - now;
+
+                // Tính toán phút và giây
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // Hiển thị kết quả
+                if (distance > 0) {
+                    countdownElement.innerHTML = (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+                } else {
+                    // Nếu hết giờ
+                    clearInterval(interval);
+                    timerTextElement.innerHTML = "Your code has expired.";
+                    resendForm.classList.remove('hidden'); // Hiện nút "Resend code"
+                    changeButton.disabled = true; // Vô hiệu hóa nút "Change"
+                    changeButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                }
+            }, 1000);
+        </script>
     </body>
 </html>

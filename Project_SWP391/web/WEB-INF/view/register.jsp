@@ -177,17 +177,6 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label for="role_id" class="block text-sm font-medium text-gray-700">Account Role</label>
-                        <select id="role_id" name="role_id" required
-                                class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                            <option value="" disabled selected>-- Select a role --</option>
-                            <c:forEach var="role" items="${rolesList}">
-                                <option value="${role.role_id}">${role.role_name}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="new_password" class="block text-sm font-medium text-gray-700">Password</label>

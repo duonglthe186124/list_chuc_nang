@@ -148,8 +148,14 @@
                                 <a
                                     href="${pageContext.request.contextPath}/PersonalProfile"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    >Hồ sơ</a
-                                ><a
+                                    >Hồ sơ</a>
+                                <c:if test="${sessionScope.account.role_id == 1}">
+                                    <a href="${pageContext.request.contextPath}/account-management"
+                                       class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Account Management
+                                    </a>
+                                </c:if>
+                                <a
                                     href="#"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     >Cài đặt</a

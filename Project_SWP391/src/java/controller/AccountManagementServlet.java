@@ -59,7 +59,10 @@ public class AccountManagementServlet extends HttpServlet {
         String action = request.getParameter("action");
         int userId = Integer.parseInt(request.getParameter("userId"));
         
-        if (admin.getUser_id() == userId) {
+        if (admin.getUser_id() == userId && action.equals("changeRole")) {
+             // Cho phép Admin tự đổi role của mình
+        }
+        else if (admin.getUser_id() == userId) {
             System.out.println("Admin cannot perform this action on themselves.");
             response.sendRedirect(request.getContextPath() + "/account-management");
             return;
@@ -69,6 +72,10 @@ public class AccountManagementServlet extends HttpServlet {
         
 
         switch (action) {
+            case "changeRole":
+                int roleId = Integer.parseInt(request.getParameter("roleId"));
+                userDAO.updateUserRole(userId, roleId);
+                break;
             case "disable":
                 userDAO.setUserActiveStatus(userId, false); 
                 break;

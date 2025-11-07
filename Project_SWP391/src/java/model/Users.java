@@ -12,6 +12,7 @@ public class Users {
     private String reset_token;
     private Timestamp token_expiry;
     private String roleName;
+    private String githubId;
     public Users() {
     }
 
@@ -139,6 +140,14 @@ public class Users {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public String getGithubId() {
+        return githubId;
+    }
+
+    public void setGithubId(String githubId) {
+        this.githubId = githubId;
     }
 
 }

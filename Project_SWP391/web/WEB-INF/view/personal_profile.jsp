@@ -100,17 +100,23 @@
                                         <a
                                         href="${pageContext.request.contextPath}/PersonalProfile"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        >Hồ sơ</a
-                                    ><a
-                                        href="#"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                        >Cài đặt</a
-                                    >
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <a
-                                        href="${pageContext.request.contextPath}/loginStaff"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                        >Đăng xuất</a>                                   
+                                        >Hồ sơ</a>
+                                        <c:if test="${sessionScope.account.role_id == 1}">
+                                            <a href="${pageContext.request.contextPath}/account-management"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Account Management
+                                            </a>
+                                        </c:if>
+                                        <a
+                                            href="#"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            >Cài đặt</a
+                                        >
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <a
+                                            href="${pageContext.request.contextPath}/loginStaff"
+                                            class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                            >Đăng xuất</a>                                   
                                     </div>
                                 </div>
                             </c:otherwise>
