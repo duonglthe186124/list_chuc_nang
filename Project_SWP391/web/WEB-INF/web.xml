@@ -149,6 +149,10 @@
         <servlet-class>controller.InboundDashboardServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <servlet-class>controller.ManageSupplierServlet</servlet-class>
+      </servlet>
+    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>controller.LogoutServlet</servlet-class>
     </servlet>
@@ -288,6 +292,10 @@
         <servlet-name>InboundDashboardServlet</servlet-name>
         <url-pattern>/inbound/dashboard</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers</url-pattern>
+      </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProductSearchUnit</servlet-name>
         <url-pattern>/product/viewUnit</url-pattern>
