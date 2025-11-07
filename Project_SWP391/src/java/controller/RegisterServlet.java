@@ -53,7 +53,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setPhone(phone);
         newUser.setPassword(password);
         newUser.setSec_address(null);
-        newUser.setRole_id(9);
+        newUser.setRole_id(2);
 
         // Add the user to the database
         boolean success = userDAO.addUser(newUser);
