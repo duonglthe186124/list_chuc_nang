@@ -128,6 +128,10 @@
         <servlet-name>InboundDashboardServlet</servlet-name>
         <servlet-class>controller.InboundDashboardServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <servlet-class>controller.ManageSupplierServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -247,6 +251,10 @@
     <servlet-mapping>
         <servlet-name>InboundDashboardServlet</servlet-name>
         <url-pattern>/inbound/dashboard</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
