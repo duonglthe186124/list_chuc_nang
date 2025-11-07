@@ -65,7 +65,7 @@ public class CreateShipController extends HttpServlet {
             }
 
             // 🚫 Nếu user không phải Manager (roleId != 2)
-            if (user.getRoleId() != 2) {
+            if (user.getRoleId() != 5) {
                 req.setAttribute("error", "🚫 User ID " + userId + " không có quyền thực hiện thao tác này!");
                 req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
                 return;
