@@ -1,53 +1,64 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
- */
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const editBtn = document.getElementById('edit-btn');
     const saveBtn = document.getElementById('save-btn');
     const profileForm = document.getElementById('profile-form');
-    // Lấy tất cả các ô input bên trong form, trừ các nút
-    const formInputs = profileForm.querySelectorAll('input:not([type="button"]):not([type="submit"])');
+    
+    // Chỉ lấy các input có thể chỉnh sửa (Email thường không được sửa)
+    const formInputs = profileForm.querySelectorAll('input[name="fullname"], input[name="phone"], input[name="address"]');
 
-    // Mặc định: ẩn nút Save
-    saveBtn.style.display = 'none';
+    if (saveBtn) {
+        saveBtn.style.display = 'none';
+    }
 
     // Xử lý sự kiện khi nhấn nút "Edit"
-    editBtn.addEventListener('click', function () {
-        // Kích hoạt tất cả các ô input
-        formInputs.forEach(input => {
-            input.disabled = false;
+    if(editBtn) {
+        editBtn.addEventListener('click', function () {
+            formInputs.forEach(input => {
+                input.disabled = false;
+                
+                // Thêm các lớp Tailwind để người dùng biết là có thể sửa
+                input.classList.add('bg-white', 'border-gray-300'); 
+                input.classList.remove('bg-transparent', 'border-transparent');
+            });
+
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+            
+            if (formInputs.length > 0) {
+                formInputs[0].focus();
+            }
         });
+    }
 
-        // Ẩn nút "Edit" và hiện nút "Save"
-        editBtn.style.display = 'none';
-        saveBtn.style.display = 'inline-block';
-        
-        // Tự động focus vào ô input đầu tiên
-        if (formInputs.length > 0) {
-            formInputs[0].focus();
-        }
-    });
-
-    // Xử lý sự kiện khi form được gửi đi (nhấn nút "Save")
-    profileForm.addEventListener('submit', function (event) {
-        event.preventDefault(); // Ngăn trang tải lại
-
-        // Trong một ứng dụng thực tế, đây là nơi bạn sẽ gửi dữ liệu lên server
-        // Ví dụ: using fetch() API
-        console.log('Form data would be sent to the server now.');
-
-        // Vô hiệu hóa lại tất cả các ô input
-        formInputs.forEach(input => {
-            input.disabled = true;
+    // Xử lý sự kiện khi nhấn nút "Save"
+    if(profileForm) {
+        profileForm.addEventListener('submit', function (event) {
+            // Chúng ta muốn form được gửi đi để ProfileServlet xử lý
+            console.log('Form is submitting to the server...');
         });
+    }
 
-        // Hiện nút "Edit" và ẩn nút "Save"
-        editBtn.style.display = 'inline-block';
-        saveBtn.style.display = 'none';
-        
-        alert('Profile saved successfully!'); // Thông báo giả
-    });
+    // --- Logic cho Avatar ---
+    const changeAvatarBtn = document.getElementById('change-avatar-btn');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+
+    if (changeAvatarBtn) {
+        changeAvatarBtn.addEventListener('click', function () {
+            avatarInput.click();
+        });
+    }
+
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    avatarPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 });

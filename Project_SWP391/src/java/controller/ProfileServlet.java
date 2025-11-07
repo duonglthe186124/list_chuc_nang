@@ -9,17 +9,25 @@ import dal.UserDAO;
 import model.Users;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.MultipartConfig;
+
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.io.PrintWriter;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.nio.file.Paths;
 
 /**
  *
  * @author admin
  */
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
+    maxFileSize = 1024 * 1024 * 10, // 10MB
+    maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 public class ProfileServlet extends HttpServlet {
    
     /** 
@@ -54,40 +62,40 @@ public class ProfileServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private static final String SAVE_DIR = "resources/uploads/avatars";
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+//        HttpSession session = request.getSession();
+//        Users currentUser = (Users) session.getAttribute("account");
+//
+//        if (currentUser == null) {
+//            System.out.println(">>> ProfileServlet: No user in session. Creating a mock user for testing.");
+//
+//            currentUser = new Users();
+//
+//            currentUser.setFullname("Test User Name");
+//            currentUser.setEmail("test.user@example.com");
+//            currentUser.setPhone("0987654321");
+//            currentUser.setAddress("123 Test Street, Hanoi");
+//        }
+//
+//        request.setAttribute("userProfile", currentUser);
+//        request.getRequestDispatcher("WEB-INF/view/personal_profile.jsp").forward(request, response);
 
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("account");
 
         if (currentUser == null) {
-            System.out.println(">>> ProfileServlet: No user in session. Creating a mock user for testing.");
-
-            currentUser = new Users();
-
-            currentUser.setFullname("Test User Name");
-            currentUser.setEmail("test.user@example.com");
-            currentUser.setPhone("0987654321");
-            currentUser.setAddress("123 Test Street, Hanoi");
+            response.sendRedirect(request.getContextPath() + "/loginStaff");
+            return;
         }
 
         request.setAttribute("userProfile", currentUser);
         request.getRequestDispatcher("WEB-INF/view/personal_profile.jsp").forward(request, response);
     }
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//    throws ServletException, IOException {
-//        HttpSession session = request.getSession();
-//        Users currentUser = (Users) session.getAttribute("account");
-//
-//        if (currentUser == null) {
-//            response.sendRedirect(request.getContextPath() + "/loginStaff");
-//            return;
-//        }
-//        request.setAttribute("userProfile", currentUser);
-//        request.getRequestDispatcher("WEB-INF/view/personal_profile.jsp").forward(request, response);
-//    }
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -100,7 +108,6 @@ public class ProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8"); 
-
         HttpSession session = request.getSession();
         Users currentUser = (Users) session.getAttribute("account");
 
@@ -109,21 +116,51 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
-        String fullname = request.getParameter("fullname");
-        String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
-        currentUser.setFullname(fullname);
-        currentUser.setPhone(phone);
-        currentUser.setAddress(address);
+        try {
+            // 1. Lấy file từ form
+            Part filePart = request.getPart("avatar_file");
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
-        UserDAO userDAO = new UserDAO();
-        boolean success = userDAO.updateUser(currentUser);
+            // 2. Kiểm tra xem người dùng CÓ upload file mới không
+            if (fileName != null && !fileName.isEmpty()) {
+                String appPath = request.getServletContext().getRealPath("");
+                String savePath = appPath + File.separator + SAVE_DIR;
+                
+                File fileSaveDir = new File(savePath);
+                if (!fileSaveDir.exists()) {
+                    fileSaveDir.mkdirs();
+                }
+                
+                String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+                String newFileName = "user_" + currentUser.getUser_id() + "_avatar" + fileExtension;
+                
+                filePart.write(savePath + File.separator + newFileName);
+                
+                // 3. Cập nhật đối tượng user VỚI URL ẢNH MỚI
+                currentUser.setAvatar_url(SAVE_DIR + "/" + newFileName);
+            }
+            // Nếu người dùng không upload file mới, chúng ta sẽ không làm gì cả
+            // và `currentUser.getAvatar_url()` sẽ giữ nguyên giá trị cũ của nó
 
-        if (success) {
-            session.setAttribute("account", currentUser);
-            request.setAttribute("successMessage", "Profile updated successfully!");
-        } else {
-            request.setAttribute("errorMessage", "Failed to update profile. Please try again.");
+            // 4. Cập nhật các thông tin khác
+            currentUser.setFullname(request.getParameter("fullname"));
+            currentUser.setPhone(request.getParameter("phone"));
+            currentUser.setAddress(request.getParameter("address"));
+
+            // 5. Gọi DAO để lưu tất cả thay đổi (bao gồm cả avatar_url MỚI hoặc CŨ)
+            UserDAO userDAO = new UserDAO();
+            boolean success = userDAO.updateUser(currentUser); 
+
+            if (success) {
+                session.setAttribute("account", currentUser); // Cập nhật lại session
+                request.setAttribute("successMessage", "Profile updated successfully!");
+            } else {
+                request.setAttribute("errorMessage", "Failed to update profile.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
         }
 
         request.setAttribute("userProfile", currentUser);

@@ -34,7 +34,7 @@ public class SearchProductDAO extends DBContext {
         ArrayList<ProductInfo> list = new ArrayList<>();
 
         String sql = "SELECT "
-                + "    p.product_id, "
+                + "   distinct p.product_id, "
                 + "    p.name, "
                 + "    p.sku_code, "
                 + "    b.brand_name, "

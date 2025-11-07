@@ -190,22 +190,39 @@
                 <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
                     <h3 style="margin: 0 0 10px 0;">🔄 Sort Orders</h3>
                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <a href="?page=1&sort=Lowest order price" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá thấp→cao</a>
-                        <a href="?page=1&sort=Highest order price" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá cao→thấp</a>
-                        <a href="?page=1&sort=Earliest orders" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn cũ→mới</a>
-                        <a href="?page=1&sort=Latest orders" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn mới→cũ</a>
-                        <a href="?page=1&sort=Lowest quantity" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL ít→nhiều</a>
-                        <a href="?page=1&sort=Highest quantity" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL nhiều→ít</a>
-                        <a href="?page=1&sort=PENDING" style="padding: 6px 12px; background: #fff3cd; color: #856404; text-decoration: none; border-radius: 5px; font-size: 13px;">⏳ PENDING đầu</a>
-                        <a href="?page=1&sort=CONFIRMED" style="padding: 6px 12px; background: #d1ecf1; color: #0c5460; text-decoration: none; border-radius: 5px; font-size: 13px;">✅ CONFIRMED đầu</a>
-                        <a href="?page=1&sort=SHIPPED" style="padding: 6px 12px; background: #d4edda; color: #155724; text-decoration: none; border-radius: 5px; font-size: 13px;">🚚 SHIPPED đầu</a>
-                        <a href="?page=1&sort=CANCELLED" style="padding: 6px 12px; background: #f8d7da; color: #721c24; text-decoration: none; border-radius: 5px; font-size: 13px;">❌ CANCELLED đầu</a>
+                        <a href="?page=1&sort=Lowest order price&userId=${param.userId}" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá thấp→cao</a>
+                        <a href="?page=1&sort=Highest order price&userId=${param.userId}" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá cao→thấp</a>
+                        <a href="?page=1&sort=Earliest orders&userId=${param.userId}" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn cũ→mới</a>
+                        <a href="?page=1&sort=Latest orders&userId=${param.userId}" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn mới→cũ</a>
+                        <a href="?page=1&sort=Lowest quantity&userId=${param.userId}" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL ít→nhiều</a>
+                        <a href="?page=1&sort=Highest quantity&userId=${param.userId}" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL nhiều→ít</a>
+                        <a href="?page=1&sort=PENDING&userId=${param.userId}" style="padding: 6px 12px; background: #fff3cd; color: #856404; text-decoration: none; border-radius: 5px; font-size: 13px;">⏳ PENDING đầu</a>
+                        <a href="?page=1&sort=CONFIRMED&userId=${param.userId}" style="padding: 6px 12px; background: #d1ecf1; color: #0c5460; text-decoration: none; border-radius: 5px; font-size: 13px;">✅ CONFIRMED đầu</a>
+                        <a href="?page=1&sort=SHIPPED&userId=${param.userId}" style="padding: 6px 12px; background: #d4edda; color: #155724; text-decoration: none; border-radius: 5px; font-size: 13px;">🚚 SHIPPED đầu</a>
+                        <a href="?page=1&sort=CANCELLED&userId=${param.userId}" style="padding: 6px 12px; background: #f8d7da; color: #721c24; text-decoration: none; border-radius: 5px; font-size: 13px;">❌ CANCELLED đầu</a>
                     </div>
                 </div>
 
                 <a href="${pageContext.request.contextPath}/products">
                     <button type="button">Back to Products</button>
                 </a>
+
+                <div style="margin: 15px 0;">
+                    <form action="${pageContext.request.contextPath}/order/list" method="get" style="display:inline-block;">
+                        <label for="userFilter"><strong>Filter by User:</strong></label>
+                        <select id="userFilter" name="userId" style="padding:6px; margin-left:10px; border-radius:4px;">
+                            <option value="">-- All Users --</option>
+                            <c:forEach var="u" items="${userList}">
+                                <option value="${u.userId}" ${param.userId == u.userId ? 'selected' : ''}>
+                                    ${u.fullname} (${u.rolename})
+                                </option>
+                            </c:forEach>
+                        </select>
+                        <button type="submit" style="margin-left:8px; padding:6px 12px; background:#007bff; color:white; border:none; border-radius:4px;">
+                            Go
+                        </button>
+                    </form>
+                </div>
 
                 <!-- Hiển thị thông báo thành công nếu có -->
                 <c:if test="${not empty successMessage}">
@@ -257,6 +274,7 @@
                                         <c:if test="${empty order.shipMentId || order.shipMentId == 0}">
                                             <form action="${pageContext.request.contextPath}/process/ship" method="post" style="display:inline;">
                                                 <input type="hidden" name="orderId" value="${order.orderNumber}">
+                                                <input type="hidden" name="userId" value="${selectedUserId}">
                                                 <button type="submit" class="btn-process">Process</button>
                                             </form>
                                         </c:if>
@@ -277,6 +295,7 @@
                                                 <th>Shipper Name</th>
                                                 <th>Shipper Email</th>
                                                 <th>Shipper Phone</th>
+                                                <th>Action</th>
                                             </tr>
                                             <tr>
                                                 <td>${order.shipMentId}</td>
@@ -287,6 +306,31 @@
                                                 <td>${order.shipperName}</td>
                                                 <td>${order.shipperEmail}</td>
                                                 <td>${order.shipperPhone}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${empty order.shipMentId or order.shipMentId == 0}">
+                                                            <span style="color:orange;">⏳ Waiting shipment</span>
+                                                        </c:when>
+
+                                                        <c:when test="${order.shipmentStatus != 'SHIPPED' and order.shipmentStatus != 'CANCELLED'}">
+                                                            <form action="${pageContext.request.contextPath}/ship/update" method="post" style="display:inline;">
+                                                                <input type="hidden" name="shipmentId" value="${order.shipMentId}">
+                                                                <input type="hidden" name="shipmentStatus" value="${order.shipmentStatus}">
+                                                                <input type="hidden" name="shipmentQty" value="${order.shippedQuantity}">
+                                                                <input type="hidden" name="shipmentNote" value="${order.shipmentNote}">
+                                                                <input type="hidden" name="userId" value="${selectedUserId}">
+                                                                <button type="submit" class="btn-update">⚙️ delivery process update</button>
+                                                            </form>
+                                                        </c:when>
+
+                                                        <c:otherwise>
+                                                            <span style="color:green;">✔️ End of delivery process</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+
+
+                                                </td>
+
                                             </tr>
                                         </table>
                                     </td>
@@ -318,7 +362,7 @@
                                 </c:if>
 
                                 <c:if test="${currentPage > 1}">
-                                    <a href="?page=${currentPage - 1}&sort=${currentSort}">Prev</a>
+                                    <a href="?page=${currentPage - 1}&sort=${currentSort}&userId=${param.userId}">Prev</a>
                                     &nbsp;
                                 </c:if>
 
@@ -328,23 +372,26 @@
                                             <b>[${i}]</b>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="?page=${i}&sort=${currentSort}">${i}</a>
+                                            <a href="?page=${i}&sort=${currentSort}&userId=${param.userId}">${i}</a>
                                         </c:otherwise>
                                     </c:choose>
                                     &nbsp;
                                 </c:forEach>
 
                                 <c:if test="${currentPage < totalPages}">
-                                    <a href="?page=${currentPage + 1}&sort=${currentSort}">Next</a>
+                                    <a href="?page=${currentPage + 1}&sort=${currentSort}&userId=${param.userId}">Next</a>
                                 </c:if>
                             </c:if>
                         </div>
+
 
                         <div style="margin-top:15px;">
                             <label for="goToPage">Go to page:</label>
                             <input type="number" id="goToPage" min="1" max="${totalPages}" value="${currentPage}" style="width:60px;">
                             <button type="button" onclick="jumpToPage()">Go</button>
                         </div>
+
+
 
                         <script>
                             function jumpToPage() {
@@ -361,8 +408,8 @@
                                     return;
                                 }
 
-                                // Điều hướng đến trang được nhập, giữ nguyên sort
-                                window.location.href = "?page=" + page + "&sort=${currentSort}";
+                                // Giữ nguyên sort và userId khi chuyển trang
+                                window.location.href = "?page=" + page + "&sort=${currentSort}&userId=${param.userId}";
                             }
                         </script>
                     </c:otherwise>

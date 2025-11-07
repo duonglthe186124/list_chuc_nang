@@ -94,7 +94,7 @@
                             >Liên hệ</a
                         >
                         <a
-                            href="/login"
+                            href="${pageContext.request.contextPath}/loginStaff"
                             class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                             Đăng nhập
@@ -145,7 +145,7 @@
                             >Liên hệ</a
                         >
                         <a
-                            href="/login"
+                            href="${pageContext.request.contextPath}/loginStaff"
                             class="mt-2 block w-full rounded-md bg-indigo-600 px-4 py-2 text-center text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                             >
                             Đăng nhập
@@ -195,7 +195,7 @@
                             style="transition-delay: 400ms"
                             >
                             <a
-                                href="/login"
+                                href="${pageContext.request.contextPath}/loginStaff"
                                 class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
                                 >
                                 Đăng nhập hệ thống
@@ -481,7 +481,7 @@
                             style="transition-delay: 300ms"
                             >
                             <a
-                                href="/login"
+                                href="${pageContext.request.contextPath}/loginStaff"
                                 class="rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900"
                                 >
                                 Dùng thử miễn phí

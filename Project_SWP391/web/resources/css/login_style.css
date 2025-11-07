@@ -7,7 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : admin
 */
 
-body {
+/*body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
     display: flex;
@@ -15,7 +15,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-}
+}*/
 
 .login-container {
     background-color: #ffffff;
@@ -23,13 +23,13 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     text-align: center;
+    margin: 40px auto;
 }
 
 h2 {
     margin-bottom: 30px;
-    font-size: 28px;
     color: #212529;
 }
 
