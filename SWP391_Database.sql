@@ -46,7 +46,8 @@ CREATE TABLE Users
 	sec_address NVARCHAR(255) NULL,
 	role_id INT NULL REFERENCES Roles(role_id),
 	is_actived BIT NOT NULL DEFAULT 0,
-	is_deleted BIT NOT NULL DEFAULT 0
+	is_deleted BIT NOT NULL DEFAULT 0,
+
 )
 
 CREATE TABLE Positions
@@ -366,7 +367,13 @@ CREATE TABLE PNK_Cache(
 
 USE SWP391_WarehouseManagements
 GO
-
+ALTER TABLE Users
+ADD avatar_url NVARCHAR(500) NULL;
+ALTER TABLE Users
+ADD reset_token NVARCHAR(255) NULL;
+ALTER TABLE Users
+ADD token_expiry DATETIME2(0) NULL;
+ALTER TABLE Users ADD github_id NVARCHAR(100) NULL;
 -- Insert data into Roles
 INSERT INTO Roles (role_name, description) VALUES
 ('Admin', 'System administrator with full access'),
@@ -403,7 +410,7 @@ INSERT INTO Feature_role (role_id, feature_id) VALUES
 
 -- Insert data into Users
 INSERT INTO Users (email, password, fullname, phone, address, sec_address, role_id, is_actived, is_deleted) VALUES
-('admin@warehouse.com', 'pass123', 'John Admin', '0123456789', '123 Main St', NULL, 1, 1, 0),
+('admin@warehouse.com', '9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c', 'John Admin', '0123456789', '123 Main St', NULL, 1, 1, 0),
 ('manager@warehouse.com', 'pass456', 'Jane Manager', '0987654321', '456 Oak Ave', '789 Pine Rd', 2, 1, 0),
 ('inventory@warehouse.com', 'pass789', 'Bob Inventory', '0234567890', '789 Elm St', NULL, 3, 1, 0),
 ('sales@warehouse.com', 'pass101', 'Alice Sales', '0345678901', '101 Birch Rd', NULL, 4, 1, 0),
