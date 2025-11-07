@@ -7,6 +7,7 @@ import util.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import model.Suppliers;
 
 /**
  *
@@ -32,5 +33,77 @@ public class SupplierDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public List<Suppliers> suppliers(String search_input, int offset, int page_size) {
+        List<Suppliers> list = new ArrayList();
+        List<Object> params = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM Suppliers WHERE 1 = 1 ");
+
+        if (search_input != null && !search_input.trim().isEmpty()) {
+            sql.append("AND supplier_name LIKE ? OR address LIKE ? OR phone LIKE ?");
+            params.add(search_input);
+            params.add(search_input);
+            params.add(search_input);
+        }
+
+        sql.append("ORDER BY supplier_id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add(offset);
+        params.add(page_size);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Suppliers line = new Suppliers(
+                            rs.getInt("supplier_id"),
+                            rs.getString("supplier_name"),
+                            null,
+                            rs.getString("address"),
+                            rs.getString("phone"),
+                            rs.getString("email"),
+                            null,
+                            null,
+                            null);
+                    list.add(line);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int total_lines(String search_input) {
+        int lines = 0;
+        List<Object> params = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(supplier_id) AS line FROM Suppliers WHERE 1 = 1 ");
+
+        if (search_input != null && !search_input.trim().isEmpty()) {
+            sql.append("AND supplier_name LIKE ? OR address LIKE ? OR phone LIKE ?");
+            params.add(search_input);
+            params.add(search_input);
+            params.add(search_input);
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    lines = rs.getInt("line");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lines;
     }
 }

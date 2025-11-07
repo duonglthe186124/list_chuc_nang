@@ -1,7 +1,10 @@
 package dal;
 
+import dto.Response_ShipmentDTO;
 import model.Shipments;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import model.Shipment_lines;
 import util.DBContext;
 
@@ -64,4 +67,11 @@ public class ShipmentDAO extends DBContext {
         return shipment_line;
     }
 
+    public List<Response_ShipmentDTO> list_shipment()
+    {
+        List<Response_ShipmentDTO> list = new ArrayList();
+        StringBuilder sql = new StringBuilder();
+        sql.append("");
+        return list;
+    }
 }

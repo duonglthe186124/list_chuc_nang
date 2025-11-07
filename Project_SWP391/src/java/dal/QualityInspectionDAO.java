@@ -70,15 +70,15 @@ public class QualityInspectionDAO extends DBContext {
     public List<InspectionViewDTO> getAllInspectionsForView() {
         List<InspectionViewDTO> list = new ArrayList<>();
         String query = "SELECT " +
-                       "    q.inspection_no, q.inspected_date, q.result, q.note, " +
-                       "    pu.imei, p.name as productName, u.full_name as inspectorName, wl.code as locationCode " +
+                       "    q.inspection_no, q.inspected_at, q.result, q.note, " +
+                       "    pu.imei, p.name as productName, u.fullname as inspectorName, wl.code as locationCode " +
                        "FROM " +
                        "    Quality_inspections q " +
-                       "JOIN Product_units pu ON q.unit_id = pu.product_unit_id " +
+                       "JOIN Product_units pu ON q.unit_id = pu.unit_id " +
                        "JOIN Products p ON pu.product_id = p.product_id " +
                        "JOIN Users u ON q.inspected_by = u.user_id " +
                        "LEFT JOIN Warehouse_locations wl ON q.location_id = wl.location_id " + // LEFT JOIN phòng khi location là null
-                       "ORDER BY q.inspected_date DESC";
+                       "ORDER BY q.inspected_at DESC";
         
         Connection conn = this.connection;
         PreparedStatement ps = null;
@@ -89,7 +89,7 @@ public class QualityInspectionDAO extends DBContext {
             while (rs.next()) {
                 InspectionViewDTO dto = new InspectionViewDTO();
                 dto.setInspection_no(rs.getString("inspection_no"));
-                dto.setInspected_date(rs.getDate("inspected_date"));
+                dto.setInspected_date(rs.getDate("inspected_at"));
                 dto.setResult(rs.getString("result"));
                 dto.setNote(rs.getString("note"));
                 dto.setImei(rs.getString("imei"));
