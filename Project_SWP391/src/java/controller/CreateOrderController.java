@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -25,81 +26,62 @@ public class CreateOrderController extends HttpServlet {
         String phone = req.getParameter("phone");
         String address = req.getParameter("address");
         int qty = Integer.parseInt(req.getParameter("qty"));
+        BigDecimal unitPrice = new BigDecimal(req.getParameter("unitPrice"));
+        BigDecimal totalAmount = new BigDecimal(req.getParameter("totalAmount"));
 
-        BigDecimal purchasePrice = new BigDecimal(req.getParameter("unitPrice"));
-        if (purchasePrice == null) {
-            req.setAttribute("errorMessage", "Purchase price is not available.");
-            req.setAttribute("id", productId);
-            req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
-            return;
-        }
+        String name = req.getParameter("name");
+        String code = req.getParameter("code");
+        int qtyRaw = Integer.parseInt(req.getParameter("qtyRaw"));
+        String imgUrl = req.getParameter("image");
 
         CheckFormDAO userCheckDAO = new CheckFormDAO();
-        ListProductDAO productDAO = new ListProductDAO(); // Sử dụng ListProductDAO
+        OrderDAO orderDAO = new OrderDAO();
+
         Integer userId = null;
         try {
             userId = userCheckDAO.getUserIdByDetails(fullname, email, phone, address);
             if (userId == null) {
-                req.setAttribute("errorMessage", "User not found or not activated. Please check your details.");
+                req.setAttribute("errorMessage", "User not found or not activated.");
                 req.setAttribute("id", productId);
-                req.setAttribute("fullname", fullname);
-                req.setAttribute("email", email);
-                req.setAttribute("phone", phone);
-                req.setAttribute("address", address);
-                req.setAttribute("qty", qty);
-                req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
-                return;
-            }
-        } catch (SQLException e) {
-            req.setAttribute("errorMessage", "Database error: " + e.getMessage());
-            req.setAttribute("id", productId);
-            req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
-            return;
-        }
+                req.setAttribute("name", name);
+                req.setAttribute("code", code);
+                req.setAttribute("qty", qtyRaw);
+                req.setAttribute("price", unitPrice);
+                req.setAttribute("image", imgUrl); 
 
-        OrderDAO orderDAO = new OrderDAO();
-        try {
-            int currentQty = productDAO.getQuantityById(productId);
-            if (currentQty < qty) {
-                req.setAttribute("errorMessage", "Insufficient quantity in stock.");
-                req.setAttribute("id", productId);
-                req.setAttribute("fullname", fullname);
-                req.setAttribute("email", email);
-                req.setAttribute("phone", phone);
-                req.setAttribute("address", address);
-                req.setAttribute("qty", qty);
                 req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
                 return;
             }
 
-            int orderId = orderDAO.createOrder(userId, productId, qty, purchasePrice);
-            if (orderId != -1) {
-                productDAO.updateQuantity(productId, currentQty - qty); // Cập nhật số lượng
-                resp.sendRedirect(req.getContextPath() + "/order/list?page=1&sort=Latest orders&success=true");
-            } else {
-                req.setAttribute("errorMessage", "Failed to create order.");
-                req.setAttribute("id", productId);
-                req.setAttribute("fullname", fullname);
-                req.setAttribute("email", email);
-                req.setAttribute("phone", phone);
-                req.setAttribute("address", address);
-                req.setAttribute("qty", qty);
-                req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
+            // 1. Insert vào Orders
+            int orderId = orderDAO.insertOrder(userId, totalAmount);
+            if (orderId == -1) {
+                throw new SQLException("Failed to create order.");
             }
+
+            // 2. Update TOP(qty) product_units status
+            int updatedRows = orderDAO.updateProductUnitsStatus(productId, unitPrice, qty);
+            if (updatedRows < qty) {
+                throw new SQLException("Not enough available product units.");
+            }
+
+            // 3. Lấy unit_id đã update
+            List<Integer> unitIds = orderDAO.getSoldUnitIds(productId, unitPrice, qty);
+
+            // 4. Insert vào order_details
+            orderDAO.insertOrderDetails(orderId, unitIds, qty, unitPrice, totalAmount);
+
+            resp.sendRedirect(req.getContextPath() + "/order/list");
+
         } catch (SQLException e) {
             req.setAttribute("errorMessage", e.getMessage());
             req.setAttribute("id", productId);
-            req.setAttribute("fullname", fullname);
-            req.setAttribute("email", email);
-            req.setAttribute("phone", phone);
-            req.setAttribute("address", address);
-            req.setAttribute("qty", qty);
+            req.setAttribute("name", name);
+            req.setAttribute("code", code);
+            req.setAttribute("qty", qtyRaw);
+            req.setAttribute("price", unitPrice);
+            req.setAttribute("image", imgUrl); 
             req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);
         }
-    }
-
-    @Override
-    public String getServletInfo() {
-        return "CreateOrderController handles order creation from create_order.jsp";
     }
 }

@@ -1,0 +1,180 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 10 thg 11, 2025, 20:59:48
+    Author     : hoang
+*/
+/* === RESET & FORCE SIDEBAR STYLE === */
+* { box-sizing: border-box; }
+
+.sidebar {
+    width: 280px !important;
+    max-width: 100% !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+    margin-right: 24px !important;
+}
+
+.sidebar-title {
+    margin: 0 0 20px 0 !important;
+    padding-bottom: 12px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: #111827 !important;
+}
+
+/* === FILTER GROUP - ĐỀU NHAU === */
+.filter-group {
+    margin-bottom: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+.filter-group label {
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    color: #374151 !important;
+    line-height: 1.4 !important;
+}
+
+.filter-group select {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    font-size: 0.9rem !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    background: white !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236b7280'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+.filter-group select:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* === NÚT FILTER === */
+.filter-actions {
+    display: flex !important;
+    gap: 10px !important;
+    margin-top: 20px !important;
+    padding-top: 16px !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+.filter-actions button {
+    flex: 1 !important;
+    padding: 11px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.filter-actions .btn-primary {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+.filter-actions .btn-primary:hover {
+    background: #2563eb !important;
+}
+
+.filter-actions .btn-secondary {
+    background: #6b7280 !important;
+    color: white !important;
+}
+
+.filter-actions .btn-secondary:hover {
+    background: #4b5563 !important;
+}
+
+/* === LAYOUT CHÍNH === */
+.layout {
+    display: flex !important;
+    gap: 24px !important;
+    padding: 20px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    flex-wrap: wrap !important;
+}
+
+.main {
+    flex: 1 !important;
+    min-width: 0 !important;
+    background: white !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+/* === TABLE & SEARCH === */
+.search-form {
+    display: flex !important;
+    gap: 10px !important;
+    margin: 16px 0 !important;
+}
+
+.search-form input {
+    flex: 1 !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+}
+
+.search-form button {
+    padding: 0 16px !important;
+    background: #3b82f6 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+}
+
+table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 16px !important;
+    font-size: 0.9rem !important;
+}
+
+th, td {
+    padding: 12px !important;
+    text-align: left !important;
+    border-bottom: 1px solid #e5e7eb !important;
+}
+
+th {
+    background: #f9fafb !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 992px) {
+    .layout {
+        flex-direction: column !important;
+    }
+    .sidebar {
+        width: 100% !important;
+        margin-right: 0 !important;
+        margin-bottom: 20px !important;
+    }
+}

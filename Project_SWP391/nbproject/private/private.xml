@@ -8,6 +8,52 @@
             <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/view_purchase_order.jsp</file>
             <file>file:/D:/Project/list_chuc_nang/Project_SWP391/src/java/controller/PurchaseOrderServlet.java</file>
             <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/shipments.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/SearchProductDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/products.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/ListProductDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/OrderDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/qualityInspectionList.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dto/OrderInfoDTO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/UpdateShipDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/OrderListDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/updateShip.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_shipment.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/ProductSearchUnit.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_search_filter.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/CreateOrderController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/PrepareShip.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/sidebar_filter.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/update_ship.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/product_screen.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/CreateShipController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_screen.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/UpdateShipController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/board.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/layout.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/OrderInfoDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/CreateShipmentServlet.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dto/ProductViewDTO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/orderListController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/order_list.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/productController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_purchase_order.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/web.xml</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/orderProduct.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/CheckFormDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/CompleteShipController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/util/DBContext.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/TestOrderController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/searchProductController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/create_order.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/ConfirmShipController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/WEB-INF/view/productViewDetail.jsp</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/ProductViewDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/StatusDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/ShipEmployeesDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/view_order_lists.css</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/CompleteShipDAO.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/controller/ProductViewController.java</file>
+            <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/order_list.css</file>
         </group>
     </open-files>
 </project-private>

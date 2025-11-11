@@ -263,9 +263,10 @@
                 </div>
             </div>
 
-            <c:set var="actionUrl" value="${pageContext.request.contextPath}/products/view?id=${product.productId}" />
+            <c:set var="actionUrl" value="${pageContext.request.contextPath}/product/viewUnit?id=${product.productId}&price=${product.purchasePrice}" />
             <c:if test="${not empty param.imei or not empty param.serial or not empty param.status}">
-                <c:set var="actionUrl" value="${pageContext.request.contextPath}/product/viewUnit?id=${product.productId}&imei=${param.imei}&serial=${param.serial}&status=${param.status}" />
+                <c:set var="actionUrl" 
+                       value="${pageContext.request.contextPath}/product/viewUnit?id=${product.productId}&price=${product.purchasePrice}&imei=${param.imei}&serial=${param.serial}&status=${param.status}" />
             </c:if>
             <c:if test="${totalPages > 1}">
                 <div class="pagination" style="margin-top: 30px; text-align: center;">
@@ -274,10 +275,21 @@
                     </c:if>
 
                     <c:forEach var="i" begin="1" end="${totalPages}">
-                        <a href="${actionUrl}&page=${i}" 
-                           class="page-link ${i == pageIndex ? 'active' : ''}">
-                            ${i}
-                        </a>
+                        <form action="${pageContext.request.contextPath}/product/viewUnit" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="${product.productId}" />
+                            <input type="hidden" name="price" value="${product.purchasePrice}" />
+                            <input type="hidden" name="page" value="${i}" />
+                            <c:if test="${not empty param.imei}">
+                                <input type="hidden" name="imei" value="${param.imei}" />
+                            </c:if>
+                            <c:if test="${not empty param.serial}">
+                                <input type="hidden" name="serial" value="${param.serial}" />
+                            </c:if>
+                            <c:if test="${not empty param.status}">
+                                <input type="hidden" name="status" value="${param.status}" />
+                            </c:if>
+                            <button type="submit" class="page-link ${i == pageIndex ? 'active' : ''}">${i}</button>
+                        </form>
                     </c:forEach>
 
                     <c:if test="${pageIndex < totalPages}">
@@ -299,8 +311,9 @@
 
             <div class="search-section">
                 <h3>Tìm kiếm đơn vị sản phẩm</h3>
-                <form method="get" action="${pageContext.request.contextPath}/product/viewUnit" class="search-form">
+                <form method="post" action="${pageContext.request.contextPath}/product/viewUnit" class="search-form">
                     <input type="hidden" name="id" value="${product.productId}"/>
+                    <input type="hidden" name="price" value="${product.purchasePrice}"/>
 
                     <div class="search-fields">
                         <div class="field">
@@ -329,13 +342,16 @@
 
                     <div class="search-buttons">
                         <button type="submit" class="btn-search">🔍 Tìm kiếm</button>
-                        <a href="${pageContext.request.contextPath}/product/viewUnit?id=${product.productId}" class="btn-reset">Làm mới</a>
                     </div>
                 </form>
             </div>
 
 
-
+            <form action="${pageContext.request.contextPath}/product/viewUnit" method="post" style="display:inline;">
+                <input type="hidden" name="id" value="${product.productId}">
+                <input type="hidden" name="price" value="${product.purchasePrice}">
+                <button type="submit" class="btn-reset">Làm mới</button>
+            </form>
             <a href="${pageContext.request.contextPath}/products" class="back-btn">⬅ Quay lại danh sách sản phẩm</a>
         </div>
 

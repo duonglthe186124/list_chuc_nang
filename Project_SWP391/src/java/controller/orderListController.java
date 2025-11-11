@@ -59,7 +59,7 @@ public class orderListController extends HttpServlet {
 
         // ===== 4️⃣ Lấy userId từ form hoặc giữ mặc định =====
         String userIdParam = req.getParameter("userId");
-        int userId = 4; // mặc định tạm thời (nếu chưa chọn gì)
+        int userId = 5; // mặc định tạm thời (nếu chưa chọn gì)
         if (userIdParam != null && !userIdParam.trim().isEmpty()) {
             try {
                 userId = Integer.parseInt(userIdParam);

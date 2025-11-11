@@ -19,38 +19,38 @@ public class OrderListDAO extends DBContext {
         ArrayList<OrderList> orders = new ArrayList<>();
         String sql = """
                      SELECT 
-                       o.order_id AS Order_Number,
-                       p.name AS Product_Name,
-                       od.qty AS Order_Quantity,            -- theo dòng order detail
-                       od.unit_price AS Product_Unit_Price,
-                       od.line_amount AS Order_Line_Amount,
-                       u1.fullname AS Customer_Fullname,
-                       u1.email AS Customer_Email,
-                       u1.phone AS Customer_Phone,
-                       u1.address AS Customer_Address,
-                       o.order_date AS Order_Date,
-                       o.status AS Order_Status,
-                       s.shipment_id AS Shipment_ID,
-                       s.shipment_no,
-                       s.requested_at AS Shipment_Date,
-                       s.status AS Shipment_Status,
-                       s.note AS Shipment_Note,
-                       sl.qty AS Shipped_Quantity,
-                       u2.fullname AS Shipper_Fullname,
-                       u2.email AS Shipper_Email,
-                       u2.phone AS Shipper_Phone
+                         distinct o.order_id AS Order_Number,
+                         p.name AS Product_Name,
+                         od.qty AS Order_Quantity,
+                         od.unit_price AS Product_Unit_Price,
+                         od.line_amount AS Order_Line_Amount,
+                         u1.fullname AS Customer_Fullname,
+                         u1.email AS Customer_Email,
+                         u1.phone AS Customer_Phone,
+                         u1.address AS Customer_Address,
+                         o.order_date AS Order_Date,
+                         o.status AS Order_Status,
+                         s.shipment_id AS Shipment_ID,
+                         s.shipment_no,
+                         s.requested_at AS Shipment_Date,
+                         s.status AS Shipment_Status,
+                         s.note AS Shipment_Note,
+                         sl.qty AS Shipped_Quantity,
+                         u2.fullname AS Shipper_Fullname,
+                         u2.email AS Shipper_Email,
+                         u2.phone AS Shipper_Phone
                      FROM Order_details od
                      JOIN Product_units pu ON od.unit_id = pu.unit_id
                      JOIN Products p ON pu.product_id = p.product_id
                      JOIN Orders o ON od.order_id = o.order_id
                      JOIN Users u1 ON o.user_id = u1.user_id
-                     
-                     LEFT JOIN Shipment_units su ON pu.unit_id = su.unit_id
-                     LEFT JOIN Shipment_lines sl ON su.line_id = sl.line_id
-                     LEFT JOIN Shipments s ON sl.shipment_id = s.shipment_id AND s.order_id = o.order_id
+                     LEFT JOIN Shipments s ON s.order_id = o.order_id
+                     LEFT JOIN Shipment_lines sl ON sl.shipment_id = s.shipment_id
+                     LEFT JOIN Shipment_units su ON su.line_id = sl.line_id AND su.unit_id = pu.unit_id
                      LEFT JOIN Employees e ON s.created_by = e.employee_id
                      LEFT JOIN Users u2 ON e.user_id = u2.user_id
-                     GROUP BY o.order_id, p.name, od.qty, od.line_amount, od.unit_price, u1.fullname, u1.email, u1.phone, u1.address, o.order_date, o.status, s.shipment_id, s.shipment_no, s.requested_at, s.status, s.note, sl.qty, u2.fullname, u2.email, u2.phone ORDER BY o.order_id, p.name;""";
+                     ORDER BY o.order_id, p.name;
+                     """;
         PreparedStatement stm = connection.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
         
@@ -75,38 +75,39 @@ public class OrderListDAO extends DBContext {
         ArrayList<OrderList> orders = new ArrayList<>();
         String sql = """
                      SELECT 
-                       o.order_id AS Order_Number,
-                       p.name AS Product_Name,
-                       od.qty AS Order_Quantity,            -- theo dòng order detail
-                       od.unit_price AS Product_Unit_Price,
-                       od.line_amount AS Order_Line_Amount,
-                       u1.fullname AS Customer_Fullname,
-                       u1.email AS Customer_Email,
-                       u1.phone AS Customer_Phone,
-                       u1.address AS Customer_Address,
-                       o.order_date AS Order_Date,
-                       o.status AS Order_Status,
-                       s.shipment_id AS Shipment_ID,
-                       s.shipment_no,
-                       s.requested_at AS Shipment_Date,
-                       s.status AS Shipment_Status,
-                       s.note AS Shipment_Note,
-                       sl.qty AS Shipped_Quantity,
-                       u2.fullname AS Shipper_Fullname,
-                       u2.email AS Shipper_Email,
-                       u2.phone AS Shipper_Phone
+                         distinct o.order_id AS Order_Number,
+                         p.name AS Product_Name,
+                         od.qty AS Order_Quantity,
+                         od.unit_price AS Product_Unit_Price,
+                         od.line_amount AS Order_Line_Amount,
+                         u1.fullname AS Customer_Fullname,
+                         u1.email AS Customer_Email,
+                         u1.phone AS Customer_Phone,
+                         u1.address AS Customer_Address,
+                         o.order_date AS Order_Date,
+                         o.status AS Order_Status,
+                         s.shipment_id AS Shipment_ID,
+                         s.shipment_no,
+                         s.requested_at AS Shipment_Date,
+                         s.status AS Shipment_Status,
+                         s.note AS Shipment_Note,
+                         sl.qty AS Shipped_Quantity,
+                         u2.fullname AS Shipper_Fullname,
+                         u2.email AS Shipper_Email,
+                         u2.phone AS Shipper_Phone
                      FROM Order_details od
                      JOIN Product_units pu ON od.unit_id = pu.unit_id
                      JOIN Products p ON pu.product_id = p.product_id
                      JOIN Orders o ON od.order_id = o.order_id
                      JOIN Users u1 ON o.user_id = u1.user_id
-                     LEFT JOIN Shipment_units su ON pu.unit_id = su.unit_id
-                     LEFT JOIN Shipment_lines sl ON su.line_id = sl.line_id
-                     LEFT JOIN Shipments s ON sl.shipment_id = s.shipment_id AND s.order_id = o.order_id
+                     LEFT JOIN Shipments s ON s.order_id = o.order_id
+                     LEFT JOIN Shipment_lines sl ON sl.shipment_id = s.shipment_id
+                     LEFT JOIN Shipment_units su ON su.line_id = sl.line_id AND su.unit_id = pu.unit_id
                      LEFT JOIN Employees e ON s.created_by = e.employee_id
                      LEFT JOIN Users u2 ON e.user_id = u2.user_id
                      WHERE u1.user_id = ?  or e.user_id = ?
-                     GROUP BY o.order_id, p.name, od.qty, od.line_amount, od.unit_price, u1.fullname, u1.email, u1.phone, u1.address, o.order_date, o.status, s.shipment_id, s.shipment_no, s.requested_at, s.status, s.note, sl.qty, u2.fullname, u2.email, u2.phone ORDER BY o.order_id, p.name;""";
+                     ORDER BY o.order_id, p.name;
+                    """;
         PreparedStatement stm = connection.prepareStatement(sql);
         stm.setInt(1, userId);
         stm.setInt(2, userId);

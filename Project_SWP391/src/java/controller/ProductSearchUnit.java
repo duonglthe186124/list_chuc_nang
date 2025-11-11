@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,9 +32,10 @@ public class ProductSearchUnit extends HttpServlet {
         String status = req.getParameter("status");
         String imei = req.getParameter("imei");
         String serial = req.getParameter("serial");
+        BigDecimal price = new BigDecimal(req.getParameter("price"));
 
         int pageIndex = 1;
-        int pageSize = 2;
+        int pageSize = 4;
 
         String pageParam = req.getParameter("page");
         if (pageParam != null && !pageParam.trim().isEmpty()) {
@@ -49,11 +51,11 @@ public class ProductSearchUnit extends HttpServlet {
             int productId = Integer.parseInt(productIdParam);
             ProductViewDAO dao = new ProductViewDAO();
 
-            ProductViewDTO product = dao.getProductCommonInfoById(productId);
+            ProductViewDTO product = dao.getProductCommonInfoById(productId, price);
 
-            // ✅ Phân trang
-            List<UnitViewDTO> units = dao.searchUnitsByFiltersPaged(productId, status, imei, serial, pageIndex, pageSize);
-            int totalUnits = dao.countUnitsByFilters(productId, status, imei, serial);
+            //Phân trang
+            List<UnitViewDTO> units = dao.searchUnitsByFiltersPaged(productId, price, status, imei, serial, pageIndex, pageSize);
+            int totalUnits = dao.countUnitsByFilters(productId, price, status, imei, serial);
             int totalPages = (int) Math.ceil((double) totalUnits / pageSize);
 
             List<StatusDTO> allStatuses = dao.getAllStatusesUnit();
@@ -73,9 +75,16 @@ public class ProductSearchUnit extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/view/productViewDetail.jsp").forward(req, resp);
 
         } catch (NumberFormatException e) {
-            resp.getWriter().println("❌ ID sản phẩm không hợp lệ!");
+            resp.getWriter().println("ID sản phẩm không hợp lệ!");
         } catch (SQLException e) {
             throw new ServletException("Lỗi khi lấy dữ liệu sản phẩm: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+         doGet(req, resp);
+    }
+    
+    
 }

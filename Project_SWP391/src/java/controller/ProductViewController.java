@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.List;
 import java.sql.*;
 
@@ -28,16 +29,17 @@ public class ProductViewController extends HttpServlet {
 
         try {
             int productId = Integer.parseInt(req.getParameter("id"));
+            BigDecimal unitPrice = new BigDecimal(req.getParameter("price"));
             int pageIndex = req.getParameter("page") != null ? Integer.parseInt(req.getParameter("page")) : 1;
-            int pageSize = 2;
+            int pageSize = 4;
 
             ProductViewDAO dao = new ProductViewDAO();
 
-            ProductViewDTO product = dao.getProductCommonInfoById(productId);
-            List<UnitViewDTO> units = dao.getUnitsByProductIdPaged(productId, pageIndex, pageSize);
+            ProductViewDTO product = dao.getProductCommonInfoById(productId, unitPrice);
+            List<UnitViewDTO> units = dao.getUnitsByProductIdPaged(productId, unitPrice, pageIndex, pageSize);
             List<StatusDTO> status = dao.getAllStatusesUnit();
 
-            int totalUnits = dao.countUnitsByProductId(productId);
+            int totalUnits = dao.countUnitsByProductId(productId, unitPrice);
             int totalPages = (int) Math.ceil((double) totalUnits / pageSize);
 
             req.setAttribute("product", product);
@@ -53,5 +55,12 @@ public class ProductViewController extends HttpServlet {
         }
 
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+    
+    
 
 }
