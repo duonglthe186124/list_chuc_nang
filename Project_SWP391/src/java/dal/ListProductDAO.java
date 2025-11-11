@@ -17,32 +17,41 @@ public class ListProductDAO extends DBContext {
         ArrayList<ProductInfo> list = new ArrayList<>();
 
         String sql = """
-                     SELECT 
-                            distinct p.product_id,
-                             p.[name],
-                             p.sku_code,
-                             b.brand_name,
-                             ps.cpu,
-                             ps.memory,
-                             ps.storage,
-                             ps.camera,
-                             pu.purchase_price,
-                             pim.image_url,
-                             ISNULL(available_qty.Quantity, 0) AS available_quantity
-                         FROM Products p
-                         JOIN Brands b ON p.brand_id = b.brand_id
-                         JOIN Product_specs ps ON p.spec_id = ps.spec_id
-                         JOIN Product_images pim ON p.product_id = pim.product_id
-                         JOIN Product_units pu ON p.product_id = pu.product_id
-                         LEFT JOIN (
-                             SELECT 
-                                 pu.product_id,
-                                 COUNT(*) AS Quantity
-                             FROM Product_units pu
-                             WHERE pu.status = 'AVAILABLE'
-                             GROUP BY pu.product_id
-                         ) available_qty ON p.product_id = available_qty.product_id
-                         ORDER BY p.[name]
+                     SELECT
+                         p.product_id,
+                         p.[name],
+                         p.sku_code,
+                         b.brand_name,
+                         ps.cpu,
+                         ps.memory,
+                         ps.storage,
+                         ps.camera,
+                         ISNULL(avail.available_quantity, 0) AS available_quantity,
+                         ISNULL(COALESCE(avail.purchase_price, all_prices.purchase_price), 0) AS purchase_price,
+                         pim.image_url
+                     FROM Products p
+                     JOIN Brands b ON p.brand_id = b.brand_id
+                     JOIN Product_specs ps ON p.spec_id = ps.spec_id
+                     LEFT JOIN Product_images pim ON p.product_id = pim.product_id
+                     LEFT JOIN (
+                         -- Lấy TẤT CẢ các mức giá từng có của product (kể cả đã hết)
+                         SELECT DISTINCT
+                             product_id,
+                             purchase_price
+                         FROM Product_units
+                     ) all_prices ON p.product_id = all_prices.product_id
+                     LEFT JOIN (
+                         -- Chỉ lấy số lượng AVAILABLE
+                         SELECT 
+                             product_id,
+                             purchase_price,
+                             COUNT(*) AS available_quantity
+                         FROM Product_units
+                         WHERE status = 'AVAILABLE'
+                         GROUP BY product_id, purchase_price
+                     ) avail ON all_prices.product_id = avail.product_id 
+                             AND all_prices.purchase_price = avail.purchase_price
+                     ORDER BY p.product_id
                      OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;""";
 
         PreparedStatement stm = connection.prepareStatement(sql);
@@ -70,7 +79,21 @@ public class ListProductDAO extends DBContext {
     }
 
     public int countProducts() throws SQLException {
-        String sql = "SELECT COUNT(*) AS total FROM Products";
+        String sql = """
+                     SELECT COUNT(*) AS total
+                     FROM (
+                         SELECT
+                             p.product_id,
+                             ISNULL(all_prices.purchase_price, 0) AS purchase_price
+                         FROM Products p
+                         LEFT JOIN (
+                             -- Lấy TẤT CẢ các mức giá từng có
+                             SELECT DISTINCT product_id, purchase_price
+                             FROM Product_units
+                         ) all_prices ON p.product_id = all_prices.product_id
+                         GROUP BY p.product_id, ISNULL(all_prices.purchase_price, 0)
+                     ) AS filtered_products
+                     """;
         PreparedStatement stm = connection.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
         if (rs.next()) {
@@ -79,57 +102,4 @@ public class ListProductDAO extends DBContext {
         return 0;
     }
 
-    // Thêm phương thức để lấy số lượng hiện tại
-    public int getQuantityById(int productId) throws SQLException {
-        String sql = """
-                     SELECT ISNULL((
-                         SELECT COUNT(*) 
-                         FROM Product_units pu 
-                         WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'
-                     ), 0) AS available_quantity""";
-        PreparedStatement stm = connection.prepareStatement(sql);
-        stm.setInt(1, productId);
-        ResultSet rs = stm.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("available_quantity");
-        }
-        return 0;
-    }
-
-    // Thêm phương thức để cập nhật số lượng
-    public void updateQuantity(int productId, int newQty) throws SQLException {
-        // Đếm số lượng hiện tại của các đơn vị AVAILABLE
-        int currentQty = getQuantityById(productId);
-        int unitsToUpdate = newQty; // Số đơn vị cần cập nhật trạng thái
-
-        if (unitsToUpdate < 0) {
-            throw new SQLException("Insufficient quantity in stock.");
-        }
-
-        // Bắt đầu giao dịch
-        connection.setAutoCommit(false);
-        try {
-            // Cập nhật trạng thái của các đơn vị từ AVAILABLE sang khác (ví dụ: SOLD) để giảm số lượng
-            String sql = """
-                         UPDATE TOP (?) pu
-                         SET pu.status = 'SOLD'
-                         FROM Product_units pu
-                         WHERE pu.product_id = ? AND pu.status = 'AVAILABLE'""";
-            PreparedStatement stm = connection.prepareStatement(sql);
-            stm.setInt(1, currentQty - unitsToUpdate); // Số đơn vị cần chuyển
-            stm.setInt(2, productId);
-            int rowsAffected = stm.executeUpdate();
-
-            if (rowsAffected != (currentQty - unitsToUpdate)) {
-                throw new SQLException("Failed to update quantity.");
-            }
-
-            connection.commit();
-        } catch (SQLException e) {
-            connection.rollback();
-            throw e;
-        } finally {
-            connection.setAutoCommit(true);
-        }
-    }
 }

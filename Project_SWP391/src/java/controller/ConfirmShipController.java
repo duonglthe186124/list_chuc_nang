@@ -42,6 +42,9 @@ public class ConfirmShipController extends HttpServlet {
             // === Lấy thêm thông tin phụ ===
             int productId = dao.getProductIdByShipmentId(shipmentId);
             int orderId = dao.getOrderIdByShipmentId(shipmentId);
+            String cusName = dao.getCustomerFullname(shipmentId);
+            String cusPhone = dao.getCustomerPhone(shipmentId);
+            String phoneName = dao.getPhoneName(productId);
             List<StatusDTO> listStatus = s.getAllShipmentStatuses();
 
             // === Kiểm tra lỗi đầu vào ===
@@ -55,6 +58,9 @@ public class ConfirmShipController extends HttpServlet {
                 req.setAttribute("productId", productId);
                 req.setAttribute("orderId", orderId);
                 req.setAttribute("listStatus", listStatus);
+                req.setAttribute("cusName", cusName);
+                req.setAttribute("cusPhone", cusPhone);
+                req.setAttribute("phone", phoneName);
 
                 // Quay lại form update
                 req.getRequestDispatcher("/WEB-INF/view/updateShip.jsp").forward(req, resp);
@@ -71,8 +77,7 @@ public class ConfirmShipController extends HttpServlet {
                 dao.restoreAvailableUnits(productId, shipmentQty);
             }
 
-          
-            resp.sendRedirect(req.getContextPath() + "/order/list"); 
+            resp.sendRedirect(req.getContextPath() + "/order/list");
 
         } catch (NumberFormatException e) {
             req.setAttribute("error", "⚠️ Lỗi định dạng dữ liệu: " + e.getMessage());

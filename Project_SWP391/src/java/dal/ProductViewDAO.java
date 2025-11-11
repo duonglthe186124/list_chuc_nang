@@ -7,6 +7,7 @@ package dal;
 import dto.ProductViewDTO;
 import dto.StatusDTO;
 import dto.UnitViewDTO;
+import java.math.BigDecimal;
 import util.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,30 +19,29 @@ import java.util.List;
  */
 public class ProductViewDAO extends DBContext {
 
-    public ProductViewDTO getProductCommonInfoById(int productId) throws SQLException {
+    public ProductViewDTO getProductCommonInfoById(int productId, BigDecimal price) throws SQLException {
         String sql = """
         SELECT TOP (1)
-            p.product_id, p.name, p.sku_code, b.brand_name,
-            ps.storage, ps.screen_type, ps.screen_size, ps.memory,
-            ps.cpu, ps.color, ps.camera, ps.battery_capacity,
-            [pi].image_url, pu.purchase_price
-        FROM Products p
-        LEFT JOIN Brands b ON p.brand_id = b.brand_id
-        LEFT JOIN Product_specs ps ON ps.spec_id = p.spec_id
-        LEFT JOIN Product_images [pi] ON [pi].product_id = p.product_id
-        LEFT JOIN Product_units pu ON pu.product_id = p.product_id
-        WHERE p.product_id = ?
+                    p.product_id, p.name, p.sku_code, b.brand_name,
+                    ps.storage, ps.screen_type, ps.screen_size, ps.memory,
+                    ps.cpu, ps.color, ps.camera, ps.battery_capacity,
+                    [pi].image_url, pu.purchase_price
+                FROM Products p
+                LEFT JOIN Brands b ON p.brand_id = b.brand_id
+                LEFT JOIN Product_specs ps ON ps.spec_id = p.spec_id
+                LEFT JOIN Product_images [pi] ON [pi].product_id = p.product_id
+                LEFT JOIN Product_units pu ON pu.product_id = p.product_id
+                WHERE p.product_id = ? AND pu.purchase_price = ?
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, productId);
-            System.out.println("🔍 Đang truy vấn product_id = " + productId);
+            ps.setBigDecimal(2, price);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    System.out.println("✅ Đã tìm thấy sản phẩm trong DB!");
-                    // (phần tạo DTO giữ nguyên)
 
+                    // (phần tạo DTO giữ nguyên)
                     ProductViewDTO product = new ProductViewDTO();
                     product.setProductId(rs.getInt("product_id"));
                     product.setName(rs.getString("name"));
@@ -60,29 +60,30 @@ public class ProductViewDAO extends DBContext {
 
                     return product;
                 } else {
-                    System.out.println("⚠️ Không tìm thấy sản phẩm nào có product_id = " + productId);
+                    System.out.println("Không tìm thấy sản phẩm nào có product_id = " + productId);
                 }
             }
         } catch (SQLException e) {
-            System.out.println("❌ Lỗi SQL: " + e.getMessage());
+            System.out.println("Lỗi SQL: " + e.getMessage());
             throw e;
         }
         return null;
     }
 
-    public List<UnitViewDTO> getUnitsByProductId(int productId) throws SQLException {
+    public List<UnitViewDTO> getUnitsByProductId(int productId, BigDecimal price) throws SQLException {
         List<UnitViewDTO> list = new ArrayList<>();
 
         String sql = """
             SELECT unit_id, imei, serial_number, 
-                   warranty_start, warranty_end, status
-            FROM Product_units
-            WHERE product_id = ?
-            ORDER BY unit_id
+                               warranty_start, warranty_end, status
+                        FROM Product_units
+                        WHERE product_id = ? AND purchase_price = ?
+                        ORDER BY unit_id
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, productId);
+            ps.setBigDecimal(2, price);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -192,49 +193,48 @@ public class ProductViewDAO extends DBContext {
 
         return list;
     }
-    
-    
-    public List<UnitViewDTO> getUnitsByProductIdPaged(int productId, int pageIndex, int pageSize) throws SQLException {
-    List<UnitViewDTO> list = new ArrayList<>();
-    String sql = """
+
+    public List<UnitViewDTO> getUnitsByProductIdPaged(int productId, BigDecimal price, int pageIndex, int pageSize) throws SQLException {
+        List<UnitViewDTO> list = new ArrayList<>();
+        String sql = """
         SELECT unit_id, imei, serial_number, warranty_start, warranty_end, status
         FROM Product_units
-        WHERE product_id = ?
+        WHERE product_id = ? AND purchase_price = ?
         ORDER BY unit_id
         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
     """;
 
-    try (PreparedStatement stm = connection.prepareStatement(sql)) {
-        stm.setInt(1, productId);
-        stm.setInt(2, (pageIndex - 1) * pageSize);
-        stm.setInt(3, pageSize);
-        try (ResultSet rs = stm.executeQuery()) {
-            while (rs.next()) {
-                UnitViewDTO u = new UnitViewDTO();
-                u.setUnitId(rs.getInt("unit_id"));
-                u.setImei(rs.getString("imei"));
-                u.setSerialNumber(rs.getString("serial_number"));
-                u.setWarrantyStart(rs.getTimestamp("warranty_start"));
-                u.setWarrantyEnd(rs.getTimestamp("warranty_end"));
-                u.setStatus(rs.getString("status"));
-                list.add(u);
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, productId);
+            stm.setBigDecimal(2, price);
+            stm.setInt(3, (pageIndex - 1) * pageSize);
+            stm.setInt(4, pageSize);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    UnitViewDTO u = new UnitViewDTO();
+                    u.setUnitId(rs.getInt("unit_id"));
+                    u.setImei(rs.getString("imei"));
+                    u.setSerialNumber(rs.getString("serial_number"));
+                    u.setWarrantyStart(rs.getTimestamp("warranty_start"));
+                    u.setWarrantyEnd(rs.getTimestamp("warranty_end"));
+                    u.setStatus(rs.getString("status"));
+                    list.add(u);
+                }
             }
         }
+        return list;
     }
-    return list;
-}
 
+    public List<UnitViewDTO> searchUnitsByFiltersPaged(
+            int productId, BigDecimal price, String status, String imei, String serial,
+            int pageIndex, int pageSize) throws SQLException {
 
-   public List<UnitViewDTO> searchUnitsByFiltersPaged(
-        int productId, String status, String imei, String serial,
-        int pageIndex, int pageSize) throws SQLException {
+        List<UnitViewDTO> list = new ArrayList<>();
 
-    List<UnitViewDTO> list = new ArrayList<>();
-
-    String sql = """
+        String sql = """
         SELECT unit_id, imei, serial_number, warranty_start, warranty_end, status
         FROM Product_units
-        WHERE product_id = ?
+        WHERE product_id = ? AND purchase_price = ?
           AND (? IS NULL OR status LIKE ? COLLATE SQL_Latin1_General_CP1_CI_AS)
           AND (? IS NULL OR imei COLLATE SQL_Latin1_General_CP1_CI_AS LIKE ?)
           AND (? IS NULL OR serial_number COLLATE SQL_Latin1_General_CP1_CI_AS LIKE ?)
@@ -242,108 +242,112 @@ public class ProductViewDAO extends DBContext {
         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
     """;
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, productId);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ps.setBigDecimal(2, price);
 
-        // status
-        if (status == null || status.trim().isEmpty()) {
-            ps.setNull(2, java.sql.Types.NVARCHAR);
-            ps.setNull(3, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(2, status);
-            ps.setString(3, status);
-        }
+            // status
+            if (status == null || status.trim().isEmpty()) {
+                ps.setNull(3, java.sql.Types.NVARCHAR);
+                ps.setNull(4, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(3, status);
+                ps.setString(4, status);
+            }
 
-        // imei
-        if (imei == null || imei.trim().isEmpty()) {
-            ps.setNull(4, java.sql.Types.NVARCHAR);
-            ps.setNull(5, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(4, imei);
-            ps.setString(5, "%" + imei + "%");
-        }
+            // imei
+            if (imei == null || imei.trim().isEmpty()) {
+                ps.setNull(5, java.sql.Types.NVARCHAR);
+                ps.setNull(6, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(5, imei);
+                ps.setString(6, "%" + imei + "%");
+            }
 
-        // serial
-        if (serial == null || serial.trim().isEmpty()) {
-            ps.setNull(6, java.sql.Types.NVARCHAR);
-            ps.setNull(7, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(6, serial);
-            ps.setString(7, "%" + serial + "%");
-        }
+            // serial
+            if (serial == null || serial.trim().isEmpty()) {
+                ps.setNull(7, java.sql.Types.NVARCHAR);
+                ps.setNull(8, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(7, serial);
+                ps.setString(8, "%" + serial + "%");
+            }
 
-        // Phân trang
-        ps.setInt(8, (pageIndex - 1) * pageSize); // OFFSET
-        ps.setInt(9, pageSize); // FETCH NEXT
+            // Phân trang
+            ps.setInt(9, (pageIndex - 1) * pageSize); // OFFSET
+            ps.setInt(10, pageSize); // FETCH NEXT
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                UnitViewDTO u = new UnitViewDTO();
-                u.setUnitId(rs.getInt("unit_id"));
-                u.setImei(rs.getString("imei"));
-                u.setSerialNumber(rs.getString("serial_number"));
-                u.setWarrantyStart(rs.getTimestamp("warranty_start"));
-                u.setWarrantyEnd(rs.getTimestamp("warranty_end"));
-                u.setStatus(rs.getString("status"));
-                list.add(u);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    UnitViewDTO u = new UnitViewDTO();
+                    u.setUnitId(rs.getInt("unit_id"));
+                    u.setImei(rs.getString("imei"));
+                    u.setSerialNumber(rs.getString("serial_number"));
+                    u.setWarrantyStart(rs.getTimestamp("warranty_start"));
+                    u.setWarrantyEnd(rs.getTimestamp("warranty_end"));
+                    u.setStatus(rs.getString("status"));
+                    list.add(u);
+                }
             }
         }
+
+        return list;
     }
 
-    return list;
-}
-
-    public int countUnitsByFilters(int productId, String status, String imei, String serial) throws SQLException {
-    String sql = """
+    public int countUnitsByFilters(int productId, BigDecimal price, String status, String imei, String serial) throws SQLException {
+        String sql = """
         SELECT COUNT(*)
         FROM Product_units
         WHERE product_id = ?
+          AND purchase_price = ?           
           AND (? IS NULL OR status LIKE ? COLLATE SQL_Latin1_General_CP1_CI_AS)
           AND (? IS NULL OR imei COLLATE SQL_Latin1_General_CP1_CI_AS LIKE ?)
           AND (? IS NULL OR serial_number COLLATE SQL_Latin1_General_CP1_CI_AS LIKE ?)
     """;
 
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, productId);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            ps.setBigDecimal(2, price);
 
-        if (status == null || status.trim().isEmpty()) {
-            ps.setNull(2, java.sql.Types.NVARCHAR);
-            ps.setNull(3, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(2, status);
-            ps.setString(3, status);
-        }
+            if (status == null || status.trim().isEmpty()) {
+                ps.setNull(3, java.sql.Types.NVARCHAR);
+                ps.setNull(4, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(3, status);
+                ps.setString(4, status);
+            }
 
-        if (imei == null || imei.trim().isEmpty()) {
-            ps.setNull(4, java.sql.Types.NVARCHAR);
-            ps.setNull(5, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(4, imei);
-            ps.setString(5, "%" + imei + "%");
-        }
+            if (imei == null || imei.trim().isEmpty()) {
+                ps.setNull(5, java.sql.Types.NVARCHAR);
+                ps.setNull(6, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(5, imei);
+                ps.setString(6, "%" + imei + "%");
+            }
 
-        if (serial == null || serial.trim().isEmpty()) {
-            ps.setNull(6, java.sql.Types.NVARCHAR);
-            ps.setNull(7, java.sql.Types.NVARCHAR);
-        } else {
-            ps.setString(6, serial);
-            ps.setString(7, "%" + serial + "%");
-        }
+            if (serial == null || serial.trim().isEmpty()) {
+                ps.setNull(7, java.sql.Types.NVARCHAR);
+                ps.setNull(8, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(7, serial);
+                ps.setString(8, "%" + serial + "%");
+            }
 
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         }
+
+        return 0;
     }
 
-    return 0;
-}
-
-    public int countUnitsByProductId(int productId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Product_units WHERE product_id = ?";
+    public int countUnitsByProductId(int productId, BigDecimal price) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Product_units WHERE product_id = ? AND purchase_price = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, productId);
+            stm.setBigDecimal(2, price);
             try (ResultSet rs = stm.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);

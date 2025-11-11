@@ -138,10 +138,72 @@ public class UpdateShipDAO extends DBContext {
         System.out.println("Đã khôi phục " + rows + " units của product_id=" + productId + " về AVAILABLE.");
     }
 }
+    
+    
+    public String getCustomerFullname(int shipmentId) {
+        String sql = """
+            SELECT u.fullname
+            FROM Shipments s
+            LEFT JOIN Orders o ON s.order_id = o.order_id
+            LEFT JOIN Users u ON o.user_id = u.user_id
+            WHERE s.shipment_id = ?
+            """;
 
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
+            ps.setInt(1, shipmentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("fullname");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy hoặc lỗi
+    }
     
     
+    public String getCustomerPhone(int shipmentId) {
+        String sql = """
+            SELECT u.phone
+            FROM Shipments s
+            LEFT JOIN Orders o ON s.order_id = o.order_id
+            LEFT JOIN Users u ON o.user_id = u.user_id
+            WHERE s.shipment_id = ?
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, shipmentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("phone");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy hoặc lỗi
+    }
     
-    
+     public String getPhoneName(int productId) {
+        String sql = """
+            select p.name from Products p 
+            where p.product_id = ?
+            """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Không tìm thấy hoặc lỗi
+    }
 }

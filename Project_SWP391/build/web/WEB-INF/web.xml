@@ -149,6 +149,10 @@
         <servlet-class>controller.InboundDashboardServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <servlet-class>controller.ManageSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>controller.LogoutServlet</servlet-class>
     </servlet>
@@ -163,6 +167,10 @@
     <servlet>
         <servlet-name>CallbackGithubServlet</servlet-name>
         <servlet-class>controller.CallbackGithubServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestOrderController</servlet-name>
+        <servlet-class>controller.TestOrderController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -297,6 +305,10 @@
         <url-pattern>/inbound/dashboard</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>ManageSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ProductSearchUnit</servlet-name>
         <url-pattern>/product/viewUnit</url-pattern>
     </servlet-mapping>
@@ -319,6 +331,10 @@
     <servlet-mapping>
         <servlet-name>CallbackGithubServlet</servlet-name>
         <url-pattern>/callback-github</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestOrderController</servlet-name>
+        <url-pattern>/order/test</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

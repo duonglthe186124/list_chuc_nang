@@ -1,0 +1,146 @@
+/* === BẢNG ĐẸP - HIỆN ĐẠI - CÓ NÉT KẺ - RESPONSIVE === */
+.table-container {
+    overflow-x: auto !important;
+    margin: 20px 0 !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    background: white !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+
+/* Thanh cuộn mượt */
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+.table-container table {
+    width: 100% !important;
+    min-width: 900px !important;
+    border-collapse: collapse !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+}
+
+/* === HEADER === */
+.table-container th {
+    background: #f8fafc !important;
+    color: #1e293b !important;
+    font-weight: 600 !important;
+    padding: 14px 12px !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    font-size: 0.8rem !important;
+    text-align: left !important;
+}
+
+/* Bỏ viền phải cột cuối */
+.table-container th:last-child {
+    border-right: none !important;
+}
+
+/* === DÒNG DỮ LIỆU === */
+.table-container td {
+    padding: 12px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    vertical-align: middle !important;
+}
+
+/* Bỏ viền phải cột cuối */
+.table-container td:last-child {
+    border-right: none !important;
+}
+
+/* Bỏ viền dưới dòng cuối */
+.table-container tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* === HOVER HIỆU ỨNG === */
+.table-container tr:hover {
+    background-color: #f1f5f9 !important;
+    transition: background 0.2s ease !important;
+}
+
+.table-container tr:hover td {
+    border-right-color: #cbd5e1 !important;
+    border-bottom-color: #cbd5e1 !important;
+}
+
+/* === CỘT NAME - XUỐNG DÒNG === */
+.table-container td:nth-child(1) {
+    max-width: 180px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    font-weight: 500 !important;
+    color: #1e293b !important;
+}
+
+/* === CỘT ẢNH === */
+.table-container td img {
+    width: 56px !important;
+    height: 56px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* === NÚT ACTIONS === */
+.table-container .action-btn {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    margin: 2px !important;
+    min-width: 60px !important;
+    display: inline-block !important;
+    text-align: center !important;
+}
+
+.table-container .action-btn:first-child {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+.table-container .action-btn:first-child:hover {
+    background: #2563eb !important;
+}
+
+.table-container .action-btn:last-child {
+    background: #10b981 !important;
+    color: white !important;
+}
+
+.table-container .action-btn:last-child:hover {
+    background: #059669 !important;
+}
+
+.table-container .action-btn:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+}
+
+/* === GIÁ TIỀN === */
+.table-container td:nth-child(9) {
+    font-weight: 600 !important;
+    color: #dc2626 !important;
+}
