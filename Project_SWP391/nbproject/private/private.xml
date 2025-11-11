@@ -3,37 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/nbproject/private/private.xml</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/reset_password.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/product_screen.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/model/Users.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/account_management.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/util/EmailUtil.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/dal/UserDAO.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/util/DBContext.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/js/password-strength.js</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/ForgotPasswordServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/js/profile_script.js</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/change_password.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/LoginServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/view_transaction.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/RegisterServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/login_page.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/ProfileServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/model/Roles.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/css/style.css</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/AccountManagementServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/util/ContextListener.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/register.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/personal_profile.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/js/validation_register.js</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/ResetPasswordServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/web.xml</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/LogoutServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/src/java/controller/ChangePasswordServlet.java</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/resources/css/login_style.css</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/forgot_password.jsp</file>
-            <file>file:/D:/lap_trinh_java/list_chuc_nang/Project_SWP391/web/WEB-INF/view/home_page.jsp</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/suppliers.jsp</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/src/java/dal/PurchaseOrderDAO.java</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/view_purchase_order.jsp</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/src/java/controller/PurchaseOrderServlet.java</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/shipments.jsp</file>
         </group>
     </open-files>
 </project-private>
