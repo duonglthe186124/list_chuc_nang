@@ -3,6 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/suppliers.jsp</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/src/java/dal/PurchaseOrderDAO.java</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/view_purchase_order.jsp</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/src/java/controller/PurchaseOrderServlet.java</file>
+            <file>file:/D:/Project/list_chuc_nang/Project_SWP391/web/WEB-INF/view/shipments.jsp</file>
             <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/SearchProductDAO.java</file>
             <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/web/resources/css/products.css</file>
             <file>file:/C:/SWP_5_main_n_update_2/list_chuc_nang/Project_SWP391/src/java/dal/ListProductDAO.java</file>
