@@ -85,7 +85,7 @@
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo -->
                     <a
-                        href="#"
+                        href="${pageContext.request.contextPath}/home"
                         class="flex items-center gap-2 text-2xl font-bold text-gray-900"
                         >
                         <!-- Icon SVG đơn giản -->
@@ -194,101 +194,249 @@
                 <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">
                     Reset password
                 </h2>
-                
+
                 <form id="reset-form" action="${pageContext.request.contextPath}/reset-password" method="post" class="space-y-6">
-                    
+
                     <div class="min-h-[40px]">
                         <c:if test="${not empty error}">
-                            <span class="block w-full p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300">
+                            <div class="p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300">
                                 ${error}
-                            </span>
-                        </c:if>
-                        <c:if test="${not empty successMessage}">
-                            <span class="block w-full p-3 text-sm rounded-lg text-green-700 bg-green-100 border border-green-300">
-                                ${successMessage}
-                            </span>
+                            </div>
                         </c:if>
                     </div>
-                    
-                    <input type="hidden" name="email" value="${email}">
 
-                    <div>
-                        <label for="reset_code" class="block text-sm font-medium text-gray-700">Reset code (6 digits)</label>
-                        <input type="text" id="reset_code" name="reset_code" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm ...">
-                    </div>
-                    
-                    <div class="text-sm text-center">
-                        <span id="timer-text">Code expires in: <strong id="countdown" class="text-indigo-600">02:00</strong></span>
-                    </div>
-                    
-                    <div class="password-wrapper">
-                        <label for="new_password" class="block text-sm font-medium text-gray-700">New password</label>
-                        <input type="password" id="new_password" name="new_password" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 ...">
-                        <i class="fas fa-eye-slash toggle-password"></i>
-                        <div class="password-strength-indicator"><div id="strength-bar"></div></div>
-                        <div id="strength-text" class="strength-text"></div>
-                    </div>
+                    <input type="hidden" name="email" id="email-hidden" value="${email}">
 
-                    <div class="password-wrapper">
-                        <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required
-                               class="mt-1 block w-full px-4 py-3 border border-gray-300 ...">
-                        <i class="fas fa-eye-slash toggle-password"></i>
-                    </div>
-                    
-                    <div class="flex gap-4 pt-4">
-                        <a href="${pageContext.request.contextPath}/forgot-password" class="flex-1 block py-3 px-4 bg-gray-200 ...">
-                           Cancel
+                    <input type="hidden" name="reset_code" id="reset-code-hidden">
+
+                    <div id="code-section" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Reset code (6 digits)</label>
+                            <div id="otp-container" class="flex justify-center gap-2 mt-2">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                                <input type="text" class="otp-input w-12 h-14 text-center text-2xl font-semibold border border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" maxlength="1">
+                            </div>
+                        </div>
+
+                        <div id="verify-error-message" class="p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300 hidden">
+                            </div>
+
+                        <div class="text-sm text-center">
+                            <span id="timer-text">Code expires in: <strong id="countdown" class="text-indigo-600">02:00</strong></span>
+                        </div>
+
+                        <button type="button" id="verify-code-btn" 
+                                class="w-full py-3 px-4 bg-indigo-600 text-white font-medium rounded-lg transition duration-200 hover:bg-indigo-700">
+                            Verify Code
+                        </button>
+
+                        <a href="${pageContext.request.contextPath}/forgot-password" class="w-full block py-3 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg text-center transition duration-200 hover:bg-gray-300">
+                            Cancel
                         </a>
-                        <button type="submit" id="change-button" class="flex-1 py-3 px-4 bg-black text-white ...">
-                           Change
+                    </div>
+
+                    <div id="password-section" class="hidden space-y-6 pt-4 border-t">
+
+                        <div class="text-center">
+                            <span class="font-medium text-green-600">Code verified successfully! Please set your new password.</span>
+                        </div>
+
+                        <div class="password-wrapper">
+                            <label for="new_password" class="block text-sm font-medium text-gray-700">New password</label>
+                            <input type="password" id="new_password" name="new_password" 
+                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <div class="password-strength-indicator"><div id="strength-bar"></div></div>
+                            <div id="strength-text" class="strength-text"></div>
+                        </div>
+
+                        <div class="password-wrapper">
+                            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" 
+                                   class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <button type="submit" id="change-button" class="w-full py-3 px-4 bg-black text-white font-medium rounded-lg shadow-sm transition duration-200 hover:bg-gray-800">
+                            Change
                         </button>
                     </div>
-                </form> 
-                           <div class="text-sm text-center mt-4">
-                    <form id="resend-form" action="${pageContext.request.contextPath}/resend-code" method="post" class="hidden">
-                        <input type="hidden" name="email" value="${email}">
-                        <button type="submit" class="font-medium text-indigo-600 hover:text-indigo-500">
-                            Resend code
-                        </button>
-                    </form>
-                </div>
-                
+                </form>
+                    <div class="text-sm text-center mt-4">
+                        <form id="resend-form" action="${pageContext.request.contextPath}/forgot-password" method="post" class="hidden">
+                            <input type="hidden" name="email" value="${email}">
+                            <button type="submit" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                Resend code
+                            </button>
+                        </form>
+                    </div>
             </div>
         </main>
         <script src="${pageContext.request.contextPath}/resources/js/password-strength.js"></script>
         <script>
-            // Lấy mốc thời gian hết hạn (dưới dạng số) mà ForgotPasswordServlet đã gửi
-            const expiryTime = ${expiryTime}; 
+            document.addEventListener('DOMContentLoaded', function () {
 
-            const countdownElement = document.getElementById('countdown');
-            const timerTextElement = document.getElementById('timer-text');
-            const resendForm = document.getElementById('resend-form');
-            const changeButton = document.getElementById('change-button');
+                // === PHẦN 1: ĐỊNH NGHĨA TẤT CẢ BIẾN ===
 
-            // Cập nhật bộ đếm ngược mỗi giây
-            const interval = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = expiryTime - now;
+                // (Biến cho 6 ô OTP)
+                const otpContainer = document.getElementById('otp-container');
+                const otpInputs = otpContainer ? otpContainer.querySelectorAll('.otp-input') : [];
+                const hiddenOtpInput = document.getElementById('reset-code-hidden');
 
-                // Tính toán phút và giây
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // (Biến cho đếm ngược)
+                const expiryTimeString = "${expiryTime}"; // Lấy an toàn dưới dạng chuỗi
+                const countdownElement = document.getElementById('countdown');
+                const timerTextElement = document.getElementById('timer-text');
+                const resendForm = document.getElementById('resend-form');
 
-                // Hiển thị kết quả
-                if (distance > 0) {
-                    countdownElement.innerHTML = (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
-                } else {
-                    // Nếu hết giờ
-                    clearInterval(interval);
-                    timerTextElement.innerHTML = "Your code has expired.";
-                    resendForm.classList.remove('hidden'); // Hiện nút "Resend code"
-                    changeButton.disabled = true; // Vô hiệu hóa nút "Change"
-                    changeButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                // (Biến cho Verify)
+                const verifyBtn = document.getElementById('verify-code-btn'); // ĐỊNH NGHĨA Ở ĐÂY
+                const verifyErrorDiv = document.getElementById('verify-error-message');
+                const codeSection = document.getElementById('code-section');
+                const hiddenEmail = document.getElementById('email-hidden');
+
+                // (Biến cho khối Mật khẩu)
+                const passwordSection = document.getElementById('password-section');
+                const newPasswordInput = document.getElementById('new_password');
+                const confirmPasswordInput = document.getElementById('confirm_password');
+                const changeButton = document.getElementById('change-button');
+
+                // === PHẦN 2: LOGIC 6 Ô OTP (Không đổi, chỉ đảm bảo an toàn) ===
+                if (otpContainer) {
+                    otpInputs.forEach((input, index) => {
+                        // 1. Tự động nhảy ô
+                        input.addEventListener('input', (e) => {
+                            input.value = input.value.replace(/[^0-9]/g, '');
+                            if (input.value.length === 1 && index < otpInputs.length - 1) {
+                                otpInputs[index + 1].focus();
+                            }
+                            updateHiddenInput();
+                        });
+
+                        // 2. Xử lý Backspace
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                                otpInputs[index - 1].focus();
+                            }
+                            setTimeout(updateHiddenInput, 0);
+                        });
+
+                        // 3. Xử lý Paste
+                        input.addEventListener('paste', (e) => {
+                            e.preventDefault();
+                            const pasteData = e.clipboardData.getData('text');
+                            const digits = pasteData.split('').filter(d => /^\d$/.test(d));
+                            digits.forEach((digit, i) => {
+                                if (index + i < otpInputs.length) { otpInputs[index + i].value = digit; }
+                            });
+                            const lastFilledIndex = Math.min(index + digits.length, otpInputs.length) - 1;
+                            if (lastFilledIndex < otpInputs.length - 1) {
+                                otpInputs[lastFilledIndex + 1].focus();
+                            } else {
+                                otpInputs[lastFilledIndex].focus();
+                            }
+                            updateHiddenInput();
+                        });
+                    });
+
+                    // Hàm gộp 6 ô
+                    function updateHiddenInput() {
+                        let otp = '';
+                        otpInputs.forEach(input => { otp += input.value; });
+                        hiddenOtpInput.value = otp;
+                    }
                 }
-            }, 1000);
+
+                // === PHẦN 3: LOGIC ĐẾM NGƯỢC (Đã sửa) ===
+                if (expiryTimeString && expiryTimeString !== "null" && expiryTimeString !== "") {
+                    const expiryTimeValue = parseInt(expiryTimeString); // SỬA: Chuyển chuỗi thành số
+
+                    const interval = setInterval(function() {
+                        const now = new Date().getTime();
+                        const distance = expiryTimeValue - now; // SỬA: Dùng biến số để tính
+
+                        if (distance > 0) {
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            countdownElement.innerHTML = (minutes < 10 ? '0' : '') + minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+                        } else {
+                            clearInterval(interval);
+                            timerTextElement.innerHTML = "Your code has expired.";
+                            resendForm.classList.remove('hidden');
+                            if (verifyBtn) { // Vô hiệu hóa nút Verify
+                                verifyBtn.disabled = true;
+                                verifyBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                            }
+                            if (changeButton) { // Vô hiệu hóa nút Change
+                                changeButton.disabled = true; 
+                                changeButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                            }
+                        }
+                    }, 1000);
+                } else {
+                    // Trường hợp không có thời gian (lỗi)
+                    timerTextElement.innerHTML = "Error: Expiry time not set.";
+                    if (verifyBtn) {
+                        verifyBtn.disabled = true;
+                        verifyBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    }
+                    if (changeButton) {
+                        changeButton.disabled = true;
+                        changeButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                    }
+                }
+
+                // === PHẦN 4: LOGIC VERIFY CODE (Đã sửa) ===
+                if (verifyBtn) {
+                    verifyBtn.addEventListener('click', async function() {
+                        const code = hiddenOtpInput.value;
+                        const email = hiddenEmail.value;
+
+                        if (code.length !== 6) {
+                            verifyErrorDiv.textContent = 'Please enter all 6 digits.';
+                            verifyErrorDiv.classList.remove('hidden');
+                            return;
+                        }
+
+                        verifyBtn.textContent = 'Verifying...';
+                        verifyBtn.disabled = true;
+
+                        try {
+                            const response = await fetch('${pageContext.request.contextPath}/verifyCode', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: 'email=' + encodeURIComponent(email) + '&reset_code=' + encodeURIComponent(code)
+                            });
+                            const data = await response.json();
+
+                            if (data.valid) {
+                                codeSection.classList.add('hidden');
+                                passwordSection.classList.remove('hidden');
+                                newPasswordInput.required = true;
+                                confirmPasswordInput.required = true;
+                            } else {
+                                verifyErrorDiv.textContent = data.message;
+                                verifyErrorDiv.classList.remove('hidden');
+                                verifyBtn.textContent = 'Verify Code';
+                                verifyBtn.disabled = false;
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            verifyErrorDiv.textContent = 'An error occurred. Please try again.';
+                            verifyErrorDiv.classList.remove('hidden');
+                            verifyBtn.textContent = 'Verify Code';
+                            verifyBtn.disabled = false;
+                        }
+                    });
+                }
+
+                // Vô hiệu hóa 'required' của 2 ô password ban đầu
+                newPasswordInput.required = false;
+                confirmPasswordInput.required = false;
+
+            }); // <-- Dấu đóng của DOMContentLoaded (quan trọng!)
         </script>
     </body>
 </html>

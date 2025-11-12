@@ -1,4 +1,4 @@
-package controller;
+package controller.receipt_good;
 
 import dto.Response_OrderInfoDTO;
 import dto.Response_OrderListDTO;

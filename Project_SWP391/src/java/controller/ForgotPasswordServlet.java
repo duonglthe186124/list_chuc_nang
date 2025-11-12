@@ -6,7 +6,6 @@
 package controller;
 
 import dal.UserDAO;
-import model.Users;
 import util.EmailUtil;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -34,26 +33,39 @@ public class ForgotPasswordServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String credential = request.getParameter("credential").trim();
+        String email = request.getParameter("email");
+
+        // 2. Kiểm tra (phòng trường hợp form bị gửi mà không có email)
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("message", "Error: Email was missing. Please try again.");
+            request.getRequestDispatcher("WEB-INF/view/forgot_password.jsp").forward(request, response);
+            return;
+        }
+
+        email = email.trim();
         UserDAO userDAO = new UserDAO();
         
-        Users user = userDAO.findUserByEmailOrPhone(credential);
+        // 3. Tạo mã reset và thời gian hết hạn
+        String resetCode = String.format("%06d", new Random().nextInt(999999));
+        Timestamp expiryDate = new Timestamp(System.currentTimeMillis() + (EXPIRY_MINUTES * 60 * 1000)); 
 
-        if (user != null) {
-            String resetCode = String.format("%06d", new Random().nextInt(999999));
-            // Đặt thời gian hết hạn là 2 PHÚT kể từ bây giờ
-            Timestamp expiryDate = new Timestamp(System.currentTimeMillis() + (EXPIRY_MINUTES * 60 * 1000)); 
+        // 4. Lưu mã vào database
+        boolean tokenSaved = userDAO.saveResetToken(email, resetCode, expiryDate);
 
-            userDAO.saveResetToken(user.getEmail(), resetCode, expiryDate);
-            EmailUtil.sendResetCode(user.getEmail(), resetCode);
+        if (tokenSaved) {
+            // 5. Gửi email
+            EmailUtil.sendResetCode(email, resetCode);
             
-            request.setAttribute("email", user.getEmail());
-            // Gửi mốc thời gian hết hạn (dưới dạng số) sang JSP để JavaScript bắt đầu đếm ngược
-            request.setAttribute("expiryTime", expiryDate.getTime());
+            // 6. Chuyển tiếp đến trang nhập mã (reset_password.jsp)
+            //    GỬI KÈM 'email' và 'expiryTime'
+            request.setAttribute("email", email);
+            request.setAttribute("expiryTime", expiryDate.getTime()); // Gửi mốc thời gian (số)
             
             request.getRequestDispatcher("WEB-INF/view/reset_password.jsp").forward(request, response);
+            
         } else {
-            request.setAttribute("message", "Error: No account found with that email or phone number.");
+            // Lỗi này xảy ra nếu saveResetToken thất bại (vd: email không tìm thấy)
+            request.setAttribute("message", "Error: Could not save reset token for that account.");
             request.getRequestDispatcher("WEB-INF/view/forgot_password.jsp").forward(request, response);
         }
     }

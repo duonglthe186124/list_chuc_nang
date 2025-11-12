@@ -49,7 +49,7 @@
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo -->
                     <a
-                        href="#"
+                        href="${pageContext.request.contextPath}/home"
                         class="flex items-center gap-2 text-2xl font-bold text-gray-900"
                         >
                         <!-- Icon SVG đơn giản -->
@@ -157,36 +157,125 @@
         <div class="max-w-md mx-auto mt-10 p-8 bg-white shadow-lg rounded-lg">
             <h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Recover my account</h2>
             
-            <form action="${pageContext.request.contextPath}/forgot-password" method="post">
+            <form id="reset-form" action="${pageContext.request.contextPath}/forgot-password" method="POST" class="space-y-4">
                 
-                <div class="mb-6 min-h-[40px]"> 
-                    <% String message = (String) request.getAttribute("message");
-                       if (message != null) { %>
-                        <span class="block w-full p-3 text-sm rounded-lg <%= message.startsWith("Error") ? "text-red-700 bg-red-100 border border-red-300" : "text-green-700 bg-green-100 border border-green-300" %>">
-                            <%= message %>
-                        </span>
-                    <% } %>
+                <div>
+                    <input type="email" id="email-input" name="email" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                           placeholder="Enter your email" required>
                 </div>
 
-                <div class="mb-8">
-                    <input type="text" name="credential" placeholder="Email or Phone number" 
-                           value="${param.credential != null ? param.credential : ''}" 
-                           required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div id="error-message" class="p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300 hidden">
+                    </div>
+                
+                <c:if test="${not empty message}">
+                    <div class="p-3 text-sm rounded-lg text-red-700 bg-red-100 border border-red-300">
+                        ${message}
+                    </div>
+                </c:if>
+
+                <div id="account-info" class="p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
+                    <p class="text-sm font-medium text-gray-700">Account found:</p>
+                    <p class="text-lg font-bold text-gray-900" id="account-fullname"></p>
+                    <p class="text-sm text-gray-600" id="account-role"></p>
+                    <p class="mt-2 text-sm text-gray-600">Is this you?</p>
                 </div>
 
-                <div class="flex gap-4" >
+                <div class="flex gap-4">
                     <a href="${pageContext.request.contextPath}/loginStaff" 
-                           class="flex-1 block py-3 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg text-center transition duration-200 hover:bg-gray-300">
-                           Cancel
-                        </a>
-                    <button type="submit" 
-                                class="flex-1 py-3 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg transition duration-200 hover:bg-gray-300">
-                           Send reset password code
-                        </button>
+                       class="flex-1 text-center py-3 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg transition duration-200 hover:bg-gray-300">
+                        Cancel
+                    </a>
+
+                    <button type="button" id="find-account-btn" 
+                            class="flex-1 py-3 px-4 bg-indigo-600 text-white font-medium rounded-lg transition duration-200 hover:bg-indigo-700">
+                        Find my account
+                    </button>
+
+                    <button type="submit" id="send-reset-btn" 
+                            class="flex-1 py-3 px-4 bg-indigo-600 text-white font-medium rounded-lg transition duration-200 hover:bg-indigo-700 hidden">
+                        Send reset code
+                    </button>
                 </div>
+
             </form>
         </div>
         </main>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                // Lấy các phần tử (element)
+                const findAccountBtn = document.getElementById('find-account-btn');
+                const sendResetBtn = document.getElementById('send-reset-btn');
+                const emailInput = document.getElementById('email-input');
+
+                const accountInfoDiv = document.getElementById('account-info');
+                const accountFullname = document.getElementById('account-fullname');
+                const accountRole = document.getElementById('account-role');
+
+                const errorDiv = document.getElementById('error-message');
+
+                // 1. Khi người dùng nhấn nút "Find my account"
+                findAccountBtn.addEventListener('click', async function () {
+                    const email = emailInput.value;
+                    if (!email) {
+                        errorDiv.textContent = 'Please enter an email address.';
+                        errorDiv.classList.remove('hidden');
+                        return;
+                    }
+
+                    findAccountBtn.textContent = 'Finding...';
+                    findAccountBtn.disabled = true;
+
+                    try {
+                        // 2. GỌI SERVLET MỚI (/findAccount)
+                        const response = await fetch('${pageContext.request.contextPath}/findAccount', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: 'email=' + encodeURIComponent(email)
+                        });
+
+                        const data = await response.json(); // Đợi và đọc JSON
+
+                        // 3. XỬ LÝ KẾT QUẢ JSON
+                        if (data.found) {
+                            // TÌM THẤY
+                            accountFullname.textContent = data.fullname;
+                            accountRole.textContent = '(' + data.roleName + ')';
+
+                            accountInfoDiv.classList.remove('hidden'); // Hiện div thông tin
+                            sendResetBtn.classList.remove('hidden');   // Hiện nút "Send reset code"
+
+                            errorDiv.classList.add('hidden');          // Ẩn lỗi
+                            findAccountBtn.classList.add('hidden');    // Ẩn nút "Find"
+                        } else {
+                            // KHÔNG TÌM THẤY
+                            errorDiv.textContent = 'No account found with that email address.';
+                            errorDiv.classList.remove('hidden');       // Hiện lỗi
+                            accountInfoDiv.classList.add('hidden');    
+                            sendResetBtn.classList.add('hidden');      
+                        }
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        errorDiv.textContent = 'An error occurred. Please try again.';
+                        errorDiv.classList.remove('hidden');
+                    } finally {
+                        findAccountBtn.textContent = 'Find my account';
+                        findAccountBtn.disabled = false;
+                    }
+                });
+
+                // 4. Khi người dùng sửa lại email, reset lại form
+                emailInput.addEventListener('input', function() {
+                    accountInfoDiv.classList.add('hidden');
+                    sendResetBtn.classList.add('hidden');
+                    findAccountBtn.classList.remove('hidden');
+                    errorDiv.classList.add('hidden');
+                });
+            });
+        </script>               
     </body>
 </html>
