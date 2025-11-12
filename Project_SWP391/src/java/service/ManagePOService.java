@@ -8,6 +8,9 @@ import dal.POCacheDAO;
 import dal.ProductDAO;
 import dal.PurchaseOrderDAO;
 import dal.SupplierDAO;
+import dto.Response_PODTO;
+import dto.Response_POHeaderDTO;
+import dto.Response_POLineDTO;
 import dto.Response_ProductDTO;
 import dto.Response_SupplierDTO;
 import java.time.Instant;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import model.Purchase_order_lines;
 import model.Purchase_orders;
 
@@ -26,10 +30,58 @@ import model.Purchase_orders;
  */
 public class ManagePOService {
 
+    private static final String[] STATUS_NAMES = new String[]{"DRAFT", "PENDING", "PARTIAL", "COMPLETED", "CANCELLED"};
+
     private static final SupplierDAO supplier_dao = new SupplierDAO();
     private static final ProductDAO product_dao = new ProductDAO();
     private static final PurchaseOrderDAO po_dao = new PurchaseOrderDAO();
     private static final POCacheDAO cache = new POCacheDAO();
+
+    public List<Response_PODTO> get_po_list(String search, String status, int page_size, int page_no) throws IllegalArgumentException {
+        if (search != null) {
+            search = search + '%';
+        }
+
+        if (status != null && !Arrays.asList(STATUS_NAMES).contains(status.toUpperCase())) {
+            throw new IllegalArgumentException("404");
+        }
+
+        int offset = page_no - 1;
+
+        return po_dao.PO_list(search, status, page_size, offset);
+    }
+
+    public int get_total_items(String search, String status) {
+        if (search != null) {
+            search = search + '%';
+        }
+
+        if (status != null && !Arrays.asList(STATUS_NAMES).contains(status.toUpperCase())) {
+            throw new IllegalArgumentException("404");
+        }
+
+        return po_dao.total_items(search, status);
+    }
+
+    public Response_POHeaderDTO get_po_header(int po_id) throws IllegalArgumentException {
+        Response_POHeaderDTO line = po_dao.po_header(po_id);
+
+        if (line == null) {
+            throw new IllegalArgumentException("404");
+        }
+
+        return line;
+    }
+
+    public List<Response_POLineDTO> get_po_line(int po_id) throws IllegalArgumentException {
+        List<Response_POLineDTO> list = po_dao.po_lines(po_id);
+
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("Không có dòng hàng nào được dặt");
+        }
+
+        return list;
+    }
 
     public List<Response_SupplierDTO> get_list_supplier() {
         List<Response_SupplierDTO> list = supplier_dao.list_supplier();

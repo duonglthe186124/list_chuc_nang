@@ -19,11 +19,11 @@ public class OrderListDAO extends DBContext {
         ArrayList<OrderList> orders = new ArrayList<>();
         String sql = """
                      SELECT 
-                         o.order_id AS Order_Number,
+                         distinct o.order_id AS Order_Number,
                          p.name AS Product_Name,
-                         SUM(od.qty) AS Order_Quantity,
+                         od.qty AS Order_Quantity,
                          od.unit_price AS Product_Unit_Price,
-                         SUM(od.line_amount) AS Order_Line_Amount,
+                         od.line_amount AS Order_Line_Amount,
                          u1.fullname AS Customer_Fullname,
                          u1.email AS Customer_Email,
                          u1.phone AS Customer_Phone,
@@ -31,6 +31,7 @@ public class OrderListDAO extends DBContext {
                          o.order_date AS Order_Date,
                          o.status AS Order_Status,
                          s.shipment_id AS Shipment_ID,
+                         s.shipment_no,
                          s.requested_at AS Shipment_Date,
                          s.status AS Shipment_Status,
                          s.note AS Shipment_Note,
@@ -39,37 +40,17 @@ public class OrderListDAO extends DBContext {
                          u2.email AS Shipper_Email,
                          u2.phone AS Shipper_Phone
                      FROM Order_details od
-                     LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id
-                     LEFT JOIN Products p ON pu.product_id = p.product_id
-                     LEFT JOIN Orders o ON od.order_id = o.order_id
-                     LEFT JOIN Users u1 ON o.user_id = u1.user_id
-                     LEFT JOIN Shipment_units su ON pu.unit_id = su.unit_id
-                         AND EXISTS (
-                             SELECT 1
-                             FROM Shipment_lines sl2
-                             LEFT JOIN Shipments s2 ON sl2.shipment_id = s2.shipment_id
-                             LEFT JOIN Products p2 ON sl2.product_id = p2.product_id
-                             LEFT JOIN Product_units pu2 ON p2.product_id = pu2.product_id
-                             LEFT JOIN Order_details od2 ON pu2.unit_id = od2.unit_id
-                             LEFT JOIN Orders o2 ON od2.order_id = o2.order_id
-                             WHERE sl2.line_id = su.line_id
-                               AND o2.order_id = o.order_id
-                               AND s2.order_id = o.order_id
-                         )
-                     LEFT JOIN Shipment_lines sl ON su.line_id = sl.line_id
-                     LEFT JOIN Shipments s ON sl.shipment_id = s.shipment_id
+                     JOIN Product_units pu ON od.unit_id = pu.unit_id
+                     JOIN Products p ON pu.product_id = p.product_id
+                     JOIN Orders o ON od.order_id = o.order_id
+                     JOIN Users u1 ON o.user_id = u1.user_id
+                     LEFT JOIN Shipments s ON s.order_id = o.order_id
+                     LEFT JOIN Shipment_lines sl ON sl.shipment_id = s.shipment_id
+                     LEFT JOIN Shipment_units su ON su.line_id = sl.line_id AND su.unit_id = pu.unit_id
                      LEFT JOIN Employees e ON s.created_by = e.employee_id
                      LEFT JOIN Users u2 ON e.user_id = u2.user_id
-                     GROUP BY
-                         o.order_id,
-                         p.name,
-                     \tod.unit_price,
-                         u1.fullname, u1.email, u1.phone, u1.address,
-                         o.order_date, o.status,
-                         s.shipment_id, s.requested_at, s.status, s.note,
-                     \tsl.qty,
-                         u2.fullname, u2.email, u2.phone
-                     ORDER BY o.order_id, p.name;""";
+                     ORDER BY o.order_id, p.name;
+                     """;
         PreparedStatement stm = connection.prepareStatement(sql);
         ResultSet rs = stm.executeQuery();
         
@@ -94,11 +75,11 @@ public class OrderListDAO extends DBContext {
         ArrayList<OrderList> orders = new ArrayList<>();
         String sql = """
                      SELECT 
-                         o.order_id AS Order_Number,
+                         distinct o.order_id AS Order_Number,
                          p.name AS Product_Name,
-                         SUM(od.qty) AS Order_Quantity,
+                         od.qty AS Order_Quantity,
                          od.unit_price AS Product_Unit_Price,
-                         SUM(od.line_amount) AS Order_Line_Amount,
+                         od.line_amount AS Order_Line_Amount,
                          u1.fullname AS Customer_Fullname,
                          u1.email AS Customer_Email,
                          u1.phone AS Customer_Phone,
@@ -106,6 +87,7 @@ public class OrderListDAO extends DBContext {
                          o.order_date AS Order_Date,
                          o.status AS Order_Status,
                          s.shipment_id AS Shipment_ID,
+                         s.shipment_no,
                          s.requested_at AS Shipment_Date,
                          s.status AS Shipment_Status,
                          s.note AS Shipment_Note,
@@ -114,38 +96,18 @@ public class OrderListDAO extends DBContext {
                          u2.email AS Shipper_Email,
                          u2.phone AS Shipper_Phone
                      FROM Order_details od
-                     LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id
-                     LEFT JOIN Products p ON pu.product_id = p.product_id
-                     LEFT JOIN Orders o ON od.order_id = o.order_id
-                     LEFT JOIN Users u1 ON o.user_id = u1.user_id
-                     LEFT JOIN Shipment_units su ON pu.unit_id = su.unit_id
-                         AND EXISTS (
-                             SELECT 1
-                             FROM Shipment_lines sl2
-                             LEFT JOIN Shipments s2 ON sl2.shipment_id = s2.shipment_id
-                             LEFT JOIN Products p2 ON sl2.product_id = p2.product_id
-                             LEFT JOIN Product_units pu2 ON p2.product_id = pu2.product_id
-                             LEFT JOIN Order_details od2 ON pu2.unit_id = od2.unit_id
-                             LEFT JOIN Orders o2 ON od2.order_id = o2.order_id
-                             WHERE sl2.line_id = su.line_id
-                               AND o2.order_id = o.order_id
-                               AND s2.order_id = o.order_id
-                         )
-                     LEFT JOIN Shipment_lines sl ON su.line_id = sl.line_id
-                     LEFT JOIN Shipments s ON sl.shipment_id = s.shipment_id
+                     JOIN Product_units pu ON od.unit_id = pu.unit_id
+                     JOIN Products p ON pu.product_id = p.product_id
+                     JOIN Orders o ON od.order_id = o.order_id
+                     JOIN Users u1 ON o.user_id = u1.user_id
+                     LEFT JOIN Shipments s ON s.order_id = o.order_id
+                     LEFT JOIN Shipment_lines sl ON sl.shipment_id = s.shipment_id
+                     LEFT JOIN Shipment_units su ON su.line_id = sl.line_id AND su.unit_id = pu.unit_id
                      LEFT JOIN Employees e ON s.created_by = e.employee_id
                      LEFT JOIN Users u2 ON e.user_id = u2.user_id
                      WHERE u1.user_id = ?  or e.user_id = ?
-                     GROUP BY
-                         o.order_id,
-                         p.name,
-                     \tod.unit_price,
-                         u1.fullname, u1.email, u1.phone, u1.address,
-                         o.order_date, o.status,
-                         s.shipment_id, s.requested_at, s.status, s.note,
-                     \tsl.qty,
-                         u2.fullname, u2.email, u2.phone
-                     ORDER BY o.order_id, p.name;""";
+                     ORDER BY o.order_id, p.name;
+                    """;
         PreparedStatement stm = connection.prepareStatement(sql);
         stm.setInt(1, userId);
         stm.setInt(2, userId);

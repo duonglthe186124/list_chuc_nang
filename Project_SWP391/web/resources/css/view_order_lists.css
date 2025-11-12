@@ -1,0 +1,326 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 11 thg 11, 2025, 08:56:03
+    Author     : hoang
+*/
+
+/* ========================================
+   ORDER LIST - MODERN, CLEAN, RESPONSIVE
+   ======================================== */
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f9fa;
+    color: #212529;
+}
+
+/* === MAIN CONTAINER === */
+.main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* === TABLE CONTAINER === */
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* === MAIN TABLE === */
+#orderTable {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+#orderTable th {
+    background: #f8fafc;
+    color: #1e293b;
+    font-weight: 600;
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 2px solid #cbd5e1;
+    border-right: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 0.8rem;
+    text-transform: none;
+}
+
+#orderTable th:last-child {
+    border-right: none;
+}
+
+#orderTable td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    color: #475569;
+    vertical-align: middle;
+}
+
+#orderTable td:last-child {
+    border-right: none;
+}
+
+#orderTable tr:last-child td {
+    border-bottom: none;
+}
+
+/* === HOVER === */
+#orderTable tr:hover {
+    background-color: #f1f5f9 !important;
+    transition: background 0.2s ease;
+}
+
+#orderTable tr:hover td {
+    border-right-color: #cbd5e1;
+    border-bottom-color: #cbd5e1;
+}
+
+/* === STATUS BADGES === */
+.order-status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-PENDING { background: #fff3cd; color: #856404; }
+.status-CONFIRMED { background: #d1ecf1; color: #0c5460; }
+.status-SHIPPED { background: #d4edda; color: #155724; }
+.status-CANCELLED { background: #f8d7da; color: #721c24; }
+
+/* === BUTTONS === */
+.btn-process,
+.btn-update {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 2px;
+}
+
+.btn-process {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-process:hover {
+    background: #2563eb;
+}
+
+.btn-update {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-update:hover {
+    background: #d97706;
+}
+
+button[onclick^="toggleDetail"] {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button[onclick^="toggleDetail"]:hover {
+    background: #4b5563;
+}
+
+/* === DETAIL ROW (SHIPMENT) === */
+.detail-row {
+    background: #fafafa !important;
+}
+
+.detail-row table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 0.8rem;
+}
+
+.detail-row th {
+    background: #f1f1f1;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.detail-row td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* === PAGINATION === */
+.pagination {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 0.9rem;
+}
+
+.pagination a,
+.pagination button {
+    margin: 0 4px;
+    padding: 6px 10px;
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination a:hover,
+.pagination button:hover {
+    background: #d1d5db;
+}
+
+.pagination b {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* === GO TO PAGE === */
+.go-to-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.go-to-page input {
+    width: 60px;
+    padding: 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.go-to-page button {
+    padding: 6px 12px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* === MESSAGES === */
+.success, .error, .no-data {
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 500;
+}
+
+.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.no-data {
+    background: #e2e8f0;
+    color: #4b5563;
+    border: 1px solid #cbd5e1;
+}
+
+/* === SORT BUTTONS === */
+.sort-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.sort-buttons button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sort-buttons button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .main {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .sort-buttons {
+        justify-content: center;
+    }
+    
+    #orderTable th,
+    #orderTable td {
+        font-size: 0.75rem;
+        padding: 8px 6px;
+    }
+    
+    .btn-process,
+    .btn-update,
+    button[onclick^="toggleDetail"] {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+}

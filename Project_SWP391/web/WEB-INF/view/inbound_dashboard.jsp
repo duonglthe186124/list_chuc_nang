@@ -160,7 +160,7 @@
                                     <ul id="submenu-po" class="submenu hidden space-y-1 pl-4">
                                         <li>
                                             <a
-                                                href="#"
+                                                href="${pageContext.request.contextPath}/inbound/purchase-orders"
                                                 class="block py-2 px-6 text-sm text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-r-full sidebar-text"
                                                 >Danh sách PO</a
                                             >

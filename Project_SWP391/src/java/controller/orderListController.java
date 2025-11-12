@@ -59,7 +59,7 @@ public class orderListController extends HttpServlet {
 
         // ===== 4️⃣ Lấy userId từ form hoặc giữ mặc định =====
         String userIdParam = req.getParameter("userId");
-        int userId = 2; // mặc định tạm thời (nếu chưa chọn gì)
+        int userId = 5; // mặc định tạm thời (nếu chưa chọn gì)
         if (userIdParam != null && !userIdParam.trim().isEmpty()) {
             try {
                 userId = Integer.parseInt(userIdParam);
@@ -88,7 +88,7 @@ public class orderListController extends HttpServlet {
         try {
             int totalOrders, totalPages;
 
-            if (user.getRoleId() != 2) { // Không phải Manager
+            if (user.getRoleId() != 5) { // Không phải Manager
                 orders = db.getOrdersByUserIdPageSorted(user.getUserId(), pageIndex, PAGE_SIZE, sortBy);
                 totalOrders = db.countOrdersByUserId(user.getUserId());
             } else { // Manager
@@ -99,7 +99,7 @@ public class orderListController extends HttpServlet {
 
             if (pageIndex > totalPages && totalPages > 0) {
                 pageIndex = totalPages;
-                if (user.getRoleId() != 2) {
+                if (user.getRoleId() != 5) {
                     orders = db.getOrdersByUserIdPageSorted(user.getUserId(), pageIndex, PAGE_SIZE, sortBy);
                 } else {
                     orders = db.getAllOrdersByPageSorted(pageIndex, PAGE_SIZE, sortBy);

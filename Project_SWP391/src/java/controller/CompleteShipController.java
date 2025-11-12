@@ -86,7 +86,7 @@ public class CompleteShipController extends HttpServlet {
 
                     // lấy lại dữ liệu như CreateShipController
                     OrderInfoDTO order = orderInfoDAO.getOrderDetailInfo(orderIdBack);
-                    List<Integer> unitIds = orderInfoDAO.getSoldUnitIdsForShipment(order.getProductId(), order.getQty());
+                    List<Integer> unitIds = orderInfoDAO.getSoldUnitIdsForShipment(order.getProductId(), order.getQty(), order.getUnitPrice());
                     List<StatusDTO> statuses = statusDAO.getAllOrderStatuses();
                     List<ShipEmployeesDTO> shipList = shipDAO.getShipEmployees();
 

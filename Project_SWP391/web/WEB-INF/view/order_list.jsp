@@ -7,6 +7,7 @@
         <title>Order List</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/order_list.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/view_order_lists.css">
         <style>
             table {
                 border-collapse: collapse;
@@ -167,22 +168,6 @@
                 </button>
             </div>
         </nav>
-
-        <div class="layout">
-            <aside class="sidebar" aria-label="Sidebaar">
-                <h3 class="sidebar-title">Role Pannel</h3>
-
-                <div class="sidebar-menu">
-                    <a class="menu-item" href="${pageContext.request.contextPath}/products">Products</a>
-                    <a class="menu-item active" href="${pageContext.request.contextPath}/order/list">Order List</a>
-                    <a class="menu-item">Manager fields</a>
-                    <a class="menu-item" href="">Manager fields</a>
-                    <a class="menu-item" href="">Manager fields</a>
-                    <a class="menu-item">Manager fields</a>
-                    <a class="menu-item">Manager fields</a>
-                </div>
-            </aside>
-
             <main class="main">
                 <div class="main-header" id="main-header">
                     <h1>Order lists</h1>
@@ -190,16 +175,60 @@
                 <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
                     <h3 style="margin: 0 0 10px 0;">🔄 Sort Orders</h3>
                     <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <a href="?page=1&sort=Lowest order price&userId=${param.userId}" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá thấp→cao</a>
-                        <a href="?page=1&sort=Highest order price&userId=${param.userId}" style="padding: 6px 12px; background: #e3f2fd; color: #1976d2; text-decoration: none; border-radius: 5px; font-size: 13px;">💰 Giá cao→thấp</a>
-                        <a href="?page=1&sort=Earliest orders&userId=${param.userId}" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn cũ→mới</a>
-                        <a href="?page=1&sort=Latest orders&userId=${param.userId}" style="padding: 6px 12px; background: #e8f5e8; color: #388e3c; text-decoration: none; border-radius: 5px; font-size: 13px;">📅 Đơn mới→cũ</a>
-                        <a href="?page=1&sort=Lowest quantity&userId=${param.userId}" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL ít→nhiều</a>
-                        <a href="?page=1&sort=Highest quantity&userId=${param.userId}" style="padding: 6px 12px; background: #fff3e0; color: #f57c00; text-decoration: none; border-radius: 5px; font-size: 13px;">📦 SL nhiều→ít</a>
-                        <a href="?page=1&sort=PENDING&userId=${param.userId}" style="padding: 6px 12px; background: #fff3cd; color: #856404; text-decoration: none; border-radius: 5px; font-size: 13px;">⏳ PENDING đầu</a>
-                        <a href="?page=1&sort=CONFIRMED&userId=${param.userId}" style="padding: 6px 12px; background: #d1ecf1; color: #0c5460; text-decoration: none; border-radius: 5px; font-size: 13px;">✅ CONFIRMED đầu</a>
-                        <a href="?page=1&sort=SHIPPED&userId=${param.userId}" style="padding: 6px 12px; background: #d4edda; color: #155724; text-decoration: none; border-radius: 5px; font-size: 13px;">🚚 SHIPPED đầu</a>
-                        <a href="?page=1&sort=CANCELLED&userId=${param.userId}" style="padding: 6px 12px; background: #f8d7da; color: #721c24; text-decoration: none; border-radius: 5px; font-size: 13px;">❌ CANCELLED đầu</a>
+                        <form action="${pageContext.request.contextPath}/order/list" method="post" style="display:flex; flex-wrap:wrap; gap:6px;">
+                            <input type="hidden" name="page" value="1">
+                            <input type="hidden" name="userId" value="${param.userId}">
+
+                            <button type="submit" name="sort" value="Lowest order price"
+                                    style="padding:6px 12px; background:#e3f2fd; color:#1976d2; border:none; border-radius:5px; font-size:13px;">
+                                💰 Giá thấp→cao
+                            </button>
+
+                            <button type="submit" name="sort" value="Highest order price"
+                                    style="padding:6px 12px; background:#e3f2fd; color:#1976d2; border:none; border-radius:5px; font-size:13px;">
+                                💰 Giá cao→thấp
+                            </button>
+
+                            <button type="submit" name="sort" value="Earliest orders"
+                                    style="padding:6px 12px; background:#e8f5e8; color:#388e3c; border:none; border-radius:5px; font-size:13px;">
+                                📅 Đơn cũ→mới
+                            </button>
+
+                            <button type="submit" name="sort" value="Latest orders"
+                                    style="padding:6px 12px; background:#e8f5e8; color:#388e3c; border:none; border-radius:5px; font-size:13px;">
+                                📅 Đơn mới→cũ
+                            </button>
+
+                            <button type="submit" name="sort" value="Lowest quantity"
+                                    style="padding:6px 12px; background:#fff3e0; color:#f57c00; border:none; border-radius:5px; font-size:13px;">
+                                📦 SL ít→nhiều
+                            </button>
+
+                            <button type="submit" name="sort" value="Highest quantity"
+                                    style="padding:6px 12px; background:#fff3e0; color:#f57c00; border:none; border-radius:5px; font-size:13px;">
+                                📦 SL nhiều→ít
+                            </button>
+
+                            <button type="submit" name="sort" value="PENDING"
+                                    style="padding:6px 12px; background:#fff3cd; color:#856404; border:none; border-radius:5px; font-size:13px;">
+                                ⏳ PENDING đầu
+                            </button>
+
+                            <button type="submit" name="sort" value="CONFIRMED"
+                                    style="padding:6px 12px; background:#d1ecf1; color:#0c5460; border:none; border-radius:5px; font-size:13px;">
+                                ✅ CONFIRMED đầu
+                            </button>
+
+                            <button type="submit" name="sort" value="SHIPPED"
+                                    style="padding:6px 12px; background:#d4edda; color:#155724; border:none; border-radius:5px; font-size:13px;">
+                                🚚 SHIPPED đầu
+                            </button>
+
+                            <button type="submit" name="sort" value="CANCELLED"
+                                    style="padding:6px 12px; background:#f8d7da; color:#721c24; border:none; border-radius:5px; font-size:13px;">
+                                ❌ CANCELLED đầu
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -208,7 +237,7 @@
                 </a>
 
                 <div style="margin: 15px 0;">
-                    <form action="${pageContext.request.contextPath}/order/list" method="get" style="display:inline-block;">
+                    <form action="${pageContext.request.contextPath}/order/list" method="post" style="display:inline-block;">
                         <label for="userFilter"><strong>Filter by User:</strong></label>
                         <select id="userFilter" name="userId" style="padding:6px; margin-left:10px; border-radius:4px;">
                             <option value="">-- All Users --</option>
@@ -269,7 +298,7 @@
                                     <td>${order.cusPhone}</td>
                                     <td>${order.cusAddress}</td>
                                     <td><fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm:ss"/></td>
-                                    <td>${order.orderStatus}</td>
+                                    <td><span class="order-status status-${order.orderStatus}">${order.orderStatus}</span></td>
                                     <td>
                                         <c:if test="${empty order.shipMentId || order.shipMentId == 0}">
                                             <form action="${pageContext.request.contextPath}/process/ship" method="post" style="display:inline;">
@@ -372,7 +401,14 @@
                                             <b>[${i}]</b>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="?page=${i}&sort=${currentSort}&userId=${param.userId}">${i}</a>
+                                            <form action="${pageContext.request.contextPath}/order/list" method="post" style="display:inline;">
+                                                <input type="hidden" name="page" value="${i}">
+                                                <input type="hidden" name="sort" value="${currentSort}">
+                                                <input type="hidden" name="userId" value="${param.userId}">
+                                                <button type="submit" style="background:none; border:none; color:#007bff; cursor:pointer;">
+                                                    ${i}
+                                                </button>
+                                            </form>
                                         </c:otherwise>
                                     </c:choose>
                                     &nbsp;

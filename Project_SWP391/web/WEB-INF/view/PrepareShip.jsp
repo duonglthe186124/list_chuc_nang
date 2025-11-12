@@ -163,6 +163,8 @@
                 <button type="submit" style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">
                     Update
                 </button>
+                
+                <button type="reset">Cancel</button>
             </form>
 
             <hr>

@@ -4,7 +4,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Products</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/sidebar_filter.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/board.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/product_screen.css">
     </head>
@@ -139,183 +141,209 @@
 
         <div class="layout">
             <aside class="sidebar" aria-label="Sidebaar">
-                <h3 class="sidebar-title">Role Pannel</h3>
+                <h3 class="sidebar-title">Product Filters</h3>
+                <form action="${pageContext.request.contextPath}/products/filter" method="get" class="sidebar-filter-form">
+                    <!-- Giữ lại keyword nếu đang search -->
+                    <input type="hidden" name="keyword" value="${param.keyword}">
 
-                <div class="sidebar-menu">
-                    <a class="menu-item active" href="${pageContext.request.contextPath}/products">Products</a>
-                    <a class="menu-item" href="${pageContext.request.contextPath}/order/list">Order List</a>
-                    <a class="menu-item">Manager fields</a>
-                    <a class="menu-item" href="">Manager fields</a>
-                    <a class="menu-item" href="">Manager fields</a>
-                    <a class="menu-item">Manager fields</a>
-                    <a class="menu-item">Manager fields</a>
-                </div>
+                    <!-- Price -->
+                    <div class="filter-group">
+                        <label>Price</label>
+                        <select name="price">
+                            <option value="">All Prices</option>
+                            <c:forEach var="r" items="${priceRanges}">
+                                <c:choose>
+                                    <c:when test="${empty r.max}">
+                                        <option value="${r.min}+" ${param.price == r.min.toString().concat('+') ? 'selected' : ''}>${r.label}</option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="${r.min}-${r.max}" ${param.price == r.min.toString().concat('-').concat(r.max.toString()) ? 'selected' : ''}>${r.label}</option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Brand -->
+                    <div class="filter-group">
+                        <label>Brand</label>
+                        <select name="brand">
+                            <option value="">All Brands</option>
+                            <c:forEach var="b" items="${brandOptions}">
+                                <option value="${b.brandName}" ${param.brand == b.brandName ? 'selected' : ''}>${b.brandName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- CPU -->
+                    <div class="filter-group">
+                        <label>CPU</label>
+                        <select name="cpu">
+                            <option value="">All CPUs</option>
+                            <c:forEach var="c" items="${cpuOptions}">
+                                <option value="${c.cpu}" ${param.cpu == c.cpu ? 'selected' : ''}>${c.cpu}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Memory -->
+                    <div class="filter-group">
+                        <label>Memory (RAM)</label>
+                        <select name="memory">
+                            <option value="">All Memory</option>
+                            <c:forEach var="m" items="${memoryOptions}">
+                                <option value="${m.memory}" ${param.memory == m.memory ? 'selected' : ''}>${m.memory}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Storage -->
+                    <div class="filter-group">
+                        <label>Storage</label>
+                        <select name="storage">
+                            <option value="">All Storage</option>
+                            <c:forEach var="s" items="${storageOptions}">
+                                <option value="${s.storage}" ${param.storage == s.storage ? 'selected' : ''}>${s.storage}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="filter-group">
+                        <label>Color</label>
+                        <select name="color">
+                            <option value="">All Colors</option>
+                            <c:forEach var="co" items="${colorOptions}">
+                                <option value="${co.color}" ${param.color == co.color ? 'selected' : ''}>${co.color}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Battery -->
+                    <div class="filter-group">
+                        <label>Battery Capacity</label>
+                        <select name="battery">
+                            <option value="">All Batteries</option>
+                            <c:forEach var="ba" items="${batteryOptions}">
+                                <option value="${ba.battery}" ${param.battery == ba.battery ? 'selected' : ''}>${ba.battery} mAh</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Screen Size -->
+                    <div class="filter-group">
+                        <label>Screen Size</label>
+                        <select name="screen_size">
+                            <option value="">All Sizes</option>
+                            <c:forEach var="ss" items="${ScreenSizeOptions}">
+                                <option value="${ss.screenSize}" ${param.screen_size == ss.screenSize ? 'selected' : ''}>${ss.screenSize}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Screen Type -->
+                    <div class="filter-group">
+                        <label>Screen Type</label>
+                        <select name="screen_type">
+                            <option value="">All Types</option>
+                            <c:forEach var="st" items="${ScreenTypeOptions}">
+                                <option value="${st.screenType}" ${param.screen_type == st.screenType ? 'selected' : ''}>${st.screenType}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Camera -->
+                    <div class="filter-group">
+                        <label>Camera</label>
+                        <select name="camera">
+                            <option value="">All Cameras</option>
+                            <c:forEach var="cam" items="${cameraOptions}">
+                                <option value="${cam.camera}" ${param.camera == cam.camera ? 'selected' : ''}>${cam.camera} MP</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-primary">Apply Filters</button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href = '${pageContext.request.contextPath}/products'">Clear All</button>
+                    </div>
+                </form>
+
+                <!-- Quick Links -->
+
             </aside>
 
+            <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/products.css">        
             <main class="main">
                 <div class="main-header" id="main-header">
                     <h1>Products</h1>
                 </div>
 
-                <a href="${pageContext.request.contextPath}/home">
-                    <button type="button">Home</button>
-                </a><br>
+                <a href="${pageContext.request.contextPath}/home"><button type="button">Home</button></a><a href="${pageContext.request.contextPath}/order/list"><button type="button">View Order List</button></a><br>
+
                 <form action="${pageContext.request.contextPath}/products/filter" method="get" class="search-form">
                     <input type="text" name="keyword" placeholder="Search by name or code" value="${param.keyword}">
                     <button type="submit">Search</button>
-                </form>
-
-                <form action="${pageContext.request.contextPath}/products/filter" method="get">
-
-                    <label>Price:</label>
-                    <select name="price">
-                        <option value="">-- Select Price --</option>
-                        <c:forEach var="r" items="${priceRanges}">
-                            <c:choose>
-                                <c:when test="${empty r.max}">
-                                    <option value="${r.min}+">${r.label}</option>
-                                </c:when>
-                                <c:otherwise>
-                                    <option value="${r.min}-${r.max}">${r.label}</option>
-                                </c:otherwise>
-                            </c:choose>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Brand:</label>
-                    <select name="brand" id="brand">
-                        <option value="">-- Select Brand --</option>
-                        <c:forEach var="b" items="${brandOptions}">
-                            <option value="${b.brandName}">${b.brandName}</option>
-                        </c:forEach>
-                    </select>
-
-                    <label>CPU:</label>
-                    <select name="cpu">
-                        <option value="">-- Select --</option>             
-                        <c:forEach var="c" items="${cpuOptions}">
-                            <option value="${c.cpu}">${c.cpu}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Memory (RAM):</label>
-                    <select name="memory">
-                        <option value="">-- Select --</option>               
-                        <c:forEach var="m" items="${memoryOptions}">
-                            <option value="${m.memory}">${m.memory}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Storage:</label>
-                    <select name="storage">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="s" items="${storageOptions}">
-                            <option value="${s.storage}">${s.storage}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Color:</label>
-                    <select name="color">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="co" items="${colorOptions}">
-                            <option value="${co.color}">${co.color}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Battery Capacity:</label>
-                    <select name="battery">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="ba" items="${batteryOptions}">
-                            <option value="${ba.battery}">${ba.battery} mAh</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Screen Size:</label>
-                    <select name="screen_size">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="ss" items="${ScreenSizeOptions}">
-                            <option value="${ss.screenSize}">${ss.screenSize}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Screen Type:</label>
-                    <select name="screen_type">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="st" items="${ScreenTypeOptions}">
-                            <option value="${st.screenType}">${st.screenType}</option>
-                        </c:forEach>
-                    </select><br>
-
-                    <label>Camera:</label>
-                    <select name="camera">
-                        <option value="">-- Select --</option>
-                        <c:forEach var="cam" items="${cameraOptions}">
-                            <option value="${cam.camera}">${cam.camera} MP</option>
-                        </c:forEach>
-                    </select><br><br>
-
-                    <button type="submit">Apply Filter</button>
-                    <button type="reset">Reset</button>
                 </form><br>
-            
 
-                <a href="${pageContext.request.contextPath}/order/list">
-                    <button type="button">View Order List</button>
-                </a>   
 
-                <table border="1" cellpadding="5" cellspacing="0">
-                    <tr>
-                        <th>Name</th>
-                        <th>Brand</th>  
-                        <th>Code</th>
-                        <th>CPU</th>
-                        <th>Memory</th>
-                        <th>Storage</th>
-                        <th>Camera</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-
-                    </tr>
-
-                    <c:forEach var="p" items="${products}">
+                <div class="table-container">
+                    <table>
                         <tr>
-                            <td>${p.productName}</td>
-                            <td>${p.brandName}</td>
-                            <td>${p.sku_code}</td>
-                            <td>${p.cpu}</td>
-                            <td>${p.memory}</td>
-                            <td>${p.storage}</td>
-                            <td>${p.camera}</td>
-                            <td>${p.qty}</td>
-                            <td>${p.price}</td>
-                            <td style="text-align:center;">
-                                <c:choose>
-                                    <c:when test="${not empty p.imageUrl}">
-                                        <img src="${p.imageUrl}" alt="Product image" width="80" height="80" style="object-fit: cover; border-radius: 8px;" />
-                                    </c:when>
-                                    <c:otherwise>
-                                        <i>No image</i>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-
-                            <td>
-                                <form action="${pageContext.request.contextPath}/products/view" method="get" style="display:inline;">
-                                    <input type="hidden" name="id" value="${p.productId}">
-                                    <button type="submit">View</button>
-                                </form>
-                                    
-
-                                <form action="${pageContext.request.contextPath}/order" method="get" style="display:inline;">
-                                    <input type="hidden" name="id" value="${p.productId}">
-                                    <button type="submit" ${p.qty == 0 ? 'disabled' : ''}>Order</button>
-                                </form>
-                            </td>
+                            <th>Name</th>
+                            <th>Brand</th>
+                            <th>Code</th>
+                            <th>CPU</th>
+                            <th>Memory</th>
+                            <th>Storage</th>
+                            <th>Camera</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Image</th>
+                            <th>Actions</th>
                         </tr>
-                    </c:forEach>
-                </table>
+                        <c:forEach var="p" items="${products}">
+                            <tr>
+                                <td>${p.productName}</td>
+                                <td>${p.brandName}</td>
+                                <td>${p.sku_code}</td>
+                                <td>${p.cpu}</td>
+                                <td>${p.memory}</td>
+                                <td>${p.storage}</td>
+                                <td>${p.camera}MP</td>
+                                <td>${p.qty}</td>
+                                <td>${p.price}</td>
+                                <td style="text-align:center;">
+                                    <c:choose>
+                                        <c:when test="${not empty p.imageUrl}">
+                                            <img src="${p.imageUrl}" alt="Product image" width="80" height="80" style="object-fit: cover; border-radius: 8px;" />
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i>No image</i>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                    <form action="${pageContext.request.contextPath}/products/view" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="${p.productId}">
+                                        <input type="hidden" name="price" value="${p.price}">
+                                        <button type="submit" class="action-btn">View</button>
+                                    </form>
+                                    <form action="${pageContext.request.contextPath}/order" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="${p.productId}">
+                                        <input type="hidden" name="name" value="${p.productName}">
+                                        <input type="hidden" name="qty" value="${p.qty}">
+                                        <input type="hidden" name="code" value="${p.sku_code}">
+                                        <input type="hidden" name="price" value="${p.price}">
+                                        <input type="hidden" name="image" value="${p.imageUrl}">
+                                        <button type="submit" class="action-btn" ${p.qty == 0 ? 'disabled' : ''}>Order</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </table>
+                </div>
 
                 <!-- ✅ Phân trang nâng cao -->
                 <div style="margin-top:20px; text-align:center;">
@@ -458,4 +486,6 @@
             </div>
         </footer>
     </body>
+
+
 </html>

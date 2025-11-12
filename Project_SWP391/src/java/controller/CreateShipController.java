@@ -64,9 +64,9 @@ public class CreateShipController extends HttpServlet {
                 return;
             }
 
-            // 🚫 Nếu user không phải Manager (roleId != 2)
-            if (user.getRoleId() != 2) {
-                req.setAttribute("error", "🚫 User ID " + userId + " không có quyền thực hiện thao tác này!");
+            // Nếu user không phải product Manager (roleId != 5)
+            if (user.getRoleId() != 5) {
+                req.setAttribute("error", "User ID " + userId + " không có quyền thực hiện thao tác này!");
                 req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
                 return;
             }
@@ -110,7 +110,7 @@ public class CreateShipController extends HttpServlet {
             }
 
             // 2. Kiểm tra tồn kho (SOLD)
-            List<Integer> unitIds = orderInfoDAO.getSoldUnitIdsForShipment(order.getProductId(), order.getQty());
+            List<Integer> unitIds = orderInfoDAO.getSoldUnitIdsForShipment(order.getProductId(), order.getQty(), order.getUnitPrice());
             if (unitIds.size() < order.getQty()) {
                 req.setAttribute("errorMessage", "Không đủ hàng SOLD để giao! Cần: " + order.getQty() + ", Có: " + unitIds.size());
                 req.getRequestDispatcher("/order/list").forward(req, resp);
@@ -137,5 +137,11 @@ public class CreateShipController extends HttpServlet {
             req.getRequestDispatcher("WEB-INF/view/order_list.jsp").forward(req, resp);
         }
     }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPost(req, resp);
+    }
+    
 }
 

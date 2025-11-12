@@ -176,6 +176,18 @@
         <servlet-name>CreateEmployeeServlet</servlet-name>
         <servlet-class>controller.CreateEmployeeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.PurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.ViewPurchaseOrderServlet</servlet-class>
+      </servlet>
+    <servlet>
+        <servlet-name>TestOrderController</servlet-name>
+        <servlet-class>controller.TestOrderController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/home</url-pattern>
@@ -343,6 +355,18 @@
     <servlet-mapping>
         <servlet-name>CreateEmployeeServlet</servlet-name>
         <url-pattern>/createEmployee</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/purchase-orders</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/purchase-orders/view</url-pattern>
+       </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestOrderController</servlet-name>
+        <url-pattern>/order/test</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

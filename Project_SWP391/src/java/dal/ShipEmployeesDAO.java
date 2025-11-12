@@ -22,7 +22,7 @@ public class ShipEmployeesDAO extends DBContext{
                             u.fullname, u.email, u.phone
                      FROM Employees e
                      JOIN Users u ON e.user_id = u.user_id
-                     WHERE e.position_id = 8;
+                     WHERE e.position_id = 9;
                      """;
         
         try(PreparedStatement stm = connection.prepareStatement(sql);

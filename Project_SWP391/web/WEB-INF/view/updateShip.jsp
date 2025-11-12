@@ -30,16 +30,20 @@
                 margin-top: 5px;
             }
         </style>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/update_ship.css">
     </head>
     <body>
 
         <h2 style="text-align:center;">Cập nhật thông tin Shipment</h2>
 
         <!-- Bảng thông tin shipment -->
-        <table>
+        <table class="info-table">
             <tr><th>Shipment ID</th><td>${shipmentId}</td></tr>
             <tr><th>Order ID</th><td>${orderId}</td></tr>
             <tr><th>Product ID</th><td>${productId}</td></tr>
+            <tr><th>Product</th><td>${phoneName}</td></tr>
+            <tr><th>Customer</th><td>${cusName}</td></tr>
+            <tr><th>Phone</th><td>${cusPhone}</td></tr>
             <tr><th>Quantity</th><td>${shipmentQty}</td></tr>
         </table>
 
@@ -56,7 +60,10 @@
                 <input type="hidden" name="shipmentId" value="${shipmentId}" />
                 <input type="hidden" name="orderId" value="${orderId}" />
                 <input type="hidden" name="productId" value="${productId}" />
-                <input type="hidden" name="shipmentQty" value="${shipmentId}" />
+                <input type="hidden" name="shipmentQty" value="${shipmentQty}" />
+                <input type="hidden" name="cusName" value="${cusName}" />
+                <input type="hidden" name="cusPhone" value="${cusPhone}" />
+                <input type="hidden" name="phoneName" value="${phoneName}" />
 
                 <label>Trạng thái (Status):</label>
                 <select name="shipmentStatus">
@@ -69,9 +76,11 @@
                 </select>
 
                 <label>Ghi chú (Note):</label>
-                <textarea name="shipmentNote" rows="3">${shipmentNote}</textarea>
-
+                <textarea name="shipmentNote" rows="3">${shipmentNote}</textarea><br>
+               <div class="form-buttons">
+                <button type="reset">Cancel</button>
                 <input type="submit" value="Cập nhật Shipment" />
+               </div>
             </form>
         </div>
 

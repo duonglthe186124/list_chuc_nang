@@ -45,7 +45,7 @@ public class UpdateShipController extends HttpServlet {
             getRoleBySetIdDAO db = new getRoleBySetIdDAO();
             UserToCheckTask user = db.getUserById(userId);
 
-            if (user.getRoleId() != 8) {
+            if (user.getRoleId() != 10) {
                 req.setAttribute("error", "Bạn không có quyền truy cập chức năng này!");
                 req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
                 return;
@@ -57,6 +57,9 @@ public class UpdateShipController extends HttpServlet {
 
             int productId = dao.getProductIdByShipmentId(shipmentId);
             int orderId = dao.getOrderIdByShipmentId(shipmentId);
+            String cusName = dao.getCustomerFullname(shipmentId);
+            String cusPhone = dao.getCustomerPhone(shipmentId);
+            String phoneName = dao.getPhoneName(productId);
             List<StatusDTO> listStatus = s.getAllShipmentStatuses();
 
             // === Gửi dữ liệu sang JSP ===
@@ -67,6 +70,9 @@ public class UpdateShipController extends HttpServlet {
             req.setAttribute("productId", productId);
             req.setAttribute("orderId", orderId);
             req.setAttribute("listStatus", listStatus);
+            req.setAttribute("cusName", cusName);
+            req.setAttribute("cusPhone", cusPhone);
+            req.setAttribute("phoneName", phoneName);
 
             // === Chuyển đến JSP để hiển thị form update ===
             req.getRequestDispatcher("/WEB-INF/view/updateShip.jsp").forward(req, resp);

@@ -6,6 +6,7 @@ package dal;
 
 import dto.OrderInfoDTO;
 import dto.Response_OrderInfoDTO;
+import java.math.BigDecimal;
 import util.DBContext;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -22,9 +23,9 @@ public class OrderInfoDAO extends DBContext {
         String sql = """
      SELECT 
          o.order_id,
-     	p.product_id,
+     	 p.product_id,
          p.[name] AS product_name,
-         SUM(ot.qty) AS total_qty,
+         ot.qty AS total_qty,
          ot.unit_price,
          o.total_amount,
      	u.user_id,
@@ -35,7 +36,7 @@ public class OrderInfoDAO extends DBContext {
      JOIN Products p ON pu.product_id = p.product_id
      JOIN Users u ON o.user_id = u.user_id
      where o.order_id = ?
-     GROUP BY o.order_id, p.[name], ot.unit_price, o.total_amount, u.fullname, u.email, u.phone, u.address, o.status, p.product_id, u.user_id, o.order_date;
+     GROUP BY o.order_id, p.[name], ot.unit_price, o.total_amount, u.fullname, u.email, u.phone, u.address, o.status, p.product_id, u.user_id, o.order_date, ot.qty;
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -62,18 +63,19 @@ public class OrderInfoDAO extends DBContext {
         return null;
     }
 
-    public List<Integer> getSoldUnitIdsForShipment(int productId, int qty) throws SQLException {
+    public List<Integer> getSoldUnitIdsForShipment(int productId, int qty, BigDecimal purchasePrice) throws SQLException {
         List<Integer> unitIds = new ArrayList<>();
         String sql = """
-        SELECT TOP(?) unit_id 
-        FROM Product_units 
-        WHERE product_id = ? AND status = 'SOLD'
-        ORDER BY unit_id
+        SELECT TOP(?)pu.unit_id 
+                FROM Product_units pu 
+                WHERE pu.product_id = ? AND pu.status = 'SOLD' AND pu.purchase_price = ?
+                ORDER BY pu.unit_id
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, qty);
             ps.setInt(2, productId);
+            ps.setBigDecimal(3, purchasePrice);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     unitIds.add(rs.getInt("unit_id"));
@@ -82,19 +84,17 @@ public class OrderInfoDAO extends DBContext {
         }
         return unitIds;
     }
-    
-    
+
     public List<String> getAllShipmentNos() throws SQLException {
-    List<String> list = new ArrayList<>();
-    String sql = "SELECT shipment_no FROM Shipments";
-    try (PreparedStatement ps = connection.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-        while (rs.next()) {
-            list.add(rs.getString("shipment_no"));
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT shipment_no FROM Shipments";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(rs.getString("shipment_no"));
+            }
         }
+        return list;
     }
-    return list;
-}
 
     public List<Integer> get_order_id() {
         List<Integer> list = new ArrayList();
@@ -116,22 +116,23 @@ public class OrderInfoDAO extends DBContext {
     public Response_OrderInfoDTO get_order_info(int order_id) {
         Response_OrderInfoDTO line = null;
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT\n"
-                + "	u.fullname,\n"
-                + "	o.order_date,\n"
-                + "	o.status,\n"
-                + "	COUNT(DISTINCT pu.unit_id) AS line_count,\n"
-                + "	SUM(qty) AS total_qty,\n"
-                + "	SUM(line_amount) AS total_value\n"
-                + "FROM Orders o\n"
-                + "LEFT JOIN Users u ON o.user_id = u.user_id\n"
-                + "LEFT JOIN Order_details od ON o.order_id = od.order_id\n"
-                + "LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id\n"
-                + "WHERE o.status = 'CONFIRMED' AND o.order_id = ?\n"
-                + "GROUP BY\n"
-                + "	u.fullname,\n"
-                + "	o.order_date,\n"
-                + "	o.status");
+        sql.append("""
+                   SELECT
+                   \tu.fullname,
+                   \to.order_date,
+                   \to.status,
+                   \tCOUNT(DISTINCT pu.unit_id) AS line_count,
+                   \tSUM(qty) AS total_qty,
+                   \tSUM(line_amount) AS total_value
+                   FROM Orders o
+                   LEFT JOIN Users u ON o.user_id = u.user_id
+                   LEFT JOIN Order_details od ON o.order_id = od.order_id
+                   LEFT JOIN Product_units pu ON od.unit_id = pu.unit_id
+                   WHERE o.status = 'CONFIRMED' AND o.order_id = ?
+                   GROUP BY
+                   \tu.fullname,
+                   \to.order_date,
+                   \to.status""");
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             ps.setInt(1, order_id);
