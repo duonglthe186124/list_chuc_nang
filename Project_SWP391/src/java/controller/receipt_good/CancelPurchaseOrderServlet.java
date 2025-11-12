@@ -1,21 +1,18 @@
-package controller;
+package controller.receipt_good;
 
-import dto.Response_POHeaderDTO;
-import dto.Response_POLineDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import service.ManagePOService;
 
 /**
  *
  * @author ASUS
  */
-public class ViewPurchaseOrderServlet extends HttpServlet {
+public class CancelPurchaseOrderServlet extends HttpServlet {
 
     private static final ManagePOService service = new ManagePOService();
 
@@ -24,8 +21,6 @@ public class ViewPurchaseOrderServlet extends HttpServlet {
             throws ServletException, IOException {
         String raw_po_id = request.getParameter("id");
 
-        Response_POHeaderDTO poheader = null;
-        List<Response_POLineDTO> poline = null;
         int po_id;
         try {
             po_id = Integer.parseInt(raw_po_id);
@@ -35,18 +30,13 @@ public class ViewPurchaseOrderServlet extends HttpServlet {
         }
 
         try {
-            poheader = service.get_po_header(po_id);
-            poline = service.get_po_line(po_id);
+            service.cancel_po(po_id);
         } catch (IllegalArgumentException e) {
-            if ("404".equals(e.getMessage())) {
-                response.sendRedirect(request.getContextPath() + "/404");
-                return;
-            }
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
         }
-
-        request.setAttribute("poheader", poheader);
-        request.setAttribute("poLines", poline);
-        request.getRequestDispatcher("/WEB-INF/view/view_purchase_order.jsp").forward(request, response);
+        
+        response.sendRedirect(request.getContextPath() + "/inbound/purchase-orders");
     }
 
     @Override
@@ -54,6 +44,11 @@ public class ViewPurchaseOrderServlet extends HttpServlet {
             throws ServletException, IOException {
     }
 
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
         return "Short description";

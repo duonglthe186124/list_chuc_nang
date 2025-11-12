@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import model.Purchase_order_lines;
 import model.Purchase_orders;
+import model.Suppliers;
 
 /**
  *
@@ -30,7 +31,7 @@ import model.Purchase_orders;
  */
 public class ManagePOService {
 
-    private static final String[] STATUS_NAMES = new String[]{"DRAFT", "PENDING", "PARTIAL", "COMPLETED", "CANCELLED"};
+    private static final String[] STATUS_NAMES = new String[]{"DRAFT", "PENDING", "CONFIRM", "PARTIAL", "COMPLETED", "CANCELLED"};
 
     private static final SupplierDAO supplier_dao = new SupplierDAO();
     private static final ProductDAO product_dao = new ProductDAO();
@@ -46,7 +47,7 @@ public class ManagePOService {
             throw new IllegalArgumentException("404");
         }
 
-        int offset = page_no - 1;
+        int offset = (page_no - 1) * page_size;
 
         return po_dao.PO_list(search, status, page_size, offset);
     }
@@ -112,7 +113,7 @@ public class ManagePOService {
         return "PO-" + date_code + "-" + no;
     }
 
-    public void add_purchase_order(String po_code, int supplier_id, String note, int[] product_id, int[] qty, float[] unit_price) {
+    public int add_purchase_order(String po_code, int supplier_id, String note, int[] product_id, int[] qty, float[] unit_price) {
         float total_po = 0;
         for (int i = 0; i < product_id.length; i++) {
             total_po += qty[i] * unit_price[i];
@@ -122,6 +123,8 @@ public class ManagePOService {
 
         add_lines(po_id, product_id, qty, unit_price);
         update_po_code();
+
+        return po_id;
     }
 
     private int add_header(String po_code, int supplier_id, float total_po, String note) {
@@ -139,24 +142,41 @@ public class ManagePOService {
     }
 
     private void update_po_code() {
-        int no;
-
-        LocalDate today = LocalDate.now();
-        Date save_date = cache.date();
-        LocalDate local_date = Instant.ofEpochMilli(save_date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-
-        if (local_date.isBefore(today)) {
-            no = 0;
-        } else {
-            no = cache.no() + 1;
-        }
-        cache.update(no);
+        cache.update(cache.no() + 1);
     }
 
-    public static void main(String[] args) {
-        ManagePOService a = new ManagePOService();
-        System.out.println(a.get_auto_po_code());
-        a.update_po_code();
-        System.out.println(a.get_auto_po_code());
+    public String get_supplier_email_by_id(int supplier_id) {
+        return supplier_dao.supplier_email(supplier_id);
+    }
+
+    public void save_confirmation_token(int po_id, String confirmationToken) {
+        po_dao.save_token(po_id, confirmationToken);
+    }
+
+    public Response_POHeaderDTO get_po_header_by_id_and_token(int po_id, String token) {
+        boolean check_token = po_dao.check_tokens(po_id, token);
+
+        if (!check_token) {
+            return null;
+        }
+
+        return get_po_header(po_id);
+    }
+
+    public boolean confirm_purchase_order(int po_id, String token) {
+        po_dao.remove_token(po_id, token);
+        return po_dao.confirm_po(po_id);
+    }
+
+    public Suppliers get_supplier_by_id(int supplier_id) {
+        return supplier_dao.supplier(supplier_id);
+    }
+
+    public void cancel_po(int po_id) throws IllegalArgumentException {
+        if (get_po_header(po_id) == null) {
+            throw new IllegalArgumentException();
+        }
+        
+        po_dao.cancel(po_id);
     }
 }

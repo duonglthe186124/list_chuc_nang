@@ -1,7 +1,13 @@
 <%-- 
-    Document   : view_purchase_order
+    Document   : shipments
     Created on : Nov 2, 2025, 5:36:53 PM
     Author     : ASUS
+--%>
+
+<%-- 
+    Document   : shipments
+    Created on : Nov 12, 2025, 5:44:04 AM
+    Author     : Grok
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -11,18 +17,25 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Quản lý Phiếu mua hàng - WMS Pro</title>
+        <title>Quản lý Phiếu xuất kho - WMS Pro</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             />
+
         <style>
             body {
                 font-family: "Inter", sans-serif;
             }
+
+            form{
+                display: contents;
+            }
+
             #admin-sidebar::-webkit-scrollbar {
                 display: none;
             }
@@ -181,7 +194,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -213,10 +226,10 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/purchase-orders"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Danh sách phiếu mua</span>
                             </a>
@@ -283,7 +296,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -315,15 +328,15 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/shipments"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
                                 >
                                 <span class="sidebar-text">Danh sách phiếu xuất kho</span>
                             </a>
                             <a
-                                href="${pageContext.request.contextPath}/inbound/create-shipment"
+                                href="${pageContext.request.contextPath}/create-shipment"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu xuất mới</span>
@@ -421,33 +434,238 @@
                 </div>
             </aside>
 
-            <main
-                id="main-content"
-                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
-                >
-                
-            </main>
+            <form id="form" action="${pageContext.request.contextPath}/inbound/shipments">
+                <main
+                    id="main-content"
+                    class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                    >
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
+                        >
+                        <h1 class="text-3xl font-bold text-gray-900">
+                            Danh sách Phiếu xuất kho (Shipment)
+                        </h1>
+                        <a
+                            href="${pageContext.request.contextPath}/inbound/create-shipment"
+                            class="w-full md:w-auto flex-shrink-0 flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                            >
+                            <svg
+                                class="h-5 w-5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                >
+                            <path
+                                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+                                />
+                            </svg>
+                            <span>Tạo phiếu xuất mới</span>
+                        </a>
+                    </div>
+
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 w-full"
+                        >
+                        <div class="flex-shrink-0 w-full md:w-auto">
+                            <div class="relative flex w-full sm:w-128 flex-shrink-0">
+                                <label for="search" class="sr-only">Tìm kiếm</label>
+                                <input
+                                    type="text"
+                                    id="search"
+                                    name="search"
+                                    value="${not empty param.search ? search : ''}"
+                                    placeholder="Tìm kiếm mã phiếu xuất, đơn hàng"
+                                    class="w-full pl-4 pr-10 py-2 border border-r-0 border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                                    />
+                                <button
+                                    type="submit"
+                                    class="bg-indigo-600 text-white px-3 py-2 border border-indigo-600 rounded-r-lg hover:bg-indigo-700 transition-colors flex-shrink-0"
+                                    >
+                                    <svg
+                                        class="h-5 w-5"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M9 3.5a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.398l3.754 3.754a.75.75 0 1 1-1.06 1.06l-3.754-3.754A7 7 0 0 1 2 9Z"
+                                        clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                    <span class="sr-only">Tìm kiếm</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex flex-wrap items-center justify-start md:justify-end gap-4 flex-shrink-0 w-full md:w-auto"
+                            >
+                            <div class="flex items-center gap-0 flex-shrink-0">
+                                <label
+                                    for="status-filter"
+                                    class="text-sm font-medium text-gray-700 whitespace-nowrap mr-2"
+                                    >Trạng thái:</label
+                                >
+                                <select
+                                    id="status-filter"
+                                    name="status"
+                                    class="px-3 py-2 border border-gray-300 rounded-l-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                    <option value="" ${empty param.status or param.status == ""? 'selected' : ''}>Tất cả</option>
+                                    <option value="PENDING" ${param.status == "PENDING" ? 'selected' : ''}>Pending</option>
+                                    <option value="PICKED" ${param.status == "PICKED" ? 'selected' : ''}>Picked</option>
+                                    <option value="SHIPPED" ${param.status == "SHIPPED" ? 'selected' : ''}>Shipped</option>
+                                    <option value="CANCELLED" ${param.status == "CANCELLED" ? 'selected' : ''}>Cancelled</option>
+                                </select>
+                                <button
+                                    type="submit"
+                                    class="px-3 py-2 text-sm font-medium rounded-r-lg text-white bg-indigo-600 border border-indigo-600 hover:bg-indigo-700 transition-colors"
+                                    >
+                                    Áp dụng
+                                </button>
+                            </div>
+
+                            <div class="flex items-center gap-2 flex-shrink-0">
+                                <label
+                                    for="entries-control"
+                                    class="text-sm font-medium text-gray-700 whitespace-nowrap"
+                                    >Hiển thị:</label
+                                >
+                                <select
+                                    id="entries-control"
+                                    name="pageSize"
+                                    onchange="this.form.submit()"
+                                    class="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    >
+                                    <option value="10" ${param.pageSize == 10 ? 'selected' : ''}>10 mục</option>
+                                    <option value="20" ${param.pageSize == 20 ? 'selected' : ''}>20 mục</option>
+                                    <option value="50" ${param.pageSize == 50 ? 'selected' : ''}>50 mục</option>
+                                    <option value="100" ${param.pageSize == 100 ? 'selected' : ''}>100 mục</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        STT
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Mã phiếu
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Đơn hàng
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Khách hàng
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tổng dòng hàng
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Số lượng xuất
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Giá trị xuất
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tạo bởi
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tạo lúc
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Trạng thái
+                                    </th>
+                                    <th scope="col" class="relative px-6 py-3">
+                                        <span class="sr-only">Hành động</span> <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div
+                        id="pagination-container"
+                        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-b-lg"
+                        >
+                        <div class="mb-3 sm:mb-0">
+                            <p id="result-info" class="text-sm text-gray-700"></p>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <nav
+                                id="page-nav"
+                                class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                                aria-label="Pagination"
+                                >
+                            </nav>
+
+                            <div class="flex items-center gap-1">
+                                <label for="go-to-page" class="sr-only">Trang số</label>
+                                <input
+                                    type="number"
+                                    id="page-input"
+                                    name="pageInput"
+                                    placeholder="Trang"
+                                    min="1"
+                                    value="1"
+                                    class="w-16 px-3 py-2 border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                <button
+                                    type="button"
+                                    id="go-to-button"
+                                    class="px-3 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 border border-indigo-600 hover:bg-indigo-700 transition-colors focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    >
+                                    Đi đến
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </form>
         </div>
 
         <script>
-            const poStatus = document.getElementById("po-status");
-            const headstatus = document.getElementById("status");
-            let status = "${poheader.status}";
+            const shipments = [];
+            <c:forEach var="l" items="${shipment_list}">
+            shipments.push({
+                id: ${l.shipment_id},
+                shipmentNo: "${l.shipment_no}",
+                order: "Đơn hàng #${l.order_id}",
+                customer: "${l.customer}",
+                totalLines: ${l.total_line},
+                shipped: ${l.total_shipped},
+                total: ${l.total},
+                createdBy: "${l.created_by}",
+                createdAt: "${l.created_at}",
+                status: "${l.status}"
+            });
+            </c:forEach>
 
-            function poBadge(status) {
-                let colorClasses = '';
+            function formatCurreny(totalAmount) {
+                return new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                }).format(totalAmount);
+            }
+
+            function createStatusBadge(status) {
+                let colorClasses = "";
                 switch (status) {
-                    case "DRAFT":
-                        colorClasses = "bg-gray-100 text-gray-800";
-                        break;
                     case "PENDING":
-                        colorClasses = "bg-yellow-100 text-yellow-800";
+                        colorClasses = "bg-yellow-50 text-yellow-800";
                         break;
-                    case "PARTIAL":
-                        colorClasses = "bg-blue-100 text-blue-800";
+                    case "PICKED":
+                        colorClasses = "bg-blue-50 text-blue-800";
                         break;
-                    case "COMPLETED":
-                        colorClasses = "bg-green-100 text-green-800";
+                    case "SHIPPED":
+                        colorClasses = "bg-green-50 text-green-800";
                         break;
                     case "CANCELLED":
                         colorClasses = "bg-red-50 text-red-800";
@@ -456,68 +674,241 @@
                         colorClasses = "bg-gray-100 text-gray-800";
                 }
 
-                poStatus.innerHTML = '<span class="px-4 py-1.5 text-sm font-semibold rounded-full ' + colorClasses + '">' + status + '</span>';
-                headstatus.innerHTML = '<span class="px-2.5 py-0.5 text-xs font-medium rounded-full ' + colorClasses + '">' + status + '</span>';
+                return '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + colorClasses + '">' + status + '</span>';
             }
 
-            const order_lines = [];
-            <c:forEach var="l" items="${poLines}">
-            order_lines.push({
-                product_name: "${l.product_name}",
-                sku_code: "${l.sku_code}",
-                unit_price: ${l.unit_price},
-                qty_ordered: ${l.qty_ordered},
-                qty_received: ${l.qty_received},
-                qty_remaining: ${l.qty_remaining},
-                total_line: ${l.total_line}
-            });
-            </c:forEach>
+            function actionBadge(id, status) {
+                let badge = '<a href="${pageContext.request.contextPath}/inbound/shipments/view?id=' + id + '" \n\
+                               class="inline-flex items-center px-3 py-1 border border-indigo-300 text-xs font-medium rounded-md shadow-sm text-black-700 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">\n\
+                                    Chi tiết\n\
+                            </a>\n';
+                if (status === 'PENDING') {
+                    badge += '<a href="${pageContext.request.contextPath}/inbound/shipments/cancel?id=' + id + '" \n\
+                                class="inline-flex items-center px-3 py-1 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" \n\
+                                onclick="return confirm(\'Bạn có chắc chắn muốn huỷ phiếu xuất kho này không?\')">\n\
+                                    Huỷ đơn\n\
+                            </a>';
+                }
+                return badge;
+            }
 
-            function formatCurrency(amount) {
-                return new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                }).format(amount);
-            }
-            
-            function createPOLineBadge(remaining) {
-                let badge = "";
-                
-            }
-            
-            function renderTableLine() {
+            function renderTable() {
                 const tableBody = document.getElementById("table-body");
-                const data = order_lines;
+                const data = shipments;
+                const start = (currentPage - 1) * pageSize;
                 let rowsHTML = "";
-                
+
                 if (Array.isArray(data) && data.length > 0) {
                     data.forEach((row, index) => {
-                        const rowNumber = index + 1;
+                        const rowNumber = start + index + 1;
 
                         rowsHTML += '\n<tr>\n' +
-                                '<td class="pl-6 pr-3 py-4 whitespace-nowrap text-sm text-gray-500">' + rowNumber + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap">' +
-                                '<div class="text-sm font-medium text-gray-900">' + row.product_name + '</div>' +
-                                '<div class="text-xs text-gray-500">' + row.sku_code + '</div>' +
-                                '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">' + row.qty_ordered + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 text-right">' + row.qty_received +'</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right font-semibold">' + row.qty_remaining + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">' + formatCurrency(row.unit_price) + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium text-right">' + formatCurrency(row.total_line) + '</td>\n' +
-                                
+                                '<td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">' + rowNumber + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.shipmentNo + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.order + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.customer + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.totalLines + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.shipped + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">' + formatCurreny(row.total) + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.createdBy + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">' + row.createdAt + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm">' + createStatusBadge(row.status) + '</td>\n' +
+                                '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">' +
+                                '<div class="flex items-center space-x-2">' + actionBadge(row.id, row.status) + '</div>' +
+                                '</td>' +
                                 '</tr>';
                     });
                 } else {
-                    rowsHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td></tr>';
+                    rowsHTML = '<tr><td colspan="11" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td></tr>';
                 }
-                
+
                 tableBody.innerHTML = rowsHTML;
             }
-            
+
+            let currentPage = ${pageInput != null ? pageInput : 1};
+            let pageSize = ${param.pageSize != null ? param.pageSize : 10};
+            let totalItems = ${totalItems != null ? totalItems : 0};
+            let totalPages = Math.ceil(totalItems / pageSize);
+
+            const form = document.getElementById('form');
+            const resultInfo = document.getElementById('result-info');
+            const pageNav = document.getElementById('page-nav');
+            const pageInput = document.getElementById('page-input');
+            const goToButton = document.getElementById('go-to-button');
+
+            function updateResultInfo() {
+                const start = (currentPage - 1) * pageSize + 1;
+                const end = Math.min(currentPage * pageSize, totalItems);
+                resultInfo.innerHTML = "Hiển thị \n" +
+                        '<span class="font - medium"> ' + start + '</span> ' +
+                        'đến ' +
+                        '<span class="font - medium"> ' + end + '</span> ' +
+                        'trong ' +
+                        '<span class="font - medium"> ' + totalItems + '</span> ' +
+                        'kết quả';
+            }
+
+            function createPageButton(content, page, active, disabled) {
+                let classes = "relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 transition-colors";
+                let actionAttr = '';
+                let nameAttr = '';
+
+                if (page !== 'ellipsis') {
+                    actionAttr = `data-page="` + page + `"`;
+                    nameAttr = `name="pageInput"`;
+                }
+
+                if (active) {
+                    classes += " active";
+                    classes += " text-white bg-indigo-600 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600";
+                } else if (disabled) {
+                    classes += " text-gray-400 bg-gray-100 disabled";
+                } else if (page === 'ellipsis') {
+                    classes += " text-gray-700 bg-white pointer-events-none cursor-default";
+                } else {
+                    classes += " text-gray-900 bg-white hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer page-link";
+                }
+
+                if (page === 'prev') {
+                    classes = classes.replace('px-4', 'px-2 rounded-l-md');
+                    content = `
+                    <span class="sr-only">Trang trước</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 0 1-.02 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06.02Z" clip-rule="evenodd" />
+                    </svg>
+                `;
+                } else if (page === 'next') {
+                    classes = classes.replace('px-4', 'px-2 rounded-r-md');
+                    content = `
+                    <span class="sr-only">Trang sau</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z" clip-rule="evenodd" />
+                    </svg>
+                `;
+                }
+
+                return '<a class="' + classes + '" ' + actionAttr + ' ' + nameAttr + '>' + content + '</a>';
+            }
+
+
+            function renderPagination() {
+                let html = '';
+
+                const prevDisabled = currentPage === 1;
+                html += createPageButton('', 'prev', false, prevDisabled);
+
+                let pages = [];
+                const pageRange = 2;
+
+                if (totalPages > 0)
+                    pages.push(1);
+                for (let i = currentPage - pageRange; i <= currentPage + pageRange; i++) {
+                    if (i > 1 && i < totalPages) {
+                        pages.push(i);
+                    }
+                }
+
+                if (totalPages > 1)
+                    pages.push(totalPages);
+                pages = [...new Set(pages)].sort((a, b) => a - b);
+
+                let lastPage = 0;
+                for (const page of pages) {
+                    if (page > lastPage + 1) {
+                        html += createPageButton('...', 'ellipsis', false, false);
+                    }
+
+                    const active = page === currentPage;
+                    html += createPageButton(page.toString(), page, active, false);
+                    lastPage = page;
+                }
+
+                const nextDisabled = currentPage === totalPages;
+                html += createPageButton('', 'next', false, nextDisabled);
+
+                pageNav.innerHTML = html;
+                pageInput.value = currentPage;
+
+                updateResultInfo();
+            }
+
+            function changePage(newPage) {
+                if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
+                    currentPage = newPage;
+                    renderPagination();
+                    form.submit();
+                }
+            }
+
+            pageNav.addEventListener('click', (e) => {
+                const target = e.target.closest('a');
+                if (!target || target.classList.contains('disabled') || target.hasAttribute('aria-current')) {
+                    return;
+                }
+
+                const pageType = target.getAttribute('data-page');
+
+                if (pageType === 'prev') {
+                    changePage(currentPage - 1);
+                } else if (pageType === 'next') {
+                    changePage(currentPage + 1);
+                } else if (pageType) {
+                    const newPage = parseInt(pageType, 10);
+                    changePage(newPage);
+                }
+            });
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-start',
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 3000,
+                timerProgressBar: true,
+
+                customClass: {
+                    popup: 'font-inter text-sm shadow-lg',
+                    closeButton: 'text-current hover:text-opacity-80'
+                },
+
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            goToButton.addEventListener('click', () => {
+                const pageValue = parseInt(pageInput.value.trim(), 10);
+                const isValid = !isNaN(pageValue) && pageValue >= 1 && pageValue <= totalPages;
+
+                if (isValid) {
+                    // Nếu hợp lệ, chuyển trang [cite: 253]
+                    changePage(pageValue);
+                } else {
+                    let errorMessage = 'Số trang không hợp lệ.';
+
+                    if (totalPages > 0) {
+                        errorMessage = 'Vui lòng nhập số trang từ 1 đến ' + totalPages + '.';
+                        pageInput.value = currentPage;
+                    } else {
+                        errorMessage = 'Không có dữ liệu để hiển thị.';
+                        pageInput.value = 1;
+                    }
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: errorMessage,
+                        customClass: {
+                            popup: 'bg-red-50 text-red-800'
+                        }
+                    });
+                }
+            });
+
             document.addEventListener("DOMContentLoaded", () => {
-                poBadge(status);
-                renderTableLine();
+                renderTable();
+                if (totalItems !== 0)
+                    renderPagination();
 
                 const sidebar = document.getElementById("admin-sidebar");
                 const mainContent = document.getElementById("main-content");
@@ -527,6 +918,26 @@
                         );
                 const userMenuButton = document.getElementById("user-menu-button");
                 const userMenuDropdown = document.getElementById("user-menu-dropdown");
+
+            <c:if test="${not empty successMessage}">
+                Toast.fire({
+                    icon: 'success',
+                    title: '${successMessage}',
+                    customClass: {
+                        popup: 'bg-green-50 text-green-800'
+                    }
+                });
+            </c:if>
+
+            <c:if test="${not empty errorMessage}">
+                Toast.fire({
+                    icon: 'error',
+                    title: '${errorMessage}',
+                    customClass: {
+                        popup: 'bg-red-50 text-red-800'
+                    }
+                });
+            </c:if>
 
                 function setTransitions(enabled) {
                     const value = enabled ? "all 0.3s ease-in-out" : "none";
