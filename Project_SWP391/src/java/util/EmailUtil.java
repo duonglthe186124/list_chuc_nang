@@ -11,7 +11,6 @@ import jakarta.mail.internet.MimeMessage;
 
 public class EmailUtil {
 
-    // **THAY THẾ BẰNG THÔNG TIN THẬT CỦA BẠN**
     private static final String SENDER_EMAIL = "rgfl7405@gmail.com"; // Email Gmail 
     private static final String APP_PASSWORD = "whel izyb njee iiov"; // Mật khẩu ứng dụng 
 
@@ -55,6 +54,47 @@ public class EmailUtil {
             System.err.println("Failed to send reset email: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+    
+    public static void sendNewStaffAccountEmail(String toEmail, String defaultPassword) {
+    
+        final String fromEmail = "rgfl7405@gmail.com"; 
+        final String password = "whel izyb njee iiov"; // Mật khẩu ứng dụng
+
+        // Cấu hình properties (giống hệt hàm sendResetCode)
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        });
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(fromEmail));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            msg.setSubject("Welcome to WMS Pro - Your Account Details"); // Tiêu đề email
+
+            // Nội dung email
+            String emailBody = "Hello,\n\n"
+                             + "An account has been created for you on the WMS Pro system.\n\n"
+                             + "Your login email: " + toEmail + "\n"
+                             + "Your default password is: " + defaultPassword + "\n\n"
+                             + "Please log in using this password and change it at your earliest convenience.\n\n"
+                             + "Thank you,\n"
+                             + "WMS Pro Administrator";
+
+            msg.setText(emailBody);
+            Transport.send(msg);
+            System.out.println("New account email sent successfully to " + toEmail);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

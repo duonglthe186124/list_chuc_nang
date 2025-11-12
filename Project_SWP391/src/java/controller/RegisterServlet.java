@@ -44,6 +44,12 @@ public class RegisterServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
             return;
         }
+        
+        if (userDAO.isPhoneTaken(phone)) {
+            request.setAttribute("errorMessage", "This phone number is already in use.");
+            request.getRequestDispatcher("WEB-INF/view/register.jsp").forward(request, response);
+            return; 
+        }
 
         // Create a new Users object
         Users newUser = new Users();
