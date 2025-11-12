@@ -98,7 +98,7 @@
                                             class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
                                         
                                         <img class="h-8 w-8 rounded-full object-cover"
-                                             src="${pageContext.request.contextPath}/${not empty sessionScope.account.avatar_url ? sessionScope.account.avatar_url : 'resources/img/default-avatar.png'}"
+                                             src="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg"
                                              alt="User Avatar" />
                                         <span class="hidden md:inline text-sm font-medium text-gray-700">
                                             ${sessionScope.account.fullname}

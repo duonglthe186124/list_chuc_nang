@@ -165,8 +165,16 @@
         <servlet-class>controller.ResendCodeServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CallbackGithubServlet</servlet-name>
-        <servlet-class>controller.CallbackGithubServlet</servlet-class>
+        <servlet-name>FindAccountServlet</servlet-name>
+        <servlet-class>controller.FindAccountServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>VerifyCodeServlet</servlet-name>
+        <servlet-class>controller.VerifyCodeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateEmployeeServlet</servlet-name>
+        <servlet-class>controller.CreateEmployeeServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PurchaseOrderServlet</servlet-name>
@@ -337,8 +345,16 @@
         <url-pattern>/resend-code</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CallbackGithubServlet</servlet-name>
-        <url-pattern>/callback-github</url-pattern>
+        <servlet-name>FindAccountServlet</servlet-name>
+        <url-pattern>/findAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VerifyCodeServlet</servlet-name>
+        <url-pattern>/verifyCode</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateEmployeeServlet</servlet-name>
+        <url-pattern>/createEmployee</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PurchaseOrderServlet</servlet-name>

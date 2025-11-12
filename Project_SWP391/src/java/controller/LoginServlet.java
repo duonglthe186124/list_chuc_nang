@@ -72,7 +72,12 @@ public class LoginServlet extends HttpServlet {
             if (activeUserSet != null) {
                 activeUserSet.add(user.getUser_id());
             }
-            response.sendRedirect(request.getContextPath() + "/home");    
+            if (user.getRole_id() == 3) {
+                request.getRequestDispatcher("/WEB-INF/view/inbound_dashboard.jsp").forward(request, response);
+            }
+            else{
+                response.sendRedirect(request.getContextPath() + "/home");    
+            }
         }
     }
 

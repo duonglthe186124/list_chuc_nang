@@ -61,7 +61,7 @@
                                             class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
                                         
                                         <img class="h-8 w-8 rounded-full object-cover"
-                                             src="${pageContext.request.contextPath}/${not empty sessionScope.account.avatar_url ? sessionScope.account.avatar_url : 'resources/img/default-avatar.png'}"
+                                             src="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg"
                                              alt="User Avatar" />
                                         <span class="hidden md:inline text-sm font-medium text-gray-700">
                                             ${sessionScope.account.fullname}
@@ -110,10 +110,10 @@
                 
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
-                    <a href="${pageContext.request.contextPath}/account-management" 
-                       class="py-2 px-4 bg-indigo-600 text-white font-medium rounded-lg transition duration-200 hover:bg-indigo-700">
-                        Update List Account
-                    </a>
+                    <a href="${pageContext.request.contextPath}/createEmployee" 
+                        class="flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus:ring">
+                         Add new account
+                     </a>
                 </div>
 
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden">
