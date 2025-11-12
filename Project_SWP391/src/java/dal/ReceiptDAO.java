@@ -28,7 +28,7 @@ public class ReceiptDAO extends DBContext {
                 + "	po.po_code\n"
                 + "FROM Purchase_orders po\n"
                 + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id\n"
-                + "WHERE po.status = 'PENDING' OR po.status = 'ACTIVE'");
+                + "WHERE po.status = 'CONFIRM' OR po.status = 'PARTIAL'");
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()) {
@@ -56,7 +56,7 @@ public class ReceiptDAO extends DBContext {
                 + "FROM Purchase_orders po\n"
                 + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id\n"
                 + "LEFT JOIN Purchase_order_lines pol ON po.po_id = pol.po_id\n"
-                + "WHERE (po.status = 'PENDING' OR po.status = 'ACTIVE') AND po.po_id = ?");
+                + "WHERE (po.status = 'CONFIRM' OR po.status = 'PARTIAL') AND po.po_id = ?");
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             ps.setInt(1, po_id);

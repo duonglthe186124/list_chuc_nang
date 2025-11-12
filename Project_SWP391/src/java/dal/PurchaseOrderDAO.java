@@ -260,7 +260,7 @@ public class PurchaseOrderDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Consider using a logging framework
+            e.printStackTrace();
         }
         return po_id;
     }
@@ -285,4 +285,84 @@ public class PurchaseOrderDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
+    public void save_token(int po_id, String token) {
+        String sql = "INSERT INTO PO_Token (po_id, token) VALUES (?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, po_id);
+            ps.setString(2, token);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean check_tokens(int po_id, String token) {
+        String sql = "SELECT 1 FROM PO_Token WHERE po_id = ? AND token = ?";
+        boolean isValid = false;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, po_id);
+            ps.setString(2, token);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    isValid = true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isValid;
+    }
+
+    public void remove_token(int po_id, String token) {
+        String sql = "DELETE FROM PO_Token WHERE po_id = ? AND token = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, po_id);
+            ps.setString(2, token);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean confirm_po(int po_id) {
+        String sql = "UPDATE Purchase_orders SET status = 'CONFIRM' WHERE po_id = ? AND status = 'PENDING'";
+        boolean existed = false;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, po_id);
+            int affectedRows = ps.executeUpdate();
+            existed = affectedRows > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return existed;
+    }
+
+    public void cancel(int po_id) {
+        String sql = "UPDATE Purchase_orders SET status = 'CANCELLED' WHERE po_id = ? AND status = 'PENDING'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, po_id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

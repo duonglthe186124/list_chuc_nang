@@ -106,4 +106,54 @@ public class SupplierDAO extends DBContext {
         }
         return lines;
     }
+
+    public String supplier_email(int supplier_id) {
+        String email = null;
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT email FROM Suppliers WHERE supplier_id = ?");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            ps.setInt(1, supplier_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    email = rs.getString("email");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return email;
+    }
+
+    public Suppliers supplier(int supplier_id) {
+        Suppliers supplier = null;
+        String sql = "SELECT * FROM Suppliers WHERE supplier_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, supplier_id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    supplier = new Suppliers(
+                            rs.getInt("supplier_id"),
+                            rs.getString("supplier_name"),
+                            rs.getString("display_name"),
+                            rs.getString("address"),
+                            rs.getString("phone"),
+                            rs.getString("email"),
+                            rs.getString("representative"),
+                            rs.getString("payment_method"),
+                            rs.getString("note"));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return supplier;
+    }
 }

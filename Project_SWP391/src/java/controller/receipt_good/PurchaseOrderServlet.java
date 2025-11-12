@@ -1,4 +1,4 @@
-package controller;
+package controller.receipt_good;
 
 import dto.Response_PODTO;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import service.ManagePOService;
@@ -21,6 +22,18 @@ public class PurchaseOrderServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            if (session.getAttribute("successMessage") != null) {
+                request.setAttribute("successMessage", session.getAttribute("successMessage"));
+                session.removeAttribute("successMessage");
+            }
+            if (session.getAttribute("errorMessage") != null) {
+                request.setAttribute("errorMessage", session.getAttribute("errorMessage"));
+                session.removeAttribute("errorMessage");
+            }
+        }
+
         String raw_search = request.getParameter("search");
         String raw_status = request.getParameter("status");
         String raw_page_size = request.getParameter("pageSize");
@@ -36,6 +49,12 @@ public class PurchaseOrderServlet extends HttpServlet {
 
         if (raw_status != null && !raw_status.trim().isEmpty()) {
             status = raw_status.replaceAll("[\"'%;]", "");
+        }
+
+        try {
+            total_items = service.get_total_items(search, status);
+        } catch (IllegalArgumentException e) {
+            request.getSession().setAttribute("errorMessage", e.getMessage());
         }
 
         if (raw_page_size != null && !raw_page_size.trim().isEmpty()) {
@@ -58,14 +77,13 @@ public class PurchaseOrderServlet extends HttpServlet {
 
         try {
             po_list = service.get_po_list(search, status, page_size, page_no);
-            total_items = service.get_total_items(search, status);
-
         } catch (IllegalArgumentException e) {
             if ("404".equals(e.getMessage())) {
                 response.sendRedirect(request.getContextPath() + "/404");
                 return;
             }
         }
+        
         request.setAttribute("list", po_list);
         request.setAttribute("search", search);
         request.setAttribute("status", status);

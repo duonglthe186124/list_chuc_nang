@@ -14,19 +14,19 @@
     </servlet>
     <servlet>
         <servlet-name>transactionServlet</servlet-name>
-        <servlet-class>controller.transactionServlet</servlet-class>
+        <servlet-class>controller.receipt_good.transactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>viewTransactionServlet</servlet-name>
-        <servlet-class>controller.viewTransactionServlet</servlet-class>
+        <servlet-class>controller.receipt_good.viewTransactionServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createPurchaseOrderServlet</servlet-name>
-        <servlet-class>controller.createPurchaseOrderServlet</servlet-class>
+        <servlet-class>controller.receipt_good.createPurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>createReceiptServlet</servlet-name>
-        <servlet-class>controller.createReceiptServlet</servlet-class>
+        <servlet-class>controller.receipt_good.createReceiptServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>productController</servlet-name>
@@ -90,7 +90,7 @@
     </servlet>
     <servlet>
         <servlet-name>CreateShipmentServlet</servlet-name>
-        <servlet-class>controller.CreateShipmentServlet</servlet-class>
+        <servlet-class>controller.receipt_good.CreateShipmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CompleteShipController</servlet-name>
@@ -146,7 +146,7 @@
     </servlet>
     <servlet>
         <servlet-name>InboundDashboardServlet</servlet-name>
-        <servlet-class>controller.InboundDashboardServlet</servlet-class>
+        <servlet-class>controller.receipt_good.InboundDashboardServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ManageSupplierServlet</servlet-name>
@@ -170,15 +170,31 @@
     </servlet>
     <servlet>
         <servlet-name>PurchaseOrderServlet</servlet-name>
-        <servlet-class>controller.PurchaseOrderServlet</servlet-class>
+        <servlet-class>controller.receipt_good.PurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ViewPurchaseOrderServlet</servlet-name>
-        <servlet-class>controller.ViewPurchaseOrderServlet</servlet-class>
-      </servlet>
+        <servlet-class>controller.receipt_good.ViewPurchaseOrderServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>TestOrderController</servlet-name>
         <servlet-class>controller.TestOrderController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.receipt_good.ConfirmPurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SupplierPOViewServlet</servlet-name>
+        <servlet-class>controller.receipt_good.SupplierPOViewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ShipmentServlet</servlet-name>
+        <servlet-class>controller.receipt_good.ShipmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CancelPurchaseOrderServlet</servlet-name>
+        <servlet-class>controller.receipt_good.CancelPurchaseOrderServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -347,10 +363,26 @@
     <servlet-mapping>
         <servlet-name>ViewPurchaseOrderServlet</servlet-name>
         <url-pattern>/inbound/purchase-orders/view</url-pattern>
-      </servlet-mapping>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestOrderController</servlet-name>
         <url-pattern>/order/test</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
+        <url-pattern>/confirm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SupplierPOViewServlet</servlet-name>
+        <url-pattern>/view-external</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ShipmentServlet</servlet-name>
+        <url-pattern>/inbound/shipments</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CancelPurchaseOrderServlet</servlet-name>
+        <url-pattern>/inbound/purchase-orders/cancel</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
