@@ -9,37 +9,71 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import dto.InspectionViewDTO; 
+import dto.InspectionFormDTO; 
 import model.Quality_inspections; 
 import model.Warehouse_locations; 
 import util.DBContext; 
 
 public class QualityInspectionDAO extends DBContext {
 
-    // Hàm 1: Lấy unit_id (ID của IMEI) từ số IMEI
-    public int getUnitIdByImei(String imei) {
-        String query = "SELECT product_unit_id FROM Product_units WHERE imei = ?";
+    // Constructor (giữ nguyên)
+    public QualityInspectionDAO() throws Exception {
+        super();
+        if (this.connection == null) {
+            throw new Exception("Lỗi: QualityInspectionDAO không thể kết nối CSDL.");
+        }
+    }
+    
+    // HÀM MỚI: JOIN 7 BẢNG ĐỂ LẤY THÔNG TIN CHO FORM
+    public InspectionFormDTO getUnitDetailsForInspection(String imei) throws Exception {
+        InspectionFormDTO details = null;
+        String query = "SELECT " +
+            "    pu.unit_id, pu.imei, pu.status, " +
+            "    p.sku_code, p.name AS productName, " +
+            "    s.supplier_name, s.phone AS supplierPhone, s.email AS supplierEmail " +
+            "FROM Product_units pu " +
+            "JOIN Products p ON pu.product_id = p.product_id " +
+            "LEFT JOIN Receipt_units ru ON pu.unit_id = ru.unit_id " +
+            "LEFT JOIN Receipt_lines rl ON ru.line_id = rl.line_id " +
+            "LEFT JOIN Receipts r ON rl.receipt_id = r.receipts_id " +
+            "LEFT JOIN Purchase_orders po ON r.po_id = po.po_id " +
+            "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id " +
+            "WHERE pu.imei = ?";
+        
         Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        int unitId = 0;
         try {
             ps = conn.prepareStatement(query);
             ps.setString(1, imei);
             rs = ps.executeQuery();
             if (rs.next()) {
-                unitId = rs.getInt("product_unit_id");
+                details = new InspectionFormDTO();
+                details.setUnitId(rs.getInt("unit_id"));
+                details.setImei(rs.getString("imei"));
+                details.setCurrentStatus(rs.getString("status"));
+                details.setSkuCode(rs.getString("sku_code"));
+                details.setProductName(rs.getString("productName"));
+                details.setSupplierName(rs.getString("supplier_name"));
+                details.setSupplierPhone(rs.getString("supplierPhone"));
+                details.setSupplierEmail(rs.getString("supplierEmail"));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         } finally {
+            // KHÔNG đóng conn
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (Exception e) { e.printStackTrace(); }
         }
-        return unitId;
+        return details;
     }
 
-    // Hàm 2: Thêm một phiếu kiểm định mới
-    public boolean addInspection(Quality_inspections inspection) {
-        String query = "INSERT INTO Quality_inspections (inspection_no, unit_id, location_id, inspected_by, inspected_date, status, result, note) " +
+    // Hàm 2: Thêm một phiếu kiểm định mới (Giữ nguyên)
+    public boolean addInspection(Quality_inspections inspection) throws Exception {
+        String query = "INSERT INTO Quality_Inspections (inspection_no, unit_id, location_id, inspected_by, inspected_at, status, result, note) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection conn = this.connection;
         PreparedStatement ps = null;
@@ -49,7 +83,7 @@ public class QualityInspectionDAO extends DBContext {
             ps.setInt(2, inspection.getUnit_id());
             ps.setInt(3, inspection.getLocation_id());
             ps.setInt(4, inspection.getInspected_by());
-            ps.setDate(5, new java.sql.Date(inspection.getInspected_date().getTime()));
+            ps.setTimestamp(5, new java.sql.Timestamp(inspection.getInspected_date().getTime())); // Dùng Timestamp
             ps.setString(6, inspection.getStatus());
             ps.setString(7, inspection.getResult());
             ps.setString(8, inspection.getNote());
@@ -57,64 +91,19 @@ public class QualityInspectionDAO extends DBContext {
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            throw e;
         } finally {
             try {
                 if (ps != null) ps.close();
-                if (conn != null) conn.close();
             } catch (Exception e) { e.printStackTrace(); }
         }
-    }
-
-    // Hàm 3: Lấy lịch sử kiểm định (dùng JOIN và DTO mới)
-    public List<InspectionViewDTO> getAllInspectionsForView() {
-        List<InspectionViewDTO> list = new ArrayList<>();
-        String query = "SELECT " +
-                       "    q.inspection_no, q.inspected_at, q.result, q.note, " +
-                       "    pu.imei, p.name as productName, u.fullname as inspectorName, wl.code as locationCode " +
-                       "FROM " +
-                       "    Quality_inspections q " +
-                       "JOIN Product_units pu ON q.unit_id = pu.unit_id " +
-                       "JOIN Products p ON pu.product_id = p.product_id " +
-                       "JOIN Users u ON q.inspected_by = u.user_id " +
-                       "LEFT JOIN Warehouse_locations wl ON q.location_id = wl.location_id " + // LEFT JOIN phòng khi location là null
-                       "ORDER BY q.inspected_at DESC";
-        
-        Connection conn = this.connection;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try {
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                InspectionViewDTO dto = new InspectionViewDTO();
-                dto.setInspection_no(rs.getString("inspection_no"));
-                dto.setInspected_date(rs.getDate("inspected_at"));
-                dto.setResult(rs.getString("result"));
-                dto.setNote(rs.getString("note"));
-                dto.setImei(rs.getString("imei"));
-                dto.setProductName(rs.getString("productName"));
-                dto.setInspectorName(rs.getString("inspectorName"));
-                dto.setLocationCode(rs.getString("locationCode"));
-                list.add(dto);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
-            } catch (Exception e) { e.printStackTrace(); }
-        }
-        return list;
     }
     
-    // Hàm 4: Lấy danh sách vị trí kho (để điền vào dropdown)
-    public List<Warehouse_locations> getAllLocations() {
+    // Hàm 3: Lấy danh sách vị trí kho (Giữ nguyên)
+    public List<Warehouse_locations> getAllLocations() throws Exception {
         List<Warehouse_locations> list = new ArrayList<>();
         String query = "SELECT location_id, code FROM Warehouse_locations";
-        Connection conn = this.connection; // Dùng chung connection
+        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -129,7 +118,23 @@ public class QualityInspectionDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (Exception e) { e.printStackTrace(); }
         }
         return list;
     }
+
+    // Hàm 4: Đóng kết nối (Giữ nguyên)
+    public void closeConnection() {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

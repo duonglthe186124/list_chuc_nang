@@ -175,10 +175,30 @@
     <servlet>
         <servlet-name>ViewPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.ViewPurchaseOrderServlet</servlet-class>
-      </servlet>
+    </servlet>
     <servlet>
         <servlet-name>TestOrderController</servlet-name>
         <servlet-class>controller.TestOrderController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EditUnitServlet</servlet-name>
+        <servlet-class>controller.EditUnitServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ReturnListServlet</servlet-name>
+        <servlet-class>controller.ReturnListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateReturnServlet</servlet-name>
+        <servlet-class>controller.CreateReturnServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TransferServlet</servlet-name>
+        <servlet-class>controller.TransferServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdjustmentHistoryServlet</servlet-name>
+        <servlet-class>controller.AdjustmentHistoryServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -347,10 +367,30 @@
     <servlet-mapping>
         <servlet-name>ViewPurchaseOrderServlet</servlet-name>
         <url-pattern>/inbound/purchase-orders/view</url-pattern>
-      </servlet-mapping>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestOrderController</servlet-name>
         <url-pattern>/order/test</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditUnitServlet</servlet-name>
+        <url-pattern>/warehouse/editUnit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReturnListServlet</servlet-name>
+        <url-pattern>/warehouse/returnsList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateReturnServlet</servlet-name>
+        <url-pattern>/warehouse/returns</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TransferServlet</servlet-name>
+        <url-pattern>/warehouse/transfer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdjustmentHistoryServlet</servlet-name>
+        <url-pattern>/warehouse/history</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
