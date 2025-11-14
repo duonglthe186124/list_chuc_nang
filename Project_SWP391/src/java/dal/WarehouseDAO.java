@@ -9,65 +9,200 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import dto.InventoryStockDTO; 
-import util.DBContext; 
+import dto.InventoryDetailDTO;
+import model.Brands;
+import util.DBContext;
 
 public class WarehouseDAO extends DBContext {
 
     /**
-     * Lấy tồn kho của TẤT CẢ sản phẩm bằng cách đếm động
-     * @return 
+     * (Đếm): Đếm tổng số IMEI khớp với bộ lọc
      */
-    public List<InventoryStockDTO> getInventoryStock() {
-        List<InventoryStockDTO> list = new ArrayList<>();
-        
-        // Câu SQL này đếm tất cả Product_units có status 'Trong kho'
-        // và nhóm theo sản phẩm
-        String query = "SELECT " +
-                       "    p.product_id, " +
-                       "    p.name, " +
-                       "    p.sku_code, " +
-                       "    COUNT(u.unit_id) as StockQuantity " +
-                       "FROM " +
-                       "    Products p " +
-                       "LEFT JOIN " +
-                       "    Product_units u ON p.product_id = u.product_id AND u.status = 'AVAILABLE' " +
-                       "GROUP BY " +
-                       "    p.product_id, p.name, p.sku_code " +
-                       "ORDER BY " +
-                       "    p.name;";
+    public int getDetailedStockCount(String productName, int brandId) {
+        List<Object> params = new ArrayList<>();
+        int total = 0;
 
-        Connection conn = this.connection; 
-        if (conn == null) {
-            System.err.println("Lỗi: WarehouseDAO không lấy được connection.");
-            return list;
+        String query = "SELECT COUNT(pu.unit_id) "
+                + "FROM Product_units pu "
+                + "JOIN Products p ON pu.product_id = p.product_id "
+                + "LEFT JOIN Brands b ON p.brand_id = b.brand_id "
+                + "WHERE 1=1 ";
+
+        if (productName != null && !productName.trim().isEmpty()) {
+            query += " AND p.name LIKE ? ";
+            params.add("%" + productName + "%");
+        }
+        if (brandId > 0) {
+            query += " AND p.brand_id = ? ";
+            params.add(brandId);
         }
 
+        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
             rs = ps.executeQuery();
-            while (rs.next()) {
-                InventoryStockDTO item = new InventoryStockDTO();
-                item.setProductId(rs.getInt("product_id"));
-                item.setProductName(rs.getString("name"));
-                item.setSkuCode(rs.getString("sku_code"));
-                item.setStockQuantity(rs.getInt("StockQuantity"));
-                list.add(item);
+            if (rs.next()) {
+                total = rs.getInt(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (conn != null) conn.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Lấy Tồn kho Chi tiết CÓ LỌC và PHÂN TRANG
+     */
+    public List<InventoryDetailDTO> getDetailedStockPaginated(String productName, int brandId, int pageIndex, int pageSize) {
+        List<InventoryDetailDTO> list = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        String query = "SELECT "
+                + "    pu.unit_id, pu.imei, pu.status, pu.purchase_price, pu.received_date, "
+                + "    p.name AS productName, "
+                + "    wl.code AS locationCode, "
+                + "    s.supplier_name, "
+                + "    latest_qi.inspected_at AS lastInspectionDate, "
+                + "    e_ins.fullname AS inspectorName, "
+                + "    sh.requested_at AS issueDate "
+                + "FROM Product_units pu "
+                + "JOIN Products p ON pu.product_id = p.product_id "
+                + "LEFT JOIN Brands b ON p.brand_id = b.brand_id "
+                + "LEFT JOIN Containers c ON pu.container_id = c.container_id "
+                + "LEFT JOIN Warehouse_locations wl ON c.location_id = wl.location_id "
+                + "LEFT JOIN Receipt_units ru ON pu.unit_id = ru.unit_id "
+                + "LEFT JOIN Receipt_lines rl ON ru.line_id = rl.line_id "
+                + "LEFT JOIN Receipts r ON rl.receipt_id = r.receipts_id "
+                + "LEFT JOIN Purchase_orders po ON r.po_id = po.po_id "
+                + "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id "
+                + "LEFT JOIN Shipment_units shu ON pu.unit_id = shu.unit_id "
+                + "LEFT JOIN Shipment_lines sl ON shu.line_id = sl.line_id "
+                + "LEFT JOIN Shipments sh ON sl.shipment_id = sh.shipment_id "
+                + "OUTER APPLY ( "
+                + "    SELECT TOP 1 qi.inspected_at, qi.inspected_by "
+                + "    FROM Quality_Inspections qi "
+                + "    WHERE qi.unit_id = pu.unit_id "
+                + "    ORDER BY qi.inspected_at DESC "
+                + ") AS latest_qi "
+                + "LEFT JOIN Employees e ON latest_qi.inspected_by = e.employee_id "
+                + "LEFT JOIN Users e_ins ON e.user_id = e_ins.user_id "
+                + "WHERE 1=1 ";
+
+        if (productName != null && !productName.trim().isEmpty()) {
+            query += " AND p.name LIKE ? ";
+            params.add("%" + productName + "%");
+        }
+        if (brandId > 0) {
+            query += " AND p.brand_id = ? ";
+            params.add(brandId);
+        }
+
+        query += " ORDER BY p.name, pu.imei "
+                + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        params.add((pageIndex - 1) * pageSize);
+        params.add(pageSize);
+
+        Connection conn = this.connection;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            ps = conn.prepareStatement(query);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                InventoryDetailDTO dto = new InventoryDetailDTO();
+                dto.setUnitId(rs.getInt("unit_id"));
+                dto.setImei(rs.getString("imei"));
+                dto.setStatus(rs.getString("status"));
+                dto.setPurchasePrice(rs.getBigDecimal("purchase_price"));
+                dto.setReceiptDate(rs.getTimestamp("received_date"));
+                dto.setProductName(rs.getString("productName"));
+                dto.setLocationCode(rs.getString("locationCode"));
+                dto.setSupplierName(rs.getString("supplier_name"));
+                dto.setLastInspectionDate(rs.getTimestamp("lastInspectionDate"));
+                dto.setInspectorName(rs.getString("inspectorName"));
+                dto.setIssueDate(rs.getTimestamp("issueDate"));
+                list.add(dto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return list;
+    }
+
+    // HÀM 3: Lấy tất cả nhãn hàng (ĐÃ SỬA LỖI)
+    public List<Brands> getAllBrands() {
+        List<Brands> list = new ArrayList<>();
+        String query = "SELECT brand_id, brand_name FROM Brands";
+        Connection conn = this.connection;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Brands b = new Brands();
+                b.setBrand_id(rs.getInt("brand_id"));
+                b.setBrand_name(rs.getString("brand_name"));
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return list;
+    }
+
+    public void closeConnection() {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

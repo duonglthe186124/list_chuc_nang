@@ -1,0 +1,71 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 13 thg 11, 2025, 19:48:22
+    Author     : hoang
+*/
+/* ========== Vùng form cập nhật trạng thái đơn hàng ========== */
+.update-form {
+    max-width: 500px;
+    background-color: #fff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    margin: 20px auto;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* mỗi dòng trong form */
+.update-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+/* nhãn bên trái */
+.update-row label {
+    flex: 1;
+    font-weight: 600;
+    color: #333;
+}
+
+/* input hoặc select bên phải */
+.update-row select,
+.update-row input[type="text"] {
+    flex: 2;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+/* căn lỗi hiển thị ngay dưới input */
+.update-error {
+    color: #b91c1c;
+    font-weight: 600;
+    margin-top: -8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: right;
+}
+
+/* responsive cho màn nhỏ */
+@media (max-width: 500px) {
+    .update-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .update-row label {
+        margin-bottom: 5px;
+    }
+
+    .update-row select,
+    .update-row input[type="text"] {
+        width: 100%;
+    }
+}
+
