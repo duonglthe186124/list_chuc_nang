@@ -3,13 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/create_purchase_order.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/shipments.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/view_transaction.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/purchase_orders.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/view_purchase_order.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/transaction_history.jsp</file>
-            <file>file:/D:/Project/list_chuc_nang_in/Project_SWP391/web/WEB-INF/view/inbound_dashboard.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/home_page.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/create_employee.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/suppliers.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/change_password.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/shipments.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/create_purchase_order.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/view_transaction.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/create_receipt.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/view_purchase_order.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/locationList.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/personal_profile.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/create_shipment.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/transaction_history.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/inbound_dashboard.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/account_management.jsp</file>
+            <file>file:/D:/SWP/list_chuc_nang_users/Project_SWP391/web/WEB-INF/view/purchase_orders.jsp</file>
         </group>
     </open-files>
 </project-private>

@@ -573,14 +573,22 @@
                                 id="user-menu-button"
                                 class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none"
                                 >
-                                <img
-                                    class="h-8 w-8 rounded-full object-cover"
-                                    src="https://placehold.co/100x100/e2e8f0/64748b?text=A"
-                                    alt="User"
-                                    /><span
-                                    class="hidden md:inline text-sm font-medium text-gray-700"
-                                    >Admin Kho</span
-                                ><svg
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.account.avatar_url}">
+                                        <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                            <c:param name="v" value="${date.time}" />
+                                        </c:url>
+                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                            <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                    </c:otherwise>
+                                </c:choose>
+                                <span class="hidden md:inline text-sm font-medium text-gray-700">
+                                            ${sessionScope.account.fullname}
+                                        </span>
+                                        <svg
                                     class="h-5 w-5 text-gray-400"
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -600,7 +608,7 @@
                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20"
                                 >
                                 <a
-                                    href="#"
+                                    href="${pageContext.request.contextPath}/PersonalProfile"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                     >Hồ sơ</a
                                 ><a
@@ -610,7 +618,7 @@
                                 >
                                 <div class="border-t border-gray-100 my-1"></div>
                                 <a
-                                    href="/login"
+                                    href="${pageContext.request.contextPath}/logout"
                                     class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                     >Đăng xuất</a
                                 >

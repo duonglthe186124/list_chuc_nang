@@ -368,6 +368,22 @@ public class UserDAO extends DBContext {
         return roleList;
     }
     
+    public boolean check_role(int role_id, int feature_id) {
+        boolean check = false;
+        String sql = "SELECT * FROM Feature_role WHERE role_id = ? and feature_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, role_id);
+            ps.setInt(2, feature_id);
+
+            int rowAffected = ps.executeUpdate();
+            check = (rowAffected > 0)? true : false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return check;
+    }
+    
 //    public List<Roles> getManageableRoles() {
 //        List<Roles> roleList = new ArrayList<>();
 //        // Lấy các vai trò bạn muốn admin có thể gán
