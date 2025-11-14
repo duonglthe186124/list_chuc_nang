@@ -16,6 +16,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Users;
 
 /**
  *
@@ -34,51 +36,21 @@ public class CreateShipController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        // ✅ Lấy userId từ form
-        String userIdParam = req.getParameter("userId");
-        int userId = -1;
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("account") == null) {
+            resp.sendRedirect(req.getContextPath() + "/loginStaff");
+            return;
+        }
 
-        if (userIdParam == null || userIdParam.trim().isEmpty()) {
-            req.setAttribute("error", "⚠️ Missing userId parameter!");
+        Users currentUser = (Users) session.getAttribute("account");
+
+        if (currentUser.getRole_id() != 5) {  // role_id = 5 là Manager
+            req.setAttribute("error", "User '" + currentUser.getFullname() + "' không có quyền thực hiện thao tác này!");
             req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
             return;
         }
 
-        try {
-            userId = Integer.parseInt(userIdParam);
-        } catch (NumberFormatException e) {
-            req.setAttribute("error", "⚠️ Invalid userId format!");
-            req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-            return;
-        }
-
-        // ✅ Kiểm tra roleId của userId nhận từ form
-        getRoleBySetIdDAO db = new getRoleBySetIdDAO();
-        UserToCheckTask user = null;
-        try {
-            user = db.getUserById(userId);
-
-            if (user == null) {
-                req.setAttribute("error", "❌ Không tìm thấy người dùng có ID: " + userId);
-                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-                return;
-            }
-
-            // Nếu user không phải product Manager (roleId != 5)
-            if (user.getRoleId() != 5) {
-                req.setAttribute("error", "User ID " + userId + " không có quyền thực hiện thao tác này!");
-                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-                return;
-            }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateShipController.class.getName()).log(Level.SEVERE, null, ex);
-            req.setAttribute("error", "⚠️ Lỗi hệ thống khi kiểm tra quyền người dùng!");
-            req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-            return;
-        }
-
-        // ✅ Tiếp tục lấy orderId
+        //lấy orderId
         String orderIdParam = req.getParameter("orderId");
         if (orderIdParam == null || orderIdParam.trim().isEmpty()) {
             req.setAttribute("errorMessage", "⚠️ Không nhận được Order ID!");
@@ -123,7 +95,7 @@ public class CreateShipController extends HttpServlet {
             // 4. Lấy danh sách ship employees
             List<ShipEmployeesDTO> list = dao.getShipEmployees();
 
-            // 5. Gửi dữ liệu vào JSP
+            // 5. Gửi dữ liệu vào JSP   
             req.setAttribute("order", order);
             req.setAttribute("unitIds", unitIds);
             req.setAttribute("statuses", statusList);
@@ -142,6 +114,5 @@ public class CreateShipController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
     }
-    
-}
 
+}
