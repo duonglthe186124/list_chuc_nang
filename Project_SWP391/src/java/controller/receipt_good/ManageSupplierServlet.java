@@ -1,4 +1,4 @@
-package controller;
+package controller.receipt_good;
 
 import java.io.IOException;
 import java.io.PrintWriter;

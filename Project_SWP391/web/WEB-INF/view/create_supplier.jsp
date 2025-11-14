@@ -1,38 +1,28 @@
 <%-- 
-    Document   : create_shipment
-    Created on : Oct 29, 2025, 5:47:08 PM
+    Document   : create_supplier
+    Created on : Nov 12, 2025, 9:42:35 PM
     Author     : ASUS
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tạo Phiếu Xuất Hàng - WMS PHONE</title>
-
-        <!-- Tailwind CSS -->
+        <title>Tạo Nhà Cung Cấp Mới - WMS Pro</title>
         <script src="https://cdn.tailwindcss.com"></script>
-
-        <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             />
-
         <style>
             body {
                 font-family: "Inter", sans-serif;
             }
-
-            form{
-                display: contents;
-            }
-
+            /* (Các CSS tùy chỉnh cho Sidebar và Main Content giữ nguyên như test.html) */
             #admin-sidebar::-webkit-scrollbar {
                 display: none;
             }
@@ -67,207 +57,6 @@
             }
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
-            }
-
-            :root {
-                --border: #e5e7eb;
-                --gap: 20px;
-                --card-radius: 8px;
-                --muted: #64748b;
-                --text: #0f172a;
-            }
-
-            .form-group {
-                margin-bottom: 18px;
-            }
-            .form-group label {
-                display: block;
-                font-weight: 600;
-                margin-bottom: 6px;
-                font-size: 14px;
-                color: #374151
-            }
-            .form-group input[type="text"],
-            .form-group input[type="date"],
-            .form-group select,
-            .form-group textarea {
-                width: 100%;
-                padding: 10px 12px;
-                border-radius: 6px;
-                border: 1px solid var(--border, #e5e7eb);
-                font-size: 14px;
-                font-family: inherit;
-                background: #fff;
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
-            .form-group input:focus,
-            .form-group select:focus,
-            .form-group textarea:focus {
-                border-color: #4f46e5;
-                box-shadow: 0 0 0 1px #4f46e5;
-                outline: none;
-            }
-
-            .form-group textarea {
-                min-height: 90px;
-                resize: vertical;
-            }
-
-            .main-summary-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-            @media (min-width: 1024px) {
-                .main-summary-grid {
-                    grid-template-columns: 3fr 1fr;
-                }
-            }
-            .main-summary-grid {
-                gap: var(--gap, 20px);
-                margin-top: 20px;
-            }
-
-            .summary-card {
-                background: #ffffff;
-                border: 1px solid var(--border, #e5e7eb);
-                border-radius: var(--card-radius, 8px);
-                padding: 16px 18px;
-                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-            }
-
-            .summary-card-title {
-                font-size: 16px;
-                font-weight: 600;
-                margin: 0 0 12px 0;
-                padding-bottom: 10px;
-                border-bottom: 1px solid var(--border, #e5e7eb);
-                color: #1f2937;
-            }
-
-            .info-list {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .info-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 14px;
-            }
-            .info-item h5 {
-                margin: 0;
-                font-weight: 500;
-                color: var(--muted, #64748b);
-            }
-            .info-item p {
-                margin: 0;
-                font-weight: 600;
-                color: var(--text, #1f2937);
-            }
-
-            .divider {
-                background: var(--border, #e5e7eb);
-                margin: 4px 0;
-                height: 1px;
-            }
-
-            .shipment-table-container {
-                overflow-x: auto;
-                border: 1px solid var(--border, #e5e7eb);
-                border-radius: 8px;
-                margin-top: 16px;
-                background: #fff;
-            }
-            .shipment-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-            .shipment-table th,
-            .shipment-table td {
-                border-bottom: 1px solid var(--border, #e5e7eb);
-                padding: 10px 12px;
-                text-align: left;
-                font-size: 14px;
-                vertical-align: middle;
-                white-space: nowrap;
-            }
-            .shipment-table tr:last-child td {
-                border-bottom: none;
-            }
-            .shipment-table th {
-                background-color: #f9fafb;
-                font-weight: 600;
-                color: #374151;
-                text-transform: uppercase;
-                font-size: 12px;
-            }
-            .shipment-table th:first-child,
-            .shipment-table td:first-child,
-            .shipment-table th:nth-child(4),
-            .shipment-table td:nth-child(4),
-            .shipment-table th:nth-child(5),
-            .shipment-table td:nth-child(5),
-            .shipment-table th:nth-child(3),
-            .shipment-table td:nth-child(3),
-            .shipment-table th:nth-child(6),
-            .shipment-table td:nth-child(6) {
-                text-align: center;
-            }
-            .shipment-table td:nth-child(5),
-            .shipment-table td:nth-child(6) {
-                text-align: right;
-                font-family: 'Menlo', 'Consolas', monospace;
-            }
-
-            .shipment-table .qty-input {
-                width: 70px;
-                padding: 6px;
-                text-align: center;
-                border: 1px solid var(--border, #e5e7eb);
-                border-radius: 6px;
-            }
-            .shipment-table .qty-input:focus {
-                border-color: #4f46e5;
-                box-shadow: 0 0 0 1px #4f46e5;
-                outline: none;
-            }
-
-            /* Nút actions */
-            .action-buttons {
-                display: flex;
-                justify-content: flex-end;
-                gap: 12px;
-                margin-top: 24px;
-                border-top: 1px solid var(--border, #e5e7eb);
-                padding-top: 20px;
-            }
-            .btn {
-                padding: 10px 20px;
-                border: none;
-                border-radius: 6px;
-                font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.2s;
-            }
-            .btn-primary {
-                background-color: #4f46e5;
-                color: white;
-            }
-            .btn-primary:hover {
-                background-color: #4338ca;
-            }
-            .btn-secondary {
-                background: #f1f5f9;
-                color: #334155;
-                border: 1px solid var(--border, #e5e7eb);
-            }
-            .btn-secondary:hover {
-                background: #e2e8f0;
             }
         </style>
     </head>
@@ -433,7 +222,7 @@
                             </a>
                             <a
                                 href="${pageContext.request.contextPath}/inbound/createpo"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu mua mới</span>
                             </a>
@@ -494,7 +283,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -526,7 +315,7 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/shipments"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
@@ -534,8 +323,8 @@
                                 <span class="sidebar-text">Danh sách phiếu xuất kho</span>
                             </a>
                             <a
-                                href="${pageContext.request.contextPath}/create-shipment"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
+                                href="${pageContext.request.contextPath}/inbound/create-shipment"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu xuất mới</span>
                             </a>
@@ -545,7 +334,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -565,7 +354,7 @@
                                 <span class="sidebar-text">Nhà cung cấp</span>
                             </div>
                             <svg
-                                class="h-4 w-4 sidebar-arrow transition-transform"
+                                class="h-4 w-4 sidebar-arrow rotate-90 transition-transform"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
@@ -577,7 +366,7 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/suppliers"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
@@ -586,7 +375,7 @@
                             </a>
                             <a
                                 href="${pageContext.request.contextPath}/inbound/create-supplier"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
                                 >
                                 <span class="sidebar-text">Tạo nhà cung cấp mới</span>
                             </a>
@@ -631,268 +420,219 @@
                     </button>
                 </div>
             </aside>
-
+                                
             <main
                 id="main-content"
-                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                class="flex-1 ml-64 bg-gray-100 p-6 lg:p-8 transition-all duration-300 ease-in-out"
                 >
-                <div
-                    class="flex flex-col justify-between items-start mb-6 gap-4"
-                    >
-                    <h1 class="text-3xl font-bold text-gray-900">
-                        Tạo Phiếu Xuất Kho mới
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                        Tạo Nhà Cung Cấp Mới
                     </h1>
-                    <p class="text-sm text-gray-500 mt-1">
-                        Chọn một đơn hàng để bắt đầu tạo phiếu xuất kho.
-                    </p>
-                </div>
 
-                <div class="main-content bg-white p-6 rounded-b-lg shadow-sm">
+                    <div class="bg-white shadow-xl rounded-xl p-6 lg:p-8">
+                        <form
+                            action="${pageContext.request.contextPath}/inbound/create-supplier"
+                            method="post"
+                            >
+                            <div class="space-y-6">
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin cơ bản
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="supplier_name"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Tên nhà cung cấp
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="supplier_name"
+                                                    id="supplier_name"
+                                                    value="${not empty supplier? supplier_name : ''}"
+                                                    autocomplete="organization"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
 
-                    <form action="${pageContext.request.contextPath}/create-shipment" method="get">
-                        <div class="form-group">
-                            <label for="order-id-select">Đơn hàng</label>
-                            <select
-                                id="order-id-select"
-                                name="id"
-                                onchange="this.form.submit()"
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="display_name"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Tên hiển thị <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="display_name"
+                                                    id="display_name"
+                                                    value="${not empty supplier? display_name : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin liên hệ
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-6">
+                                            <label
+                                                for="address"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Địa chỉ <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="address"
+                                                    id="address"
+                                                    value="${not empty supplier? address : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="phone"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Số điện thoại
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    id="phone"
+                                                    value="${not empty supplier? phone : ''}"
+                                                    autocomplete="tel"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="email"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Email <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    id="email"
+                                                    value="${not empty supplier? email : ''}"
+                                                    autocomplete="email"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin giao dịch
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="representative"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Người đại diện
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="representative"
+                                                    id="representative"
+                                                    value="${not empty supplier? representative : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="payment_method"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Phương thức TT
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <select
+                                                    id="payment_method"
+                                                    name="payment_method"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border bg-white"
+                                                    >
+                                                    <option value="">Chọn phương thức</option>
+                                                    <option value="ChuyenKhoan" ${not empty supplier and supplier.payment_method == "ChuyenKhoan"? 'selected' : ''}>Chuyển khoản</option>
+                                                    <option value="TienMat" ${not empty supplier and supplier.payment_method == "TienMat"? 'selected' : ''}>Tiền mặt</option>
+                                                    <option value="CongNo" ${not empty supplier and supplier.payment_method == "CongNo"? 'selected' : ''}>Công nợ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-6">
+                                            <label
+                                                for="note"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Ghi chú</label
+                                            >
+                                            <div class="mt-1">
+                                                <textarea
+                                                    id="note"
+                                                    name="note"
+                                                    rows="3"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    >${not empty supplier? supplier.note : ''}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="pt-5 border-t border-gray-200 mt-8 flex justify-end gap-x-3"
                                 >
-                                <option value="" ${id == selectedID? 'selected' : ''}>-- Vui lòng chọn một đơn hàng --</option>
-                                <c:forEach var="id" items="${order_id}">
-                                    <option value="${id}" ${id == selectedID? 'selected' : ''}>Đơn hàng số ${id}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </form>
-
-                    <div class="main-summary-grid">
-                        <div class="summary-card">
-                            <h3 class="summary-card-title">
-                                Thông tin Đơn hàng & Phiếu xuất
-                            </h3>
-                            <div class="info-list">
-                                <div class="info-item">
-                                    <h5>Khách hàng:</h5>
-                                    <p id="customer-name">${orderInfo.fullname}</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Ngày đặt hàng:</h5>
-                                    <p id="order-date">${orderInfo.order_date}</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Trạng thái ĐH:</h5>
-                                    <p id="order-status">${orderInfo.status}</p>
-                                </div>
-                                <div class="divider"></div>
-                                <div class="info-item">
-                                    <h5>Nhân viên tạo:</h5>
-                                    <p>Trần Văn Hùng (NV003)</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Trạng thái phiếu:</h5>
-                                    <p>PENDING</p>
-                                </div>
+                                <a
+                                    href="${pageContext.request.contextPath}/inbound/suppliers"
+                                    class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors"
+                                    >
+                                    Hủy
+                                </a>
+                                <button
+                                    type="submit"
+                                    class="inline-flex justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+                                    >
+                                    Lưu Nhà Cung Cấp
+                                </button>
                             </div>
-                        </div>
-
-                        <div class="summary-card">
-                            <h3 class="summary-card-title">Tổng quan Đơn hàng</h3>
-                            <div class="info-list">
-                                <div class="info-item">
-                                    <h5>Số dòng SP (SKU):</h5>
-                                    <p id="summary-sku">${orderInfo.line_count}</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Tổng số lượng đặt:</h5>
-                                    <p id="summary-qty">${orderInfo.total_qty}</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Số dòng SP hiên tại:</h5>
-                                    <p id="received-sku">0</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Tổng số lượng hiện tại:</h5>
-                                    <p id="received-qty">0</p>
-                                </div>
-                                <div class="divider"></div>
-                                <div class="info-item">
-                                    <h5>Tổng tiền ĐH:</h5>
-                                    <p id="order-total">${not empty orderInfo.total_value? orderInfo.total_value : 0} đ</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Tổng tiền thực tế:</h5>
-                                    <p id="actual-total" style="color: #059669">0 đ</p>
-                                </div>
-                                <div class="info-item">
-                                    <h5>Chênh lệch:</h5>
-                                    <p id="difference-total" style="color: #dc2626">0 đ</p>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-
-                    <h3 style="font-size: 18px; margin: 24px 0 10px 0; color: #1f2937; font-weight: 600;">
-                        Chi tiết sản phẩm xuất kho
-                    </h3>
-
-                    <div class="shipment-table-container">
-                        <table class="shipment-table">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Sản phẩm (product_id)</th>
-                                    <th>SL Đặt Hàng</th>
-                                    <th>SL Xuất Kho</th>
-                                    <th>Đơn giá</th>
-                                    <th>Tổng dòng hàng</th>
-                                </tr>
-                            </thead>
-                            <tbody id="shipment-lines-body">
-                                <c:forEach var="l" items="${orderDetail}" varStatus="loop">
-                                    <tr>
-                                        <td>${loop.index + 1}</td>
-                                        <td>
-                                            ${l.sku_code}
-                                            ${l.name}
-                                        </td>
-                                        <td class="ordered-qty">${l.qty_line}</td>
-                                        <td>
-                                            <input type="number"
-                                                   form="postForm"
-                                                   class="qty-input"
-                                                   name="out_qty"
-                                                   value="0"
-                                                   min="0"
-                                                   max="${l.qty_line}"
-                                                   data-unit-price="${l.unit_price}"
-                                                   data-line-no="${loop.index}" />
-                                            <input type="hidden" name="order_line_id[${loop.index}]" />
-                                        </td>
-                                        <td class="unit-price-cell">${l.unit_price} đ</td>
-                                        <td class="line-total-cell">0 đ</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 20px">
-                        <label for="shipment-note">Ghi chú (Shipments.note)</label>
-                        <textarea
-                            id="shipment-note"
-                            name="note"
-                            form="postForm"
-                            placeholder="Thêm ghi chú cho đơn vị vận chuyển hoặc lý do xuất kho..."
-                            ></textarea>
-                    </div>
-
-                    <form id="postForm" action="${pageContext.request.contextPath}/create-shipment" method="post">
-                        <div class="action-buttons">
-                            <input type="hidden" value="${selectedID}" name="id">
-                            <button type="button" class="btn btn-secondary">Hủy</button>
-                            <button type="submit" class="btn btn-primary">
-                                Xác nhận & Tạo Phiếu Xuất
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </main>
         </div>
+
         <script>
-            function formatCurrency(number) {
-                const num = parseFloat(number);
-                if (!isFinite(num)) {
-                    return new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND"
-                    }).format(0);
-                }
-
-                return new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                }).format(num);
-            }
-
-            const summaryActualTotal = document.getElementById('actual-total');
-            const summaryDifferenceTotal = document.getElementById('difference-total');
-            const summaryOrderTotalElement = document.getElementById('order-total');
-            const summarySkuCount = document.getElementById('received-sku');
-            const summaryQtyCount = document.getElementById('received-qty');
-            const qtyInputs = document.querySelectorAll('.qty-input');
-
-            let initialOrderTotal = 0;
-            if (summaryOrderTotalElement) {
-                const initialOrderTotalText = summaryOrderTotalElement.textContent
-                        .replace(/\s*đ\s*/, '')
-                        .replace(/,/g, '')
-                        .trim();
-                initialOrderTotal = parseFloat(initialOrderTotalText) || 0;
-            }
-
-            function updateTotals() {
-                let totalActualValue = 0;
-                let totalShippedQty = 0;
-                let actualLineCount = 0;
-
-                qtyInputs.forEach((input) => {
-                    const unitPrice = parseFloat(input.getAttribute('data-unit-price')) || 0;
-                    const maxQty = parseFloat(input.getAttribute('max')) || 0;
-                    let outQty = parseFloat(input.value) || 0;
-
-                    // Ràng buộc giá trị
-                    if (outQty > maxQty) {
-                        outQty = maxQty;
-                        input.value = outQty;
-                    } else if (outQty < 0) {
-                        outQty = 0;
-                        input.value = outQty;
-                    }
-
-                    const actualLineTotal = outQty * unitPrice;
-
-                    const row = input.closest('tr');
-                    const lineTotalCell = row.querySelector('.line-total-cell');
-
-                    if (lineTotalCell) {
-                        lineTotalCell.textContent = formatCurrency(actualLineTotal);
-                    }
-
-                    totalActualValue += actualLineTotal;
-                    totalShippedQty += outQty;
-
-                    if (outQty > 0) {
-                        actualLineCount++;
-                    }
-                });
-
-                const difference = totalActualValue - initialOrderTotal;
-
-                if (summaryActualTotal)
-                    summaryActualTotal.textContent = formatCurrency(totalActualValue);
-                if (summaryDifferenceTotal)
-                    summaryDifferenceTotal.textContent = formatCurrency(difference);
-
-                if (summaryDifferenceTotal) {
-                    if (difference > 0) {
-                        summaryDifferenceTotal.style.color = '#059669'; // Xanh
-                    } else if (difference < 0) {
-                        summaryDifferenceTotal.style.color = '#dc2626'; // Đỏ
-                    } else {
-                        summaryDifferenceTotal.style.color = 'inherit'; // Mặc định
-                    }
-                }
-
-                if (summarySkuCount)
-                    summarySkuCount.textContent = actualLineCount;
-                if (summaryQtyCount)
-                    summaryQtyCount.textContent = totalShippedQty;
-            }
-
-            qtyInputs.forEach(input => {
-                input.addEventListener('input', updateTotals);
-                input.addEventListener('blur', updateTotals); // Dùng blur để validate lần cuối
-            });
             document.addEventListener("DOMContentLoaded", () => {
                 const sidebar = document.getElementById("admin-sidebar");
                 const mainContent = document.getElementById("main-content");
@@ -905,10 +645,8 @@
 
                 function setTransitions(enabled) {
                     const value = enabled ? "all 0.3s ease-in-out" : "none";
-                    if (sidebar)
-                        sidebar.style.transition = value;
-                    if (mainContent)
-                        mainContent.style.transition = enabled ? "margin-left 0.3s ease-in-out" : "none";
+                    sidebar.style.transition = value;
+                    mainContent.style.transition = enabled ? "margin-left 0.3s ease-in-out" : "none";
                 }
 
                 let isSidebarCollapsed =
@@ -916,14 +654,12 @@
 
                 function toggleDesktopSidebar(collapse) {
                     isSidebarCollapsed = collapse;
-                    if (sidebar)
-                        sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
-                    if (mainContent)
-                        mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
+                    sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
+                    mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
                     localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
                 }
 
-                if (sidebarToggle && sidebar && mainContent) {
+                if (sidebarToggle) {
                     setTransitions(false);
                     toggleDesktopSidebar(isSidebarCollapsed);
 
@@ -945,8 +681,7 @@
 
                         if (submenu && submenu.classList.contains("sidebar-submenu")) {
                             submenu.classList.toggle("hidden");
-                            if (arrow)
-                                arrow.classList.toggle("rotate-90");
+                            arrow.classList.toggle("rotate-90");
                         }
                     });
                 });
@@ -959,10 +694,8 @@
                             entry.target.classList.add("is-visible");
                         }
                     });
-                }, {
-                    root: null,
-                    threshold: 0.1
-                }
+                },
+                        {root: null, threshold: 0.1}
                 );
                 revealElements.forEach((el) => {
                     revealObserver.observe(el);
@@ -993,7 +726,7 @@
                             userMenuDropdown &&
                             !userMenuDropdown.classList.contains("hidden")
                             ) {
-                        const isClickInsideButton = userMenuButton ? userMenuButton.contains(e.target) : false;
+                        const isClickInsideButton = userMenuButton.contains(e.target);
                         const isClickInsideDropdown = userMenuDropdown.contains(e.target);
                         if (!isClickInsideButton && !isClickInsideDropdown) {
                             userMenuDropdown.classList.remove("opacity-100", "scale-100");
@@ -1004,8 +737,6 @@
                         }
                     }
                 });
-
-                updateTotals();
             });
         </script>
     </body>

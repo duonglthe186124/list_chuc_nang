@@ -4,6 +4,7 @@
     Author     : ASUS
 --%>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -511,7 +512,7 @@
                                             Tổng phụ (Subtotal)
                                         </dt>
                                         <dd class="text-sm font-medium text-gray-900">
-                                            ${poheader.total_amount} VND
+                                            <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
                                         </dd>
                                     </div>
                                     <div class="flex justify-between items-center border-t pt-3">
@@ -519,7 +520,7 @@
                                             Tổng cộng (Grand Total)
                                         </dt>
                                         <dd class="text-base font-semibold text-indigo-600">
-                                            ${poheader.total_amount} VND
+                                            <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
                                         </dd>
                                     </div>
                                 </dl>
@@ -666,10 +667,10 @@
             </c:forEach>
 
             function formatCurrency(amount) {
-                return new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
+                const formattedNumber = new Intl.NumberFormat("vi-VN", {
                 }).format(amount);
+
+                return formattedNumber + " VND";
             }
 
             function createPOLineBadge(remaining, ordered) {

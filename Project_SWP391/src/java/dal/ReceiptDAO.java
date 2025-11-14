@@ -183,7 +183,7 @@ public class ReceiptDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace(); // Consider using a logging framework
+            e.printStackTrace();
         }
         return line_id;
     }
@@ -200,7 +200,7 @@ public class ReceiptDAO extends DBContext {
 
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace(); // Consider using a logging framework
+            e.printStackTrace();
         }
     }
 }
