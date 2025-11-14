@@ -344,6 +344,7 @@
                             <span class="sidebar-text">Thu gọn</span>
                         </button>
                     </div>
+                </nav>
             </aside>
             <!-- 
                     ===== MAIN CONTENT (N?I DUNG CHÍNH) =====
@@ -418,7 +419,7 @@
                                 <td>${item.inspectorName}</td>
                                 <td><fmt:formatDate value="${item.issueDate}" pattern="dd-MM-yyyy"/></td>
                                 <td>
-                                    <a href="#">Sửa</a>
+                                    <a href="${pageContext.request.contextPath}/warehouse/editUnit?unitId=${item.unitId}">Sửa</a>
                                 </td>
                             </tr>
                         </c:forEach>
