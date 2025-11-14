@@ -15,19 +15,23 @@ import util.DBContext;
 
 public class WarehouseDAO extends DBContext {
 
-    /**
-     * (Đếm): Đếm tổng số IMEI khớp với bộ lọc
-     */
-    public int getDetailedStockCount(String productName, int brandId) {
+    // Constructor kiểm tra kết nối
+    public WarehouseDAO() throws Exception {
+        super();
+        if (this.connection == null) {
+            throw new Exception("Lỗi WarehouseDAO: Không thể kết nối CSDL.");
+        }
+    }
+
+    // Hàm 1: Đếm tổng số IMEI khớp với bộ lọc (cho phân trang)
+    public int getDetailedStockCount(String productName, int brandId) throws Exception {
         List<Object> params = new ArrayList<>();
         int total = 0;
-
         String query = "SELECT COUNT(pu.unit_id) "
                 + "FROM Product_units pu "
                 + "JOIN Products p ON pu.product_id = p.product_id "
                 + "LEFT JOIN Brands b ON p.brand_id = b.brand_id "
                 + "WHERE 1=1 ";
-
         if (productName != null && !productName.trim().isEmpty()) {
             query += " AND p.name LIKE ? ";
             params.add("%" + productName + "%");
@@ -36,12 +40,10 @@ public class WarehouseDAO extends DBContext {
             query += " AND p.brand_id = ? ";
             params.add(brandId);
         }
-
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
@@ -52,6 +54,7 @@ public class WarehouseDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Lỗi SQL khi đếm: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -67,13 +70,10 @@ public class WarehouseDAO extends DBContext {
         return total;
     }
 
-    /**
-     * Lấy Tồn kho Chi tiết CÓ LỌC và PHÂN TRANG
-     */
-    public List<InventoryDetailDTO> getDetailedStockPaginated(String productName, int brandId, int pageIndex, int pageSize) {
+    // Hàm 2: Lấy Tồn kho Chi tiết CÓ LỌC và PHÂN TRANG
+    public List<InventoryDetailDTO> getDetailedStockPaginated(String productName, int brandId, int pageIndex, int pageSize) throws Exception {
         List<InventoryDetailDTO> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
-
         String query = "SELECT "
                 + "    pu.unit_id, pu.imei, pu.status, pu.purchase_price, pu.received_date, "
                 + "    p.name AS productName, "
@@ -104,7 +104,6 @@ public class WarehouseDAO extends DBContext {
                 + "LEFT JOIN Employees e ON latest_qi.inspected_by = e.employee_id "
                 + "LEFT JOIN Users e_ins ON e.user_id = e_ins.user_id "
                 + "WHERE 1=1 ";
-
         if (productName != null && !productName.trim().isEmpty()) {
             query += " AND p.name LIKE ? ";
             params.add("%" + productName + "%");
@@ -113,23 +112,18 @@ public class WarehouseDAO extends DBContext {
             query += " AND p.brand_id = ? ";
             params.add(brandId);
         }
-
         query += " ORDER BY p.name, pu.imei "
                 + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
         params.add((pageIndex - 1) * pageSize);
         params.add(pageSize);
-
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
-
             rs = ps.executeQuery();
             while (rs.next()) {
                 InventoryDetailDTO dto = new InventoryDetailDTO();
@@ -148,6 +142,7 @@ public class WarehouseDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Lỗi SQL khi lấy dữ liệu: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -163,24 +158,25 @@ public class WarehouseDAO extends DBContext {
         return list;
     }
 
-    // HÀM 3: Lấy tất cả nhãn hàng (ĐÃ SỬA LỖI)
-    public List<Brands> getAllBrands() {
+    // Hàm 3: Lấy tất cả nhãn hàng (ĐÃ SỬA LỖI TÊN)
+    public List<Brands> getAllBrands() throws Exception {
         List<Brands> list = new ArrayList<>();
         String query = "SELECT brand_id, brand_name FROM Brands";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
                 Brands b = new Brands();
                 b.setBrand_id(rs.getInt("brand_id"));
-                b.setBrand_name(rs.getString("brand_name"));
+                b.setBrand_name(rs.getString("brand_name")); // Sửa lỗi
                 list.add(b);
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception("Lỗi SQL khi lấy Brand: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -196,6 +192,7 @@ public class WarehouseDAO extends DBContext {
         return list;
     }
 
+    // Hàm 4: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

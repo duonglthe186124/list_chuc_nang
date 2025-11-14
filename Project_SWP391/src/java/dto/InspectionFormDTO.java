@@ -6,16 +6,11 @@ package dto;
 
 public class InspectionFormDTO {
 
-    // Từ Product_units
     private int unitId;
     private String imei;
     private String currentStatus;
-
-    // Từ Products
     private String skuCode;
     private String productName;
-
-    // Từ Suppliers (để đổi trả)
     private String supplierName;
     private String supplierPhone;
     private String supplierEmail;
@@ -23,7 +18,6 @@ public class InspectionFormDTO {
     public InspectionFormDTO() {
     }
 
-    // Getters and Setters
     public int getUnitId() {
         return unitId;
     }
@@ -87,4 +81,5 @@ public class InspectionFormDTO {
     public void setSupplierEmail(String supplierEmail) {
         this.supplierEmail = supplierEmail;
     }
+
 }

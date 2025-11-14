@@ -305,28 +305,22 @@
                 id="main-content"
                 class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
                 ><div class="content-header">
-                    <h2>Lịch sử Hàng trả về</h2>
+                    <h2 class="text-2xl font-bold">Lịch sử Hàng trả về</h2>
                     <div>
                         <a href="${pageContext.request.contextPath}/warehouse/returns" class="btn btn-primary">
                             Tạo Phiếu trả hàng mới
                         </a>
                     </div>
                 </div>
-                <hr>
-
+                <hr class="mb-4">
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
-                <table class="data-table">
+                <table class="data-table bg-white">
                     <thead>
                         <tr>
-                            <th>Mã Phiếu Trả</th>
-                            <th>Ngày trả</th>
-                            <th>Trạng thái</th>
-                            <th>Sản phẩm</th>
-                            <th>IMEI</th>
-                            <th>Khách hàng</th>
+                            <th>Mã Phiếu Trả</th> <th>Ngày trả</th> <th>Trạng thái</th>
+                            <th>Sản phẩm</th> <th>IMEI</th> <th>Khách hàng</th>
                         </tr>
                     </thead>
                     <tbody>

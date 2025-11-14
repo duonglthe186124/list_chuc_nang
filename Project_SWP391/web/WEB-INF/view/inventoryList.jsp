@@ -351,11 +351,9 @@
             <main id="main-content" class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out">
                 <h2>Danh sách Chi tiết Tồn kho</h2>
                 <hr>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <div class="filter-form">
                     <form action="${pageContext.request.contextPath}/warehouse/inventory" method="GET">
                         <div class="form-group">
@@ -376,40 +374,21 @@
                         <button type="submit" class="btn btn-primary">Lọc</button>
                     </form>
                 </div>
-
                 <h2>Kết quả</h2>
                 <table class="data-table detail-table">
                     <thead>
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th>IMEI</th>
-                            <th>Tình trạng</th>
-                            <th>Vị trí kho</th>
-                            <th>Giá nhập</th>
-                            <th>Ngày nhập</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Ngày kiểm kê cuối</th>
-                            <th>Nhân viên kiểm kê</th>
-                            <th>Ngày xuất</th>
-                            <th>Chỉnh sửa</th>
+                            <th>Sản phẩm</th> <th>IMEI</th> <th>Tình trạng</th> <th>Vị trí kho</th> <th>Giá nhập</th>
+                            <th>Ngày nhập</th> <th>Nhà cung cấp</th> <th>Ngày kiểm kê cuối</th> <th>Nhân viên kiểm kê</th>
+                            <th>Ngày xuất</th> <th>Chỉnh sửa</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <%-- Dùng "stockList" nhưng chứa DTO chi tiết --%>
                         <c:forEach items="${requestScope.stockList}" var="item">
                             <tr>
                                 <td>${item.productName}</td>
                                 <td>${item.imei}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${item.status == 'AVAILABLE'}">AVAILABLE</c:when>
-                                        <c:when test="${item.status == 'SOLD'}">SOLD</c:when>
-                                        <c:when test="${item.status == 'DAMAGED'}">DAMAGED</c:when>
-                                        <c:when test="${item.status == 'RESERVED'}">RESERVED</c:when>
-                                        <c:when test="${item.status == 'RETURNED'}">RETURNED</c:when>
-                                        <c:otherwise>${item.status}</c:otherwise>
-                                    </c:choose>
-                                </td>
+                                <td>${item.status}</td>
                                 <td>${item.locationCode}</td>
                                 <td><fmt:formatNumber value="${item.purchasePrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
                                 <td><fmt:formatDate value="${item.receiptDate}" pattern="dd-MM-yyyy"/></td>
@@ -418,7 +397,7 @@
                                 <td>${item.inspectorName}</td>
                                 <td><fmt:formatDate value="${item.issueDate}" pattern="dd-MM-yyyy"/></td>
                                 <td>
-                                    <a href="#">Sửa</a>
+                                    <a href="${pageContext.request.contextPath}/warehouse/editUnit?unitId=${item.unitId}">Sửa</a>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -428,157 +407,146 @@
                     </tbody>
                 </table>
                 <div class="pagination">
-                    <%-- Link về trang TRƯỚC --%>
                     <c:if test="${currentPage > 1}">
                         <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage - 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&laquo;</a>
                     </c:if>
-
-                    <%-- Hiển thị các số trang --%>
                     <c:forEach begin="1" end="${totalPages}" var="i">
                         <c:choose>
-                            <c:when test="${i == currentPage}">
-                                <span class="current">${i}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${i}&productName=${selectedProductName}&brandId=${selectedBrandId}">${i}</a>
-                            </c:otherwise>
+                            <c:when test="${i == currentPage}"><span class="current">${i}</span></c:when>
+                            <c:otherwise><a href="${pageContext.request.contextPath}/warehouse/inventory?page=${i}&productName=${selectedProductName}&brandId=${selectedBrandId}">${i}</a></c:otherwise>
                         </c:choose>
                     </c:forEach>
-
-                    <%-- Link đến trang SAU --%>
                     <c:if test="${currentPage < totalPages}">
                         <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage + 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&raquo;</a>
                     </c:if>
                 </div>
-            </main>
-        </div>
 
-        <!-- 
-              ===== JAVASCRIPT =====
-              Sửa đổi script từ file home.html
-        -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // --- CÁC BIẾN TOÀN CỤC ---
-                const sidebar = document.getElementById("admin-sidebar");
-                const mainContent = document.getElementById("main-content");
-                const sidebarToggle = document.getElementById("sidebar-toggle");
-                const submenuButtons = document.querySelectorAll(
-                        "#admin-sidebar nav > div > button"
+                <!-- 
+                      ===== JAVASCRIPT =====
+                      Sửa đổi script từ file home.html
+                -->
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                        // --- CÁC BIẾN TOÀN CỤC ---
+                        const sidebar = document.getElementById("admin-sidebar");
+                        const mainContent = document.getElementById("main-content");
+                        const sidebarToggle = document.getElementById("sidebar-toggle");
+                        const submenuButtons = document.querySelectorAll(
+                                "#admin-sidebar nav > div > button"
+                                );
+                        // *** THÊM MỚI: Biến cho menu người dùng ***
+                        const userMenuButton = document.getElementById("user-menu-button");
+                        const userMenuDropdown = document.getElementById("user-menu-dropdown");
+
+                        // Biến trạng thái (lấy từ localStorage)
+                        let isSidebarCollapsed =
+                                localStorage.getItem("sidebarCollapsed") === "true";
+
+                        // --- HÀM CHỨC NĂNG ---
+
+                        // Hàm Bật/Tắt Sidebar Desktop (Thu gọn)
+                        function toggleDesktopSidebar(collapse) {
+                            isSidebarCollapsed = collapse;
+                            sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
+                            mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
+                            // Lưu trạng thái vào localStorage
+                            localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
+                        }
+
+                        // --- KHỞI TẠO KHI TẢI TRANG ---
+
+                        // 1. Áp dụng trạng thái thu gọn đã lưu cho desktop
+                        if (sidebarToggle) {
+                            toggleDesktopSidebar(isSidebarCollapsed);
+                        }
+
+                        // --- GẮN SỰ KIỆN ---
+
+                        // 1. Nút thu gọn/mở rộng Desktop
+                        if (sidebarToggle) {
+                            sidebarToggle.addEventListener("click", () => {
+                                toggleDesktopSidebar(!isSidebarCollapsed);
+                            });
+                        }
+
+                        // 4. Các nút menu con (accordion)
+                        submenuButtons.forEach((button) => {
+                            button.addEventListener("click", () => {
+                                const submenu = button.nextElementSibling;
+                                const arrow = button.querySelector(".sidebar-arrow");
+
+                                if (submenu && submenu.classList.contains("sidebar-submenu")) {
+                                    submenu.classList.toggle("hidden");
+                                    arrow.classList.toggle("rotate-90");
+                                }
+                            });
+                        });
+
+                        // 5. Xử lý hiệu ứng cuộn (giữ nguyên từ file cũ)
+                        const revealElements = document.querySelectorAll(".reveal-on-scroll");
+                        const revealObserver = new IntersectionObserver(
+                                (entries) => {
+                            entries.forEach((entry) => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add("is-visible");
+                                }
+                            });
+                        },
+                                {root: null, threshold: 0.1}
                         );
-                // *** THÊM MỚI: Biến cho menu người dùng ***
-                const userMenuButton = document.getElementById("user-menu-button");
-                const userMenuDropdown = document.getElementById("user-menu-dropdown");
+                        revealElements.forEach((el) => {
+                            revealObserver.observe(el);
+                        });
 
-                // Biến trạng thái (lấy từ localStorage)
-                let isSidebarCollapsed =
-                        localStorage.getItem("sidebarCollapsed") === "true";
+                        // --- *** THÊM MỚI: Sự kiện cho User Menu Dropdown *** ---
 
-                // --- HÀM CHỨC NĂNG ---
+                        // 6. Bấm vào nút User Menu để Bật/Tắt
+                        if (userMenuButton && userMenuDropdown) {
+                            userMenuButton.addEventListener("click", (e) => {
+                                // Ngăn sự kiện click lan ra ngoài (xem sự kiện 7)
+                                e.stopPropagation();
 
-                // Hàm Bật/Tắt Sidebar Desktop (Thu gọn)
-                function toggleDesktopSidebar(collapse) {
-                    isSidebarCollapsed = collapse;
-                    sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
-                    mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
-                    // Lưu trạng thái vào localStorage
-                    localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
-                }
-
-                // --- KHỞI TẠO KHI TẢI TRANG ---
-
-                // 1. Áp dụng trạng thái thu gọn đã lưu cho desktop
-                if (sidebarToggle) {
-                    toggleDesktopSidebar(isSidebarCollapsed);
-                }
-
-                // --- GẮN SỰ KIỆN ---
-
-                // 1. Nút thu gọn/mở rộng Desktop
-                if (sidebarToggle) {
-                    sidebarToggle.addEventListener("click", () => {
-                        toggleDesktopSidebar(!isSidebarCollapsed);
-                    });
-                }
-
-                // 4. Các nút menu con (accordion)
-                submenuButtons.forEach((button) => {
-                    button.addEventListener("click", () => {
-                        const submenu = button.nextElementSibling;
-                        const arrow = button.querySelector(".sidebar-arrow");
-
-                        if (submenu && submenu.classList.contains("sidebar-submenu")) {
-                            submenu.classList.toggle("hidden");
-                            arrow.classList.toggle("rotate-90");
+                                if (userMenuDropdown.classList.contains("hidden")) {
+                                    // --- Hiển thị Dropdown ---
+                                    userMenuDropdown.classList.remove("hidden");
+                                    // Đợi 1 frame để trình duyệt nhận ra sự thay đổi từ display:none
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.remove("opacity-0", "scale-95");
+                                        userMenuDropdown.classList.add("opacity-100", "scale-100");
+                                    }, 10);
+                                } else {
+                                    // --- Ẩn Dropdown ---
+                                    userMenuDropdown.classList.remove("opacity-100", "scale-100");
+                                    userMenuDropdown.classList.add("opacity-0", "scale-95");
+                                    // Đợi transition (100ms) kết thúc rồi mới thêm class "hidden"
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.add("hidden");
+                                    }, 100); // 100ms này khớp với "duration-100" của Tailwind
+                                }
+                            });
                         }
+
+                        // 7. Bấm ra ngoài để Tắt Dropdown
+                        document.documentElement.addEventListener("click", (e) => {
+                            if (
+                                    userMenuDropdown &&
+                                    !userMenuDropdown.classList.contains("hidden")
+                                    ) {
+                                const isClickInsideButton = userMenuButton.contains(e.target);
+                                const isClickInsideDropdown = userMenuDropdown.contains(e.target);
+
+                                // Nếu click không nằm trong nút VÀ không nằm trong dropdown
+                                if (!isClickInsideButton && !isClickInsideDropdown) {
+                                    // --- Ẩn Dropdown ---
+                                    userMenuDropdown.classList.remove("opacity-100", "scale-100");
+                                    userMenuDropdown.classList.add("opacity-0", "scale-95");
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.add("hidden");
+                                    }, 100);
+                                }
+                            }
+                        });
                     });
-                });
-
-                // 5. Xử lý hiệu ứng cuộn (giữ nguyên từ file cũ)
-                const revealElements = document.querySelectorAll(".reveal-on-scroll");
-                const revealObserver = new IntersectionObserver(
-                        (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add("is-visible");
-                        }
-                    });
-                },
-                        {root: null, threshold: 0.1}
-                );
-                revealElements.forEach((el) => {
-                    revealObserver.observe(el);
-                });
-
-                // --- *** THÊM MỚI: Sự kiện cho User Menu Dropdown *** ---
-
-                // 6. Bấm vào nút User Menu để Bật/Tắt
-                if (userMenuButton && userMenuDropdown) {
-                    userMenuButton.addEventListener("click", (e) => {
-                        // Ngăn sự kiện click lan ra ngoài (xem sự kiện 7)
-                        e.stopPropagation();
-
-                        if (userMenuDropdown.classList.contains("hidden")) {
-                            // --- Hiển thị Dropdown ---
-                            userMenuDropdown.classList.remove("hidden");
-                            // Đợi 1 frame để trình duyệt nhận ra sự thay đổi từ display:none
-                            setTimeout(() => {
-                                userMenuDropdown.classList.remove("opacity-0", "scale-95");
-                                userMenuDropdown.classList.add("opacity-100", "scale-100");
-                            }, 10);
-                        } else {
-                            // --- Ẩn Dropdown ---
-                            userMenuDropdown.classList.remove("opacity-100", "scale-100");
-                            userMenuDropdown.classList.add("opacity-0", "scale-95");
-                            // Đợi transition (100ms) kết thúc rồi mới thêm class "hidden"
-                            setTimeout(() => {
-                                userMenuDropdown.classList.add("hidden");
-                            }, 100); // 100ms này khớp với "duration-100" của Tailwind
-                        }
-                    });
-                }
-
-                // 7. Bấm ra ngoài để Tắt Dropdown
-                document.documentElement.addEventListener("click", (e) => {
-                    if (
-                            userMenuDropdown &&
-                            !userMenuDropdown.classList.contains("hidden")
-                            ) {
-                        const isClickInsideButton = userMenuButton.contains(e.target);
-                        const isClickInsideDropdown = userMenuDropdown.contains(e.target);
-
-                        // Nếu click không nằm trong nút VÀ không nằm trong dropdown
-                        if (!isClickInsideButton && !isClickInsideDropdown) {
-                            // --- Ẩn Dropdown ---
-                            userMenuDropdown.classList.remove("opacity-100", "scale-100");
-                            userMenuDropdown.classList.add("opacity-0", "scale-95");
-                            setTimeout(() => {
-                                userMenuDropdown.classList.add("hidden");
-                            }, 100);
-                        }
-                    }
-                });
-            });
-        </script>
-    </body>
-</html>
+                </script>
+                </body>
+                </html>

@@ -345,15 +345,12 @@
                 >
                 <h2>Điều chuyển Vị trí kho</h2>
                 <hr>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
                 <c:if test="${not empty successMessage}">
                     <div class="success-message">${successMessage}</div>
                 </c:if>
-
-
                 <div class="form-container">
                     <form action="${pageContext.request.contextPath}/warehouse/transfer" method="GET">
                         <div class="form-group">
@@ -363,7 +360,6 @@
                         <button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
                     </form>
                 </div>
-
                 <c:if test="${not empty unitDetails}">
                     <hr>
                     <h2>Xác nhận Điều chuyển cho IMEI: ${unitDetails.imei}</h2>
@@ -372,25 +368,13 @@
                             <input type="hidden" name="unitId" value="${unitDetails.unitId}">
                             <input type="hidden" name="currentContainerId" value="${unitDetails.currentContainerId}">
                             <input type="hidden" name="imei" value="${unitDetails.imei}">
-
                             <h3>Thông tin Hiện tại</h3>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Tên sản phẩm:</label>
-                                    <div class="static-info">${unitDetails.productName}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Container hiện tại:</label>
-                                    <div class="static-info">${unitDetails.currentContainerCode}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Vị trí hiện tại:</label>
-                                    <div class="static-info">${unitDetails.currentLocationCode}</div>
-                                </div>
+                                <div class="form-group"><label>Tên sản phẩm:</label><div class="static-info">${unitDetails.productName}</div></div>
+                                <div class="form-group"><label>Container hiện tại:</label><div class="static-info">${unitDetails.currentContainerCode}</div></div>
+                                <div class="form-group"><label>Vị trí hiện tại:</label><div class="static-info">${unitDetails.currentLocationCode}</div></div>
                             </div>
-
                             <hr class="my-4">
-
                             <h3>Thông tin Điều chuyển</h3>
                             <div class="form-row">
                                 <div class="form-group">
@@ -398,9 +382,7 @@
                                     <select name="newContainerId" required>
                                         <option value="">-- Chọn container mới --</option>
                                         <c:forEach items="${requestScope.containerList}" var="c">
-                                            <%-- Không hiển thị vị trí hiện tại trong danh sách --%>
                                             <c:if test="${c.container_id != unitDetails.currentContainerId}">
-                                                <%-- Hiển thị (Vị trí) - (Container) --%>
                                                 <option value="${c.container_id}">(${c.description}) - ${c.container_code}</option>
                                             </c:if>
                                         </c:forEach>
@@ -413,7 +395,6 @@
                                     <textarea name="note" rows="3" placeholder="VD: Gom hàng, Tối ưu vị trí..."></textarea>
                                 </div>
                             </div>
-
                             <button type="submit" class="btn btn-primary mt-4">Xác nhận Điều chuyển</button>
                         </form>
                     </div>

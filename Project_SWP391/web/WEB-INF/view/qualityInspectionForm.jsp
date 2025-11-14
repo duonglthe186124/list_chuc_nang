@@ -338,21 +338,18 @@
             <main id="main-content" class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out">
                 <h2>Tạo Phiếu Kiểm định Chất lượng (QC)</h2>
                 <hr>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <div class="form-container">
                     <form action="${pageContext.request.contextPath}/warehouse/inspections" method="GET">
                         <div class="form-group">
                             <label>Nhập IMEI sản phẩm cần kiểm tra:</label>
                             <input type="text" name="imei" value="${unitDetails.imei}" placeholder="Quét hoặc nhập IMEI..." required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Tìm kiếm sản phẩm</button>
+                        <button type="submit" class="btn btn-primary mt-2">Tìm kiếm sản phẩm</button>
                     </form>
                 </div>
-
                 <c:if test="${not empty unitDetails}">
                     <hr>
                     <h2>Thông tin Kiểm định</h2>
@@ -360,25 +357,13 @@
                         <form action="${pageContext.request.contextPath}/warehouse/inspections" method="POST">
                             <input type="hidden" name="unitId" value="${unitDetails.unitId}">
                             <input type="hidden" name="imei" value="${unitDetails.imei}">
-
                             <h3>Thông tin Sản phẩm</h3>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Mã sản phẩm (SKU):</label>
-                                    <div class="static-info">${unitDetails.skuCode}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Tên sản phẩm:</label>
-                                    <div class="static-info">${unitDetails.productName}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Tình trạng hiện tại:</label>
-                                    <div class="static-info">${unitDetails.currentStatus}</div>
-                                </div>
+                                <div class="form-group"><label>Mã sản phẩm (SKU):</label><div class="static-info">${unitDetails.skuCode}</div></div>
+                                <div class="form-group"><label>Tên sản phẩm:</label><div class="static-info">${unitDetails.productName}</div></div>
+                                <div class="form-group"><label>Tình trạng hiện tại:</label><div class="static-info">${unitDetails.currentStatus}</div></div>
                             </div>
-
-                            <hr>
-
+                            <hr class="my-4">
                             <h3>Kết quả Kiểm định</h3>
                             <div class="form-row">
                                 <div class="form-group">
@@ -403,166 +388,151 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Lý do lỗi / Lưu ý bảo hành / Sản phẩm thay thế (Ghi chú):</label>
-                                    <textarea name="note" rows="4" placeholder="Nhập lý do nếu 'Hỏng', hoặc thông tin bảo hành, sản phẩm thay thế..."></textarea>
+                                    <textarea name="note" rows="4" placeholder="Nhập lý do nếu 'Hỏng'..."></textarea>
                                 </div>
                             </div>
-
-                            <hr>
-
+                            <hr class="my-4">
                             <div class="supplier-info">
                                 <h3>Thông tin Nhà cung cấp (Để đổi trả nếu lỗi)</h3>
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Tên NCC:</label>
-                                        <div class="static-info">${unitDetails.supplierName}</div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>SĐT NCC:</label>
-                                        <div class="static-info">${unitDetails.supplierPhone}</div>
-                                    </div>
+                                    <div class="form-group"><label>Tên NCC:</label><div class="static-info">${unitDetails.supplierName}</div></div>
+                                    <div class="form-group"><label>SĐT NCC:</label><div class="static-info">${unitDetails.supplierPhone}</div></div>
                                 </div>
                                 <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Email NCC:</label>
-                                        <div class="static-info">${unitDetails.supplierEmail}</div>
-                                    </div>
+                                    <div class="form-group"><label>Email NCC:</label><div class="static-info">${unitDetails.supplierEmail}</div></div>
                                 </div>
                             </div>
-
-                            <br>
-                            <button type="submit" class="btn btn-primary">Lưu Phiếu QC</button>
+                            <button type="submit" class="btn btn-primary mt-4">Lưu Phiếu QC</button>
                         </form>
                     </div>
                 </c:if>
-            </main>
-        </div>
 
-        <!-- 
-              ===== JAVASCRIPT =====
-              Sửa đổi script từ file home.html
-        -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // --- CÁC BIẾN TOÀN CỤC ---
-                const sidebar = document.getElementById("admin-sidebar");
-                const mainContent = document.getElementById("main-content");
-                const sidebarToggle = document.getElementById("sidebar-toggle");
-                const submenuButtons = document.querySelectorAll(
-                        "#admin-sidebar nav > div > button"
+                <!-- 
+                      ===== JAVASCRIPT =====
+                      Sửa đổi script từ file home.html
+                -->
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                        // --- CÁC BIẾN TOÀN CỤC ---
+                        const sidebar = document.getElementById("admin-sidebar");
+                        const mainContent = document.getElementById("main-content");
+                        const sidebarToggle = document.getElementById("sidebar-toggle");
+                        const submenuButtons = document.querySelectorAll(
+                                "#admin-sidebar nav > div > button"
+                                );
+                        // *** THÊM MỚI: Biến cho menu người dùng ***
+                        const userMenuButton = document.getElementById("user-menu-button");
+                        const userMenuDropdown = document.getElementById("user-menu-dropdown");
+
+                        // Biến trạng thái (lấy từ localStorage)
+                        let isSidebarCollapsed =
+                                localStorage.getItem("sidebarCollapsed") === "true";
+
+                        // --- HÀM CHỨC NĂNG ---
+
+                        // Hàm Bật/Tắt Sidebar Desktop (Thu gọn)
+                        function toggleDesktopSidebar(collapse) {
+                            isSidebarCollapsed = collapse;
+                            sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
+                            mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
+                            // Lưu trạng thái vào localStorage
+                            localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
+                        }
+
+                        // --- KHỞI TẠO KHI TẢI TRANG ---
+
+                        // 1. Áp dụng trạng thái thu gọn đã lưu cho desktop
+                        if (sidebarToggle) {
+                            toggleDesktopSidebar(isSidebarCollapsed);
+                        }
+
+                        // --- GẮN SỰ KIỆN ---
+
+                        // 1. Nút thu gọn/mở rộng Desktop
+                        if (sidebarToggle) {
+                            sidebarToggle.addEventListener("click", () => {
+                                toggleDesktopSidebar(!isSidebarCollapsed);
+                            });
+                        }
+
+                        // 4. Các nút menu con (accordion)
+                        submenuButtons.forEach((button) => {
+                            button.addEventListener("click", () => {
+                                const submenu = button.nextElementSibling;
+                                const arrow = button.querySelector(".sidebar-arrow");
+
+                                if (submenu && submenu.classList.contains("sidebar-submenu")) {
+                                    submenu.classList.toggle("hidden");
+                                    arrow.classList.toggle("rotate-90");
+                                }
+                            });
+                        });
+
+                        // 5. Xử lý hiệu ứng cuộn (giữ nguyên từ file cũ)
+                        const revealElements = document.querySelectorAll(".reveal-on-scroll");
+                        const revealObserver = new IntersectionObserver(
+                                (entries) => {
+                            entries.forEach((entry) => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add("is-visible");
+                                }
+                            });
+                        },
+                                {root: null, threshold: 0.1}
                         );
-                // *** THÊM MỚI: Biến cho menu người dùng ***
-                const userMenuButton = document.getElementById("user-menu-button");
-                const userMenuDropdown = document.getElementById("user-menu-dropdown");
+                        revealElements.forEach((el) => {
+                            revealObserver.observe(el);
+                        });
 
-                // Biến trạng thái (lấy từ localStorage)
-                let isSidebarCollapsed =
-                        localStorage.getItem("sidebarCollapsed") === "true";
+                        // --- *** THÊM MỚI: Sự kiện cho User Menu Dropdown *** ---
 
-                // --- HÀM CHỨC NĂNG ---
+                        // 6. Bấm vào nút User Menu để Bật/Tắt
+                        if (userMenuButton && userMenuDropdown) {
+                            userMenuButton.addEventListener("click", (e) => {
+                                // Ngăn sự kiện click lan ra ngoài (xem sự kiện 7)
+                                e.stopPropagation();
 
-                // Hàm Bật/Tắt Sidebar Desktop (Thu gọn)
-                function toggleDesktopSidebar(collapse) {
-                    isSidebarCollapsed = collapse;
-                    sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
-                    mainContent.classList.toggle("sidebar-collapsed", isSidebarCollapsed);
-                    // Lưu trạng thái vào localStorage
-                    localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
-                }
-
-                // --- KHỞI TẠO KHI TẢI TRANG ---
-
-                // 1. Áp dụng trạng thái thu gọn đã lưu cho desktop
-                if (sidebarToggle) {
-                    toggleDesktopSidebar(isSidebarCollapsed);
-                }
-
-                // --- GẮN SỰ KIỆN ---
-
-                // 1. Nút thu gọn/mở rộng Desktop
-                if (sidebarToggle) {
-                    sidebarToggle.addEventListener("click", () => {
-                        toggleDesktopSidebar(!isSidebarCollapsed);
-                    });
-                }
-
-                // 4. Các nút menu con (accordion)
-                submenuButtons.forEach((button) => {
-                    button.addEventListener("click", () => {
-                        const submenu = button.nextElementSibling;
-                        const arrow = button.querySelector(".sidebar-arrow");
-
-                        if (submenu && submenu.classList.contains("sidebar-submenu")) {
-                            submenu.classList.toggle("hidden");
-                            arrow.classList.toggle("rotate-90");
+                                if (userMenuDropdown.classList.contains("hidden")) {
+                                    // --- Hiển thị Dropdown ---
+                                    userMenuDropdown.classList.remove("hidden");
+                                    // Đợi 1 frame để trình duyệt nhận ra sự thay đổi từ display:none
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.remove("opacity-0", "scale-95");
+                                        userMenuDropdown.classList.add("opacity-100", "scale-100");
+                                    }, 10);
+                                } else {
+                                    // --- Ẩn Dropdown ---
+                                    userMenuDropdown.classList.remove("opacity-100", "scale-100");
+                                    userMenuDropdown.classList.add("opacity-0", "scale-95");
+                                    // Đợi transition (100ms) kết thúc rồi mới thêm class "hidden"
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.add("hidden");
+                                    }, 100); // 100ms này khớp với "duration-100" của Tailwind
+                                }
+                            });
                         }
+
+                        // 7. Bấm ra ngoài để Tắt Dropdown
+                        document.documentElement.addEventListener("click", (e) => {
+                            if (
+                                    userMenuDropdown &&
+                                    !userMenuDropdown.classList.contains("hidden")
+                                    ) {
+                                const isClickInsideButton = userMenuButton.contains(e.target);
+                                const isClickInsideDropdown = userMenuDropdown.contains(e.target);
+
+                                // Nếu click không nằm trong nút VÀ không nằm trong dropdown
+                                if (!isClickInsideButton && !isClickInsideDropdown) {
+                                    // --- Ẩn Dropdown ---
+                                    userMenuDropdown.classList.remove("opacity-100", "scale-100");
+                                    userMenuDropdown.classList.add("opacity-0", "scale-95");
+                                    setTimeout(() => {
+                                        userMenuDropdown.classList.add("hidden");
+                                    }, 100);
+                                }
+                            }
+                        });
                     });
-                });
-
-                // 5. Xử lý hiệu ứng cuộn (giữ nguyên từ file cũ)
-                const revealElements = document.querySelectorAll(".reveal-on-scroll");
-                const revealObserver = new IntersectionObserver(
-                        (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add("is-visible");
-                        }
-                    });
-                },
-                        {root: null, threshold: 0.1}
-                );
-                revealElements.forEach((el) => {
-                    revealObserver.observe(el);
-                });
-
-                // --- *** THÊM MỚI: Sự kiện cho User Menu Dropdown *** ---
-
-                // 6. Bấm vào nút User Menu để Bật/Tắt
-                if (userMenuButton && userMenuDropdown) {
-                    userMenuButton.addEventListener("click", (e) => {
-                        // Ngăn sự kiện click lan ra ngoài (xem sự kiện 7)
-                        e.stopPropagation();
-
-                        if (userMenuDropdown.classList.contains("hidden")) {
-                            // --- Hiển thị Dropdown ---
-                            userMenuDropdown.classList.remove("hidden");
-                            // Đợi 1 frame để trình duyệt nhận ra sự thay đổi từ display:none
-                            setTimeout(() => {
-                                userMenuDropdown.classList.remove("opacity-0", "scale-95");
-                                userMenuDropdown.classList.add("opacity-100", "scale-100");
-                            }, 10);
-                        } else {
-                            // --- Ẩn Dropdown ---
-                            userMenuDropdown.classList.remove("opacity-100", "scale-100");
-                            userMenuDropdown.classList.add("opacity-0", "scale-95");
-                            // Đợi transition (100ms) kết thúc rồi mới thêm class "hidden"
-                            setTimeout(() => {
-                                userMenuDropdown.classList.add("hidden");
-                            }, 100); // 100ms này khớp với "duration-100" của Tailwind
-                        }
-                    });
-                }
-
-                // 7. Bấm ra ngoài để Tắt Dropdown
-                document.documentElement.addEventListener("click", (e) => {
-                    if (
-                            userMenuDropdown &&
-                            !userMenuDropdown.classList.contains("hidden")
-                            ) {
-                        const isClickInsideButton = userMenuButton.contains(e.target);
-                        const isClickInsideDropdown = userMenuDropdown.contains(e.target);
-
-                        // Nếu click không nằm trong nút VÀ không nằm trong dropdown
-                        if (!isClickInsideButton && !isClickInsideDropdown) {
-                            // --- Ẩn Dropdown ---
-                            userMenuDropdown.classList.remove("opacity-100", "scale-100");
-                            userMenuDropdown.classList.add("opacity-0", "scale-95");
-                            setTimeout(() => {
-                                userMenuDropdown.classList.add("hidden");
-                            }, 100);
-                        }
-                    }
-                });
-            });
-        </script>
-    </body>
-</html>
+                </script>
+                </body>
+                </html>
