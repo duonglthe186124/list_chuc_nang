@@ -210,19 +210,88 @@ public class TimekeepingController extends HttpServlet {
             return;
         }
         
-        int employee_id = employeeDAO.getEmployeeIdByUserId(user.getUser_id());
-        if (employee_id == -1) {
-            req.setAttribute("errorMessage", "Không tìm thấy thông tin nhân viên.");
-            req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-            return;
-        }
+        // Kiểm tra xem có phải admin không (role_id == 1)
+        boolean isAdmin = (user.getRole_id() == 1);
         
-        // Lấy tất cả attendances
-        List<AttendanceDTO> attendances = attendanceService.getAttendancesByEmployee(employee_id);
+        int employee_id = -1;
+        if (!isAdmin) {
+            // Nếu không phải admin thì chỉ lấy attendances của chính nhân viên đó
+            employee_id = employeeDAO.getEmployeeIdByUserId(user.getUser_id());
+            if (employee_id == -1) {
+                req.setAttribute("errorMessage", "Không tìm thấy thông tin nhân viên.");
+                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
+                return;
+            }
+        }
+        // Nếu là admin thì employee_id = -1, sẽ lấy tất cả attendances
+        
+        // Lấy filter từ request parameters
+        String filterType = req.getParameter("filter"); // "week" hoặc "month"
+        String weekParam = req.getParameter("week");
+        String monthParam = req.getParameter("month");
+        String yearParam = req.getParameter("year");
+        
+        List<AttendanceDTO> attendances;
+        Calendar cal = Calendar.getInstance();
+        int currentYear = cal.get(Calendar.YEAR);
+        int currentWeek = cal.get(Calendar.WEEK_OF_YEAR);
+        int currentMonth = cal.get(Calendar.MONTH) + 1;
+        
+        if (filterType != null && !filterType.isEmpty()) {
+            if ("week".equals(filterType) && weekParam != null && yearParam != null) {
+                // Filter theo tuần
+                try {
+                    int week = Integer.parseInt(weekParam);
+                    int year = Integer.parseInt(yearParam);
+                    attendances = attendanceService.getAttendancesByWeek(week, year, employee_id);
+                    req.setAttribute("selectedWeek", week);
+                    req.setAttribute("selectedYear", year);
+                    req.setAttribute("filterType", "week");
+                } catch (NumberFormatException e) {
+                    // Nếu parse lỗi thì lấy tuần hiện tại
+                    attendances = attendanceService.getAttendancesByWeek(currentWeek, currentYear, employee_id);
+                    req.setAttribute("selectedWeek", currentWeek);
+                    req.setAttribute("selectedYear", currentYear);
+                    req.setAttribute("filterType", "week");
+                }
+            } else if ("month".equals(filterType) && monthParam != null && yearParam != null) {
+                // Filter theo tháng
+                try {
+                    int month = Integer.parseInt(monthParam);
+                    int year = Integer.parseInt(yearParam);
+                    attendances = attendanceService.getAttendancesByMonth(month, year, employee_id);
+                    req.setAttribute("selectedMonth", month);
+                    req.setAttribute("selectedYear", year);
+                    req.setAttribute("filterType", "month");
+                } catch (NumberFormatException e) {
+                    // Nếu parse lỗi thì lấy tháng hiện tại
+                    attendances = attendanceService.getAttendancesByMonth(currentMonth, currentYear, employee_id);
+                    req.setAttribute("selectedMonth", currentMonth);
+                    req.setAttribute("selectedYear", currentYear);
+                    req.setAttribute("filterType", "month");
+                }
+            } else {
+                // Mặc định lấy tháng hiện tại
+                attendances = attendanceService.getAttendancesByMonth(currentMonth, currentYear, employee_id);
+                req.setAttribute("selectedMonth", currentMonth);
+                req.setAttribute("selectedYear", currentYear);
+                req.setAttribute("filterType", "month");
+            }
+        } else {
+            // Mặc định lấy tháng hiện tại
+            attendances = attendanceService.getAttendancesByMonth(currentMonth, currentYear, employee_id);
+            req.setAttribute("selectedMonth", currentMonth);
+            req.setAttribute("selectedYear", currentYear);
+            req.setAttribute("filterType", "month");
+        }
         
         req.setAttribute("attendances", attendances);
         req.setAttribute("employee_id", employee_id);
+        req.setAttribute("isAdmin", isAdmin);
         req.setAttribute("user", user);
+        req.setAttribute("currentWeek", currentWeek);
+        req.setAttribute("currentMonth", currentMonth);
+        req.setAttribute("currentYear", currentYear);
         
         req.getRequestDispatcher("/WEB-INF/view/attendance_history.jsp").forward(req, resp);
     }

@@ -174,10 +174,66 @@
                         </div>
                     </div>
 
+                    <!-- Filter Section -->
+                    <div style="padding: 20px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                        <form action="${pageContext.request.contextPath}/timekeeping" method="GET" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+                            <input type="hidden" name="action" value="history">
+                            
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Loại filter</label>
+                                <select name="filter" id="filterType" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;" onchange="updateFilterFields()">
+                                    <option value="month" ${filterType == 'month' ? 'selected' : ''}>Theo tháng</option>
+                                    <option value="week" ${filterType == 'week' ? 'selected' : ''}>Theo tuần</option>
+                                </select>
+                            </div>
+                            
+                            <div id="monthFilter" style="flex: 1; min-width: 120px; ${filterType == 'month' ? '' : 'display: none;'}">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Tháng</label>
+                                <select name="month" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
+                                    <c:forEach var="m" begin="1" end="12">
+                                        <option value="${m}" ${selectedMonth == m ? 'selected' : ''}>Tháng ${m}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            
+                            <div id="weekFilter" style="flex: 1; min-width: 120px; ${filterType == 'week' ? '' : 'display: none;'}">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Tuần</label>
+                                <select name="week" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
+                                    <c:forEach var="w" begin="1" end="53">
+                                        <option value="${w}" ${selectedWeek == w ? 'selected' : ''}>Tuần ${w}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            
+                            <div style="flex: 1; min-width: 120px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Năm</label>
+                                <select name="year" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; background: white;">
+                                    <c:forEach var="y" begin="${currentYear - 2}" end="${currentYear + 1}">
+                                        <option value="${y}" ${selectedYear == y ? 'selected' : ''}>${y}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            
+                            <div style="flex: 0 0 auto;">
+                                <button type="submit" class="btn btn-primary" style="padding: 8px 24px; white-space: nowrap;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
+                                    Lọc
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="table-wrapper">
                         <table class="employee-table">
                             <thead>
                                 <tr>
+                                    <c:if test="${isAdmin}">
+                                        <th>NHÂN VIÊN</th>
+                                        <th>MÃ NV</th>
+                                    </c:if>
                                     <th>NGÀY</th>
                                     <th>CA LÀM VIỆC</th>
                                     <th>CHECK IN</th>
@@ -191,6 +247,14 @@
                             <tbody>
                                 <c:forEach var="att" items="${attendances}">
                                     <tr>
+                                        <c:if test="${isAdmin}">
+                                            <td>
+                                                <div style="font-weight: 600; color: #1e293b;">${att.employee_name}</div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-blue">${att.employee_code}</span>
+                                            </td>
+                                        </c:if>
                                         <td>
                                             <strong><fmt:formatDate value="${att.check_in}" pattern="dd/MM/yyyy" /></strong>
                                         </td>
@@ -234,7 +298,7 @@
                                 </c:forEach>
                                 <c:if test="${empty attendances}">
                                     <tr>
-                                        <td colspan="8" class="empty-state">
+                                        <td colspan="${isAdmin ? 10 : 8}" class="empty-state">
                                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3">
                                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -309,7 +373,26 @@
                     timekeepingMenu.classList.add('active');
                 }
             });
+            
+            // Update filter fields based on filter type
+            function updateFilterFields() {
+                const filterType = document.getElementById('filterType').value;
+                const monthFilter = document.getElementById('monthFilter');
+                const weekFilter = document.getElementById('weekFilter');
+                
+                if (filterType === 'month') {
+                    monthFilter.style.display = 'block';
+                    weekFilter.style.display = 'none';
+                } else if (filterType === 'week') {
+                    monthFilter.style.display = 'none';
+                    weekFilter.style.display = 'block';
+                }
+            }
+            
+            // Initialize filter fields on page load
+            updateFilterFields();
         </script>
     </body>
 </html>
+
 

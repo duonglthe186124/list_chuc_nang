@@ -197,5 +197,62 @@ public class AttendanceService {
         
         return todayAttendances;
     }
+    
+    // Lấy attendances theo tuần
+    // Nếu employee_id > 0 thì filter theo employee_id, nếu <= 0 thì lấy tất cả
+    public List<AttendanceDTO> getAttendancesByWeek(int week, int year, int employee_id) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY); // Tuần bắt đầu từ thứ 2
+        cal.setMinimalDaysInFirstWeek(4); // Tuần đầu tiên phải có ít nhất 4 ngày
+        
+        // Set năm và tuần
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.WEEK_OF_YEAR, week);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY); // Bắt đầu từ thứ 2
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startDate = cal.getTime();
+        
+        // Kết thúc vào chủ nhật (6 ngày sau thứ 2)
+        cal.add(Calendar.DAY_OF_MONTH, 6);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        Date endDate = cal.getTime();
+        
+        return attendanceDAO.getAttendancesByDateRange(startDate, endDate, employee_id);
+    }
+    
+    // Lấy attendances theo tháng
+    // Nếu employee_id > 0 thì filter theo employee_id, nếu <= 0 thì lấy tất cả
+    public List<AttendanceDTO> getAttendancesByMonth(int month, int year, int employee_id) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1); // Tháng bắt đầu từ 0
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startDate = cal.getTime();
+        
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        cal.set(Calendar.MILLISECOND, 999);
+        Date endDate = cal.getTime();
+        
+        return attendanceDAO.getAttendancesByDateRange(startDate, endDate, employee_id);
+    }
+    
+    // Lấy attendances theo khoảng ngày tùy ý
+    // Nếu employee_id > 0 thì filter theo employee_id, nếu <= 0 thì lấy tất cả
+    public List<AttendanceDTO> getAttendancesByDateRange(Date startDate, Date endDate, int employee_id) {
+        return attendanceDAO.getAttendancesByDateRange(startDate, endDate, employee_id);
+    }
 }
 

@@ -419,6 +419,11 @@ body {
     color: #64748b;
 }
 
+.badge-blue {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
 /* Status Badge */
 .status-badge {
     display: inline-block;
