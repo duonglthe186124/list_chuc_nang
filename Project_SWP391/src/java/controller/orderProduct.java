@@ -13,11 +13,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.*;
+import model.Users;
 
 /**
  *
@@ -51,14 +53,34 @@ public class orderProduct extends HttpServlet {
             int id = Integer.parseInt(idStr);
             int qty = Integer.parseInt(qtyStr);
             BigDecimal price = new BigDecimal(priceStr);
-
             
+            
+            HttpSession session = req.getSession(false);
+            Users currentUser = null;
+            if (session != null) {
+                currentUser = (Users) session.getAttribute("account");
+            }
+
+            if (currentUser == null) {
+                resp.sendRedirect(req.getContextPath() + "/loginStaff");
+                return;
+            }
+
+
+            // dữ liệu sản phẩm
             req.setAttribute("id", id);
             req.setAttribute("name", name);
             req.setAttribute("qty", qty);
             req.setAttribute("code", code);
             req.setAttribute("price", price);
             req.setAttribute("image", image);
+            
+            // thông tin user
+            req.setAttribute("userFullname", currentUser.getFullname());
+            req.setAttribute("userEmail", currentUser.getEmail());
+            req.setAttribute("userPhone", currentUser.getPhone());
+            req.setAttribute("userAddress", currentUser.getAddress());
+
 
             
             req.getRequestDispatcher("/WEB-INF/view/create_order.jsp").forward(req, resp);

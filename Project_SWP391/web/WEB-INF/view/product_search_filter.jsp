@@ -11,136 +11,178 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/board.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/product_screen.css">
+         <title>WMS Pro - Giải pháp Quản lý Kho Điện thoại Thông minh</title>
+        <!-- Tải Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tải Font Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+            />
+
+        <style>
+            /* Sử dụng font Inter làm mặc định */
+            body {
+                font-family: "Inter", sans-serif;
+            }
+
+            /* Lớp CSS cho hiệu ứng cuộn */
+            .reveal-on-scroll {
+                opacity: 0;
+                transform: translateY(30px);
+                transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            }
+
+            .reveal-on-scroll.is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        </style>
     </head>
     <body>
-        <nav class="nav">
-            <div class="brand">
-                <a href="home.html">
-                    <div class="logo" aria-hidden>
+       <header
+            class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm"
+            >
+            <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <!-- Logo -->
+                    <a
+                        href="#"
+                        class="flex items-center gap-2 text-2xl font-bold text-gray-900"
+                        >
+                        <!-- Icon SVG đơn giản -->
                         <svg
-                            width="26"
-                            height="26"
-                            viewBox="0 0 24 24"
-                            fill="none"
+                            class="h-8 w-8 text-indigo-600"
                             xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
                             >
-                        <rect
-                            x="2"
-                            y="2"
-                            width="20"
-                            height="20"
-                            rx="4"
-                            fill="black"
-                            opacity="0.12"
-                            />
                         <path
-                            d="M6 16V8h4l4 4v4"
-                            stroke="#06121a"
-                            stroke-width="1.2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
                             />
                         </svg>
+                        <span>WMS Pro</span>
+                    </a>
+
+                    <!-- Menu Desktop -->
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <c:choose>
+                            <%-- 1. NẾU CHƯA ĐĂNG NHẬP (session "account" bị rỗng) --%>
+                            <c:when test="${empty sessionScope.account}">
+                                <a href="#gioi-thieu" class="font-medium text-gray-600 hover:text-indigo-600">Giới thiệu</a>
+                                <a href="${pageContext.request.contextPath}/products" class="font-medium text-gray-600 hover:text-indigo-600">Sản phẩm</a>
+                                <a href="#tinh-nang" class="font-medium text-gray-600 hover:text-indigo-600">Tính năng</a>
+                                <a href="#lien-he" class="font-medium text-gray-600 hover:text-indigo-600">Liên hệ</a>
+                                <a href="${pageContext.request.contextPath}/loginStaff"
+                                   class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                                    Đăng nhập
+                                </a>
+                            </c:when>
+
+                            <%-- 2. NẾU ĐÃ ĐĂNG NHẬP --%>
+                            <c:otherwise>
+                                <a href="#gioi-thieu" class="font-medium text-gray-600 hover:text-indigo-600">Giới thiệu</a>
+                                <a href="${pageContext.request.contextPath}/products" class="font-medium text-gray-600 hover:text-indigo-600">Sản phẩm</a>
+                                <a href="#tinh-nang" class="font-medium text-gray-600 hover:text-indigo-600">Tính năng</a>
+                                <a href="#lien-he" class="font-medium text-gray-600 hover:text-indigo-600">Liên hệ</a>
+
+                                <div class="relative" id="user-menu-container">
+                                    <button id="user-menu-button"
+                                            class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
+
+                                        <img class="h-8 w-8 rounded-full object-cover"
+                                             src="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg"
+                                             alt="User Avatar" />
+                                        <span class="hidden md:inline text-sm font-medium text-gray-700">
+                                            ${sessionScope.account.fullname}
+                                        </span>
+                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
+
+                                    <div id="user-menu-dropdown"
+                                         class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20">
+                                        <a href="${pageContext.request.contextPath}/PersonalProfile"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hồ sơ</a>
+
+                                        <c:if test="${sessionScope.account.role_id == 1}">
+                                            <a href="${pageContext.request.contextPath}/account-management"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Account Management
+                                            </a>
+                                        </c:if>
+
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        <a href="${pageContext.request.contextPath}/logout"
+                                           class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Đăng xuất</a>
+                                    </div>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </nav>
+
+                    <!-- Nút Menu Mobile -->
+                    <div class="md:hidden">
+                        <button
+                            id="mobile-menu-button"
+                            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                            >
+                            <span class="sr-only">Mở menu chính</span>
+                            <svg
+                                class="h-6 w-6"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                                />
+                            </svg>
+                        </button>
                     </div>
-                </a>
-                <div>
-                    <h1>StockPhone</h1>
-                    <p>Phone Stock Management System</p>
+                </div>
+
+                <!-- Menu Mobile (Ẩn mặc định) -->
+                <div id="mobile-menu" class="hidden md:hidden pb-4">
+                    <div class="space-y-1">
+                        <a
+                            href="#gioi-thieu"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Giới thiệu</a
+                        >
+                        <a
+                            href="#tinh-nang"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Tính năng</a
+                        >
+                        <a
+                            href="#lien-he"
+                            class="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            >Liên hệ</a
+                        >
+                        <a
+                            href="${pageContext.request.contextPath}/loginStaff"
+                            class="mt-2 block w-full rounded-md bg-indigo-600 px-4 py-2 text-center text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                            >
+                            Đăng nhập
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <div class="navlinks" role="navigation" aria-label="Primary">
-                <a href="${pageContext.request.contextPath}/home">Home</a>
-                <a href="${pageContext.request.contextPath}/products">Products</a>
-                <a href="${pageContext.request.contextPath}/about">About</a>
-                <a href="${pageContext.request.contextPath}/policy">Policy</a>
-                <a href="${pageContext.request.contextPath}/report">Reports</a>
-            </div>
-
-            <div class="cta">
-                <button class="icon-btn" title="Tìm kiếm" aria-label="Tìm kiếm">
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M21 21l-4.35-4.35"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    <circle
-                        cx="11"
-                        cy="11"
-                        r="6"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    </svg>
-                </button>
-
-                <a
-                    class="icon-btn"
-                    href="login.html"
-                    title="Đăng nhập"
-                    aria-label="Đăng nhập"
-                    >
-                    <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    <circle
-                        cx="12"
-                        cy="7"
-                        r="4"
-                        stroke="currentColor"
-                        stroke-width="1.4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    </svg>
-                </a>
-
-                <button
-                    class="hamburger"
-                    id="hamburger"
-                    aria-controls="mobileMenu"
-                    aria-expanded="false"
-                    >
-                    <svg
-                        width="26"
-                        height="26"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        >
-                    <path
-                        d="M4 7h16M4 12h16M4 17h16"
-                        stroke="currentColor"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        />
-                    </svg>
-                </button>
-            </div>
-        </nav>
-
+        </header>
+        <br>                    
+        <br>
         <div class="layout">
             <aside class="sidebar" aria-label="Sidebaar">
                 <h3 class="sidebar-title">Product Filters</h3>
@@ -558,78 +600,35 @@
                 </script>
             </main>
         </div>
+        <script>
+            // Lấy các phần tử
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
 
-        <footer>
-            <div class="container" style="max-width: 1100px">
-                <div class="footer-grid">
-                    <div>
-                        <h4>StockPhone</h4>
-                        <p class="small">
-                            Hệ thống quản lý kho chuyên cho cửa hàng điện thoại. Quản lý tồn
-                            kho, đơn nhập/xuất, báo cáo và người dùng.
-                        </p>
-                    </div>
+            // Hàm mở/đóng dropdown
+            function toggleUserMenu() {
+                userMenuDropdown.classList.toggle('hidden');
+            }
 
-                    <div>
-                        <h4>Quick links</h4>
-                        <a href="/home.html">Home</a>
-                        <a href="/products">Products</a>
-                        <a href="/reports">Reports</a>
-                        <a href="/login">Đăng nhập</a>
-                    </div>
+            // Khi click vào nút avatar → toggle dropdown
+            userMenuButton.addEventListener('click', function (e) {
+                e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+                toggleUserMenu();
+            });
 
-                    <div>
-                        <h4>Hỗ trợ & Policy</h4>
-                        <a href="/policy">Privacy & Policy</a>
-                        <a href="/terms">Terms of Service</a>
-                        <a href="/help">Help Center</a>
-                    </div>
+            // Đóng dropdown khi click ra ngoài
+            document.addEventListener('click', function (e) {
+                if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            });
 
-                    <div>
-                        <h4>Contact</h4>
-                        <div class="small">Email: support@stockphone.example</div>
-                        <div class="small" style="margin-top: 6px">
-                            SĐT: +84 912 345 678
-                        </div>
-                        <div style="margin-top: 10px">
-                            <a
-                                href="#"
-                                style="
-                                margin-right: 8px;
-                                text-decoration: none;
-                                color: var(--muted);
-                                "
-                                >Twitter</a
-                            >
-                            <a
-                                href="#"
-                                style="
-                                margin-right: 8px;
-                                text-decoration: none;
-                                color: var(--muted);
-                                "
-                                >Facebook</a
-                            >
-                            <a href="#" style="text-decoration: none; color: var(--muted)"
-                               >LinkedIn</a
-                            >
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-top: 18px;
-                    flex-wrap: wrap;
-                    "
-                    >
-                    <div class="small">© 2025 StockPhone. All rights reserved.</div>
-                    <div class="small">Designed for warehouse management by Group 2</div>
-                </div>
-            </div>
-        </footer>
+            // (Tùy chọn) Đóng khi nhấn ESC
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            });
+        </script>          
     </body>
 </html>

@@ -15,8 +15,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.*;
 import java.util.List;
+import model.Users;
 
 /**
  *
@@ -26,30 +28,27 @@ public class UpdateShipController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
+        try {         
+            HttpSession session = req.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                resp.sendRedirect(req.getContextPath() + "/loginStaff");
+                return;
+            }
+
+            Users currentUser = (Users) session.getAttribute("account");
+            
+             if (currentUser.getRole_id() != 10) {
+                req.setAttribute("error", "Bạn không có quyền truy cập chức năng này!");
+                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
+                return;
+            }
+            
             // === Lấy dữ liệu từ form ===
             int shipmentId = Integer.parseInt(req.getParameter("shipmentId"));
             String shipmentStatus = req.getParameter("shipmentStatus");
             int shipmentQty = Integer.parseInt(req.getParameter("shipmentQty"));
             String shipmentNote = req.getParameter("shipmentNote");
-            String userIdRaw = req.getParameter("userId");
-
-            // === Kiểm tra null hoặc chuỗi rỗng ===
-            if (userIdRaw == null || userIdRaw.trim().isEmpty()) {
-                req.setAttribute("error", "Thiếu thông tin userId! Không thể xác định người dùng.");
-                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-                return;
-            }
-
-            int userId = Integer.parseInt(userIdRaw.trim());
-            getRoleBySetIdDAO db = new getRoleBySetIdDAO();
-            UserToCheckTask user = db.getUserById(userId);
-
-            if (user.getRoleId() != 10) {
-                req.setAttribute("error", "Bạn không có quyền truy cập chức năng này!");
-                req.getRequestDispatcher("/WEB-INF/view/error_page.jsp").forward(req, resp);
-                return;
-            }
+            
 
             // === Lấy thêm thông tin liên quan ===
             UpdateShipDAO dao = new UpdateShipDAO();

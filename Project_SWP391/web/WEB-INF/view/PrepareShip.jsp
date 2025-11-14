@@ -7,6 +7,7 @@
         <meta charset="UTF-8">
         <title>Prepare Shipment #${order.orderId}</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/processOrder.css">
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -131,40 +132,46 @@
 
 
                 <!-- Order_Status -->
-                <label><strong>Update Status:</strong></label>
-                <select name="newStatus" style="padding:8px; margin-left:10px;">
-                    <option value="">-- Select Status --</option>
-                    <c:forEach var="st" items="${statuses}">
-                        <option value="${st.statusCode}" ${st.statusCode == order.status ? 'selected' : ''}>
-                            ${st.statusCode}
-                        </option>
-                    </c:forEach>
-                </select><br>
-
-                <!-- Ship_no Shipments -->
-                <strong>Ship_code:</strong>
-                <input type="text" name="ship_no" value="${ship_no != null ? ship_no : ''}" />
-                <c:if test="${not empty error}">
-                    <div style="color:red; font-weight:bold; margin-top:5px;">
-                        ${error}
+                <div class="update-form">
+                    <!-- Update Status -->
+                    <div class="update-row">
+                        <label><strong>Update Status:</strong></label>
+                        <select name="newStatus">
+                            <option value="">-- Select Status --</option>
+                            <c:forEach var="st" items="${statuses}">
+                                <option value="${st.statusCode}" ${st.statusCode == order.status ? 'selected' : ''}>
+                                    ${st.statusCode}
+                                </option>
+                            </c:forEach>
+                        </select>
                     </div>
-                </c:if>
-                <br>
 
-                <!-- select ship employees -->
-                <label><strong>Ship Employees:</strong></label>
-                <select name="shipperId">
-                    <option value="">-- Select Employee --</option>
-                    <c:forEach var="s" items="${shipList}">
-                        <option value="${s.eId}">${s.eName}</option>
-                    </c:forEach>
-                </select><br><br>
+                    <!-- Ship_no Shipments -->
+                    <div class="update-row">
+                        <label><strong>Ship Code:</strong></label>
+                        <input type="text" name="ship_no" value="${ship_no != null ? ship_no : ''}" />
+                    </div>
+                    <c:if test="${not empty error}">
+                        <div class="update-error">${error}</div>
+                    </c:if>
+
+                    <!-- Select ship employees -->
+                    <div class="update-row">
+                        <label><strong>Ship Employees:</strong></label>
+                        <select name="shipperId">
+                            <option value="">-- Select Employee --</option>
+                            <c:forEach var="s" items="${shipList}">
+                                <option value="${s.eId}">${s.eName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
 
                 <button type="submit" style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">
                     Update
                 </button>
-                
-                <button type="reset">Cancel</button>
+
+                <button type="reset" style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer;">Cancel</button>
             </form>
 
             <hr>
