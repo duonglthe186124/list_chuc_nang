@@ -1,17 +1,18 @@
 <%-- 
-    Document   : inventoryList
-    Created on : Oct 28, 2025, 10:47:08 PM
+    Document   : createReturn
+    Created on : Nov 12, 2025, 9:54:35 PM
     Author     : Ha Trung KI
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Quản lý Kho hàng - WMS Pro</title>
+        <title>Quản lý Phiếu mua hàng - WMS Pro</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,21 +55,20 @@
 
             #main-content {
                 transition: margin-left 0.3s ease-in-out;
-                margin-left: 250px;
             }
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
             }
-            .filter-form {
+            .form-container {
                 padding: 20px;
                 background: #f9f9f9;
                 border-radius: 8px;
                 margin-bottom: 20px;
             }
-            .filter-form form {
+            .form-row {
                 display: flex;
-                align-items: flex-end;
                 gap: 15px;
+                margin-bottom: 10px;
             }
             .form-group {
                 flex: 1;
@@ -78,36 +78,21 @@
                 margin-bottom: 5px;
                 font-weight: bold;
             }
-            .form-group input, .form-group select {
+            .form-group input, .form-group select, .form-group textarea {
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
-            .detail-table {
-                font-size: 0.9em;
-            }
-            .detail-table th, .detail-table td {
-                padding: 6px 8px;
-            }
-            .pagination {
-                margin-top: 20px;
-            }
-            .pagination a, .pagination span {
-                display: inline-block;
-                padding: 8px 12px;
-                margin: 0 2px;
-                border: 1px solid #ccc;
-                color: #337ab7;
-                text-decoration: none;
-            }
-            .pagination span.current {
-                background-color: #337ab7;
-                color: white;
-                border-color: #337ab7;
-            }
-            .pagination a:hover {
+            .static-info {
                 background-color: #eee;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            .supplier-info {
+                border: 1px dashed #007bff;
+                padding: 10px;
+                background: #f0f7ff;
             }
         </style>
     </head>
@@ -345,112 +330,112 @@
                         </button>
                     </div>
             </aside>
+
             <!-- 
-                    ===== MAIN CONTENT (N?I DUNG CHÍNH) =====
+                    ===== MAIN CONTENT (NỘI DUNG CHÍNH) =====
             -->
-            <main id="main-content" class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out">
-                <h2>Danh sách Chi tiết Tồn kho</h2>
+            <main
+                id="main-content"
+                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                ><h2>Tạo Phiếu Trả Hàng</h2>
+                <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary">&larr; Quay lại Lịch sử</a>
                 <hr>
 
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
 
-                <div class="filter-form">
-                    <form action="${pageContext.request.contextPath}/warehouse/inventory" method="GET">
+                <div class="form-container">
+                    <form action="${pageContext.request.contextPath}/warehouse/returns" method="GET">
                         <div class="form-group">
-                            <label>Tìm theo Tên Sản phẩm:</label>
-                            <input type="text" name="productName" value="${selectedProductName}">
+                            <label>Nhập IMEI sản phẩm bị trả lại (phải có status 'SOLD'):</label>
+                            <input type="text" name="imei" value="${unitDetails.imei}" placeholder="Quét hoặc nhập IMEI..." required>
                         </div>
-                        <div class="form-group">
-                            <label>Lọc theo Nhãn hàng:</label>
-                            <select name="brandId">
-                                <option value="0">-- Tất cả Nhãn hàng --</option>
-                                <c:forEach items="${brandList}" var="brand">
-                                    <option value="${brand.brand_id}" ${brand.brand_id == selectedBrandId ? 'selected' : ''}>
-                                        ${brand.brand_name}
-                                    </option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Lọc</button>
+                        <button type="submit" class="btn btn-primary">Tìm kiếm sản phẩm</button>
                     </form>
                 </div>
 
-                <h2>Kết quả</h2>
-                <table class="data-table detail-table">
-                    <thead>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>IMEI</th>
-                            <th>Tình trạng</th>
-                            <th>Vị trí kho</th>
-                            <th>Giá nhập</th>
-                            <th>Ngày nhập</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Ngày kiểm kê cuối</th>
-                            <th>Nhân viên kiểm kê</th>
-                            <th>Ngày xuất</th>
-                            <th>Chỉnh sửa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%-- Dùng "stockList" nhưng chứa DTO chi tiết --%>
-                        <c:forEach items="${requestScope.stockList}" var="item">
-                            <tr>
-                                <td>${item.productName}</td>
-                                <td>${item.imei}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${item.status == 'AVAILABLE'}">AVAILABLE</c:when>
-                                        <c:when test="${item.status == 'SOLD'}">SOLD</c:when>
-                                        <c:when test="${item.status == 'DAMAGED'}">DAMAGED</c:when>
-                                        <c:when test="${item.status == 'RESERVED'}">RESERVED</c:when>
-                                        <c:when test="${item.status == 'RETURNED'}">RETURNED</c:when>
-                                        <c:otherwise>${item.status}</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>${item.locationCode}</td>
-                                <td><fmt:formatNumber value="${item.purchasePrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
-                                <td><fmt:formatDate value="${item.receiptDate}" pattern="dd-MM-yyyy"/></td>
-                                <td>${item.supplierName}</td>
-                                <td><fmt:formatDate value="${item.lastInspectionDate}" pattern="dd-MM-yyyy HH:mm"/></td>
-                                <td>${item.inspectorName}</td>
-                                <td><fmt:formatDate value="${item.issueDate}" pattern="dd-MM-yyyy"/></td>
-                                <td>
-                                    <a href="#">Sửa</a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty requestScope.stockList}">
-                            <tr><td colspan="11" style="text-align: center;">Không tìm thấy IMEI nào khớp.</td></tr>
-                        </c:if>
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <%-- Link về trang TRƯỚC --%>
-                    <c:if test="${currentPage > 1}">
-                        <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage - 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&laquo;</a>
-                    </c:if>
+                <c:if test="${not empty unitDetails}">
+                    <hr>
+                    <h2>Xác nhận Trả hàng cho IMEI: ${unitDetails.imei}</h2>
+                    <div class="form-container">
+                        <form action="${pageContext.request.contextPath}/warehouse/returns" method="POST">
+                            <input type="hidden" name="unitId" value="${unitDetails.unitId}">
+                            <input type="hidden" name="orderId" value="${unitDetails.orderId}">
+                            <input type="hidden" name="imei" value="${unitDetails.imei}">
 
-                    <%-- Hiển thị các số trang --%>
-                    <c:forEach begin="1" end="${totalPages}" var="i">
-                        <c:choose>
-                            <c:when test="${i == currentPage}">
-                                <span class="current">${i}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${i}&productName=${selectedProductName}&brandId=${selectedBrandId}">${i}</a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
+                            <h3>B. Thông tin Sản phẩm & Khách hàng </h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Mã sản phẩm (SKU):</label>
+                                    <div class="static-info">${unitDetails.skuCode}</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tên sản phẩm:</label>
+                                    <div class="static-info">${unitDetails.productName}</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Tình trạng hiện tại:</label>
+                                    <div class="static-info">${unitDetails.currentStatus}</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Từ Đơn hàng gốc (ID):</label>
+                                    <div class="static-info">${unitDetails.orderId}</div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Tên Khách hàng:</label>
+                                    <div class="static-info">${unitDetails.customerName}</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>SĐT Khách hàng:</label>
+                                    <div class="static-info">${unitDetails.customerPhone}</div>
+                                </div>
+                            </div>
 
-                    <%-- Link đến trang SAU --%>
-                    <c:if test="${currentPage < totalPages}">
-                        <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage + 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&raquo;</a>
-                    </c:if>
-                </div>
-            </main>
+                            <hr>
+
+                            <h3>C. Thông tin Trả hàng </h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Lý do trả hàng (Dropdown):</label>
+                                    <select name="reason" required>
+                                        <option value="">-- Chọn lý do --</option>
+                                        <option value="Lỗi pin">Lỗi pin</option>
+                                        <option value="Lỗi màn hình">Lỗi màn hình</option>
+                                        <option value="Khách đổi ý">Khách đổi ý</option>
+                                        <option value="Khác">Khác (Ghi chú bên dưới)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ghi chú chi tiết (Lỗi, Bảo hành, SP thay thế...):</label>
+                                    <textarea name="note" rows="4" placeholder="Nhập ghi chú chi tiết..."></textarea>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="supplier-info">
+                                <h3>Thông tin Nhà cung cấp (Để đổi trả nếu lỗi)</h3>
+                                <div class="form-row">
+                                    <div class="form-group"><label>Tên NCC:</label><div class="static-info">${unitDetails.supplierName}</div></div>
+                                    <div class="form-group"><label>SĐT NCC:</label><div class="static-info">${unitDetails.supplierPhone}</div></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>Email NCC:</label><div class="static-info">${unitDetails.supplierEmail}</div></div>
+                                </div>
+                            </div>
+
+                            <br>
+                            <button type="submit" class="btn btn-primary">Xác nhận Trả hàng (Đổi status thành 'RETURNED')</button>
+                        </form>
+                    </div>
+                </c:if></main>
         </div>
 
         <!-- 

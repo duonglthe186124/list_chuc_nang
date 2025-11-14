@@ -1,11 +1,12 @@
 <%-- 
-    Document   : inventoryList
-    Created on : Oct 28, 2025, 10:47:08 PM
+    Document   : adjustmentHistory
+    Created on : Nov 12, 2025, 11:04:10 PM
     Author     : Ha Trung KI
 --%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
     <head>
@@ -54,7 +55,6 @@
 
             #main-content {
                 transition: margin-left 0.3s ease-in-out;
-                margin-left: 250px;
             }
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
@@ -90,27 +90,8 @@
             .detail-table th, .detail-table td {
                 padding: 6px 8px;
             }
-            .pagination {
-                margin-top: 20px;
-            }
-            .pagination a, .pagination span {
-                display: inline-block;
-                padding: 8px 12px;
-                margin: 0 2px;
-                border: 1px solid #ccc;
-                color: #337ab7;
-                text-decoration: none;
-            }
-            .pagination span.current {
-                background-color: #337ab7;
-                color: white;
-                border-color: #337ab7;
-            }
-            .pagination a:hover {
-                background-color: #eee;
-            }
         </style>
-    </head>
+    </head>   
     <body class="bg-gray-100 text-gray-800">
         <header
             class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200"
@@ -345,11 +326,17 @@
                         </button>
                     </div>
             </aside>
+
+
+
             <!-- 
-                    ===== MAIN CONTENT (N?I DUNG CHÍNH) =====
+                    ===== MAIN CONTENT (NỘI DUNG CHÍNH) =====
             -->
-            <main id="main-content" class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out">
-                <h2>Danh sách Chi tiết Tồn kho</h2>
+
+            <main
+                id="main-content"
+                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                ><h2>Lịch sử Điều chỉnh Kho</h2>
                 <hr>
 
                 <c:if test="${not empty errorMessage}">
@@ -357,22 +344,19 @@
                 </c:if>
 
                 <div class="filter-form">
-                    <form action="${pageContext.request.contextPath}/warehouse/inventory" method="GET">
+                    <form action="${pageContext.request.contextPath}/warehouse/history" method="GET">
                         <div class="form-group">
-                            <label>Tìm theo Tên Sản phẩm:</label>
-                            <input type="text" name="productName" value="${selectedProductName}">
-                        </div>
-                        <div class="form-group">
-                            <label>Lọc theo Nhãn hàng:</label>
-                            <select name="brandId">
-                                <option value="0">-- Tất cả Nhãn hàng --</option>
-                                <c:forEach items="${brandList}" var="brand">
-                                    <option value="${brand.brand_id}" ${brand.brand_id == selectedBrandId ? 'selected' : ''}>
-                                        ${brand.brand_name}
+                            <label>Lọc theo Nhân viên:</label>
+                            <select name="employeeId">
+                                <option value="0">-- Tất cả Nhân viên --</option>
+                                <c:forEach items="${employeeList}" var="emp">
+                                    <option value="${emp.employee_id}" ${emp.employee_id == selectedEmployeeId ? 'selected' : ''}>
+                                        ${emp.bank_account} <%-- Lấy fullname từ trường bank_account (như đã lưu trong DAO) --%>
                                     </option>
                                 </c:forEach>
                             </select>
                         </div>
+                        <%-- (Bạn có thể thêm bộ lọc Ngày ở đây) --%>
                         <button type="submit" class="btn btn-primary">Lọc</button>
                     </form>
                 </div>
@@ -381,81 +365,39 @@
                 <table class="data-table detail-table">
                     <thead>
                         <tr>
+                            <th>Mã ĐC</th>
+                            <th>Ngày giờ</th>
+                            <th>Nhân viên</th>
                             <th>Sản phẩm</th>
                             <th>IMEI</th>
-                            <th>Tình trạng</th>
-                            <th>Vị trí kho</th>
-                            <th>Giá nhập</th>
-                            <th>Ngày nhập</th>
-                            <th>Nhà cung cấp</th>
-                            <th>Ngày kiểm kê cuối</th>
-                            <th>Nhân viên kiểm kê</th>
-                            <th>Ngày xuất</th>
-                            <th>Chỉnh sửa</th>
+                            <th>Chi tiết (Lý do)</th>
+                            <th>Vị trí (Hiện tại)</th>
+                            <th>Tình trạng (Hiện tại)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <%-- Dùng "stockList" nhưng chứa DTO chi tiết --%>
-                        <c:forEach items="${requestScope.stockList}" var="item">
+                        <c:forEach items="${requestScope.historyList}" var="item">
                             <tr>
+                                <td>${item.adjustmentId}</td>
+                                <td><fmt:formatDate value="${item.createdAt}" pattern="dd-MM-yyyy HH:mm"/></td>
+                                <td>${item.employeeName}</td>
                                 <td>${item.productName}</td>
                                 <td>${item.imei}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${item.status == 'AVAILABLE'}">AVAILABLE</c:when>
-                                        <c:when test="${item.status == 'SOLD'}">SOLD</c:when>
-                                        <c:when test="${item.status == 'DAMAGED'}">DAMAGED</c:when>
-                                        <c:when test="${item.status == 'RESERVED'}">RESERVED</c:when>
-                                        <c:when test="${item.status == 'RETURNED'}">RETURNED</c:when>
-                                        <c:otherwise>${item.status}</c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>${item.locationCode}</td>
-                                <td><fmt:formatNumber value="${item.purchasePrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
-                                <td><fmt:formatDate value="${item.receiptDate}" pattern="dd-MM-yyyy"/></td>
-                                <td>${item.supplierName}</td>
-                                <td><fmt:formatDate value="${item.lastInspectionDate}" pattern="dd-MM-yyyy HH:mm"/></td>
-                                <td>${item.inspectorName}</td>
-                                <td><fmt:formatDate value="${item.issueDate}" pattern="dd-MM-yyyy"/></td>
-                                <td>
-                                    <a href="#">Sửa</a>
-                                </td>
+                                <td>${item.reason}</td>
+                                <td>${item.currentLocation}</td>
+                                <td>${item.currentStatus}</td>
                             </tr>
                         </c:forEach>
-                        <c:if test="${empty requestScope.stockList}">
-                            <tr><td colspan="11" style="text-align: center;">Không tìm thấy IMEI nào khớp.</td></tr>
+                        <c:if test="${empty requestScope.historyList}">
+                            <tr><td colspan="8" style="text-align: center;">Không tìm thấy lịch sử điều chỉnh nào.</td></tr>
                         </c:if>
                     </tbody>
-                </table>
-                <div class="pagination">
-                    <%-- Link về trang TRƯỚC --%>
-                    <c:if test="${currentPage > 1}">
-                        <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage - 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&laquo;</a>
-                    </c:if>
-
-                    <%-- Hiển thị các số trang --%>
-                    <c:forEach begin="1" end="${totalPages}" var="i">
-                        <c:choose>
-                            <c:when test="${i == currentPage}">
-                                <span class="current">${i}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${i}&productName=${selectedProductName}&brandId=${selectedBrandId}">${i}</a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-
-                    <%-- Link đến trang SAU --%>
-                    <c:if test="${currentPage < totalPages}">
-                        <a href="${pageContext.request.contextPath}/warehouse/inventory?page=${currentPage + 1}&productName=${selectedProductName}&brandId=${selectedBrandId}">&raquo;</a>
-                    </c:if>
-                </div>
-            </main>
+                </table></main>
         </div>
 
         <!-- 
-              ===== JAVASCRIPT =====
-              Sửa đổi script từ file home.html
+===== JAVASCRIPT =====
+Sửa đổi script từ file home.html
         -->
         <script>
             document.addEventListener("DOMContentLoaded", () => {
