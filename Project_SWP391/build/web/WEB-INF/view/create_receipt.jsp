@@ -478,38 +478,101 @@
             <!-- MAIN CONTENT (Giữ nguyên Header) -->
             <div id="main-content" class="flex-1 flex flex-col overflow-hidden">
                 <header
-                    class="h-16 bg-white shadow-sm flex items-center justify-between px-6 flex-shrink-0"
+            class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200"
+            >
+            <div
+                class="mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between"
+                >
+                <a
+                    href="${pageContext.request.contextPath}/home"
+                    class="flex items-center gap-2 text-2xl font-bold text-gray-900"
                     >
-                    <div class="flex items-center">
-                        <a
-                            href="#"
-                            class="flex items-center gap-2 text-xl font-bold text-gray-900"
-                            >
-                            <svg class="h-7 w-7 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/>
-                            </svg>
-                            <span>WMS PHONE</span>
-                        </a>
-                    </div>
+                    <svg
+                        class="h-8 w-8 text-indigo-600"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25A2.25 2.25 0 0 1 13.5 8.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
+                        />
+                    </svg>
+                    <span>WMS Pro</span>
+                </a>
 
-                    <!-- (Giữ nguyên User Menu) -->
-                    <div class="flex items-center space-x-4">
-                        <button class="p-2 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none">
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"/></svg>
+                <nav class="flex items-center space-x-6">
+                    <a
+                        href="${pageContext.request.contextPath}/home"
+                        class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                        >Về trang chủ</a
+                    >
+                    <a
+                        href="#"
+                        class="font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+                        >Hỗ trợ</a
+                    >
+
+                    <div class="relative">
+                        <button
+                            id="user-menu-button"
+                            class="flex items-center gap-2 rounded-full p-1 pr-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                            >
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.account.avatar_url}">
+                                    <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                        <c:param name="v" value="${date.time}" />
+                                    </c:url>
+                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span>${sessionScope.account.fullname}</span>
+                            <svg
+                                class="h-4 w-4 text-gray-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.23 8.29a.75.75 0 0 1 .02-1.06Z"
+                                clip-rule="evenodd"
+                                />
+                            </svg>
                         </button>
-                        <div class="relative" id="user-menu-container">
-                            <button id="user-menu-button" class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
-                                <img class="h-8 w-8 rounded-full object-cover" src="https://placehold.co/100x100/e2e8f0/64748b?text=A" alt="User"/>
-                                <span class="hidden md:inline text-sm font-medium text-gray-700">Admin Kho</span>
-                                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
-                            </button>
-                            <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hồ sơ</a>
-                                <a href="/login" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Đăng xuất</a>
-                            </div>
+
+                        <div
+                            id="user-menu-dropdown"
+                            class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-50 hidden transition ease-out duration-100 transform opacity-0 scale-95"
+                            >
+                            <a
+                                href="${pageContext.request.contextPath}/PersonalProfile"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >Thông tin cá nhân</a
+                            >
+                            <a
+                                href="#"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >Quản lý</a
+                            >
+                            <div class="my-1 border-t border-gray-100"></div>
+                            <a
+                                href="${pageContext.request.contextPath}/logout"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >Đăng xuất</a
+                            >
                         </div>
                     </div>
-                </header>
+                </nav>
+            </div>
+        </header>
 
                 <!-- NỘI DUNG CHÍNH -->
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-3">
