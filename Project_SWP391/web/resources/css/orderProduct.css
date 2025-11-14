@@ -1,0 +1,160 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 13 thg 11, 2025, 19:41:37
+    Author     : hoang
+*/
+/* ========== Giao diện riêng cho trang Create Order ========== */
+body {
+    background: #f3f4f6;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== Tiêu đề chính ====== */
+.main-header h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+}
+
+/* ====== Thông tin sản phẩm ====== */
+.product-info {
+    display: flex;
+    align-items: center; /* căn giữa theo chiều dọc */
+    justify-content: flex-start;
+    gap: 20px; /* khoảng cách giữa ảnh và thông tin */
+    margin-bottom: 25px;
+}
+
+.product-info img {
+    width: 180px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0; /* không cho ảnh bị co lại */
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-details p {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #333;
+}
+/* ====== Form nhập liệu ====== */
+form {
+    background-color: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+    font-size: 15px;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* ====== Tổng tiền ====== */
+#totalAmount {
+    font-weight: bold;
+    color: #16a34a;
+    font-size: 18px;
+}
+
+/* ====== Thông báo lỗi ====== */
+.error {
+    background-color: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* ====== Nút bấm ====== */
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button[type="reset"] {
+    background-color: #6c757d;
+    margin-left: 8px;
+}
+
+button[type="reset"]:hover {
+    background-color: #545b62;
+}
+
+/* ====== Link quay lại ====== */
+.container p a {
+    display: inline-block;
+    margin-top: 18px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.container p a:hover {
+    text-decoration: underline;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .product-info img {
+        width: 120px;
+    }
+}
+
