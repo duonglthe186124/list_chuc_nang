@@ -112,8 +112,13 @@ public class EmployeeService {
     }
     
     // Validate employee code format
+    // Format: Prefix (2-4 letters) + 3 digits (e.g., HRMA001, IS003, ES001, AD002)
     public boolean isValidEmployeeCode(String employee_code) {
-        return employee_code != null && employee_code.matches("EMP\\d{3}");
+        if (employee_code == null || employee_code.trim().isEmpty()) {
+            return false;
+        }
+        // Pattern: 2-4 uppercase letters followed by 3 digits
+        return employee_code.matches("^[A-Z]{2,4}\\d{3}$");
     }
     
     // Generate next employee code
@@ -140,6 +145,78 @@ public class EmployeeService {
         
         int nextNum = maxNum + 1;
         return String.format("EMP%03d", nextNum);
+    }
+    
+    // Get role prefix code from role name
+    private String getRolePrefix(String roleName) {
+        if (roleName == null) {
+            return "EMP";
+        }
+        
+        // Map role names to prefixes
+        String role = roleName.toUpperCase();
+        if (role.contains("HRMANAGER") || role.equals("HR MANAGER")) {
+            return "HRMA";
+        } else if (role.contains("IMPORTSTAFF") || role.equals("IMPORT STAFF")) {
+            return "IS";
+        } else if (role.contains("EXPORTSTAFF") || role.equals("EXPORT STAFF")) {
+            return "ES";
+        } else if (role.contains("ADMIN")) {
+            return "AD";
+        } else if (role.contains("WAREHOUSESTAFF") || role.equals("WAREHOUSE STAFF")) {
+            return "WS";
+        } else if (role.contains("QUALITYCONTROL") || role.equals("QUALITY CONTROL") || role.equals("QC")) {
+            return "QC";
+        } else if (role.contains("ACCOUNTANT")) {
+            return "AC";
+        } else if (role.contains("MANAGER")) {
+            return "MGR";
+        } else {
+            // Default: take first 2-4 letters from role name
+            String cleaned = role.replaceAll("[^A-Z]", "");
+            if (cleaned.length() >= 4) {
+                return cleaned.substring(0, 4);
+            } else if (cleaned.length() >= 2) {
+                return cleaned.substring(0, 2);
+            } else {
+                return "EMP";
+            }
+        }
+    }
+    
+    // Generate next employee code by role
+    public String generateNextEmployeeCodeByRole(String roleName) {
+        String prefix = getRolePrefix(roleName);
+        List<EmployeeInfoDTO> employees = getAllEmployees();
+        
+        int maxNum = 0;
+        for (EmployeeInfoDTO emp : employees) {
+            String code = emp.getEmployee_code();
+            if (code != null && code.startsWith(prefix)) {
+                try {
+                    // Extract number from code (e.g., HRMA001 -> 1, IS003 -> 3)
+                    String numStr = code.substring(prefix.length());
+                    int num = Integer.parseInt(numStr);
+                    if (num > maxNum) {
+                        maxNum = num;
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore invalid formats
+                }
+            }
+        }
+        
+        int nextNum = maxNum + 1;
+        return String.format("%s%03d", prefix, nextNum);
+    }
+    
+    // Generate next employee code by role_id
+    public String generateNextEmployeeCodeByRoleId(int role_id) {
+        String roleName = roleDAO.getRoleNameById(role_id);
+        if (roleName == null) {
+            return generateNextEmployeeCode();
+        }
+        return generateNextEmployeeCodeByRole(roleName);
     }
 }
 
