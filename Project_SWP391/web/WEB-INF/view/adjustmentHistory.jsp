@@ -338,11 +338,9 @@
                 class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
                 ><h2>Lịch sử Điều chỉnh Kho</h2>
                 <hr>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <div class="filter-form">
                     <form action="${pageContext.request.contextPath}/warehouse/history" method="GET">
                         <div class="form-group">
@@ -351,28 +349,20 @@
                                 <option value="0">-- Tất cả Nhân viên --</option>
                                 <c:forEach items="${employeeList}" var="emp">
                                     <option value="${emp.employee_id}" ${emp.employee_id == selectedEmployeeId ? 'selected' : ''}>
-                                        ${emp.bank_account} <%-- Lấy fullname từ trường bank_account (như đã lưu trong DAO) --%>
+                                        ${emp.bank_account} <%-- Lấy fullname --%>
                                     </option>
                                 </c:forEach>
                             </select>
                         </div>
-                        <%-- (Bạn có thể thêm bộ lọc Ngày ở đây) --%>
                         <button type="submit" class="btn btn-primary">Lọc</button>
                     </form>
                 </div>
-
                 <h2>Kết quả</h2>
                 <table class="data-table detail-table">
                     <thead>
                         <tr>
-                            <th>Mã ĐC</th>
-                            <th>Ngày giờ</th>
-                            <th>Nhân viên</th>
-                            <th>Sản phẩm</th>
-                            <th>IMEI</th>
-                            <th>Chi tiết (Lý do)</th>
-                            <th>Vị trí (Hiện tại)</th>
-                            <th>Tình trạng (Hiện tại)</th>
+                            <th>Mã ĐC</th> <th>Ngày giờ</th> <th>Nhân viên</th> <th>Sản phẩm</th>
+                            <th>IMEI</th> <th>Chi tiết (Lý do)</th> <th>Vị trí (Hiện tại)</th> <th>Tình trạng (Hiện tại)</th>
                         </tr>
                     </thead>
                     <tbody>

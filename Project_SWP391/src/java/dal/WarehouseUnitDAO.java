@@ -3,29 +3,27 @@ package dal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import model.Product_units; 
+import model.Product_units;
 import model.Products;
 import util.DBContext;
 
 public class WarehouseUnitDAO extends DBContext {
 
     public WarehouseUnitDAO() throws Exception {
-        super(); 
+        super();
         if (this.connection == null) {
-            throw new Exception("Lỗi nghiêm trọng: WarehouseUnitDAO không thể kết nối CSDL.");
+            throw new Exception("Lỗi WarehouseUnitDAO: Không thể kết nối CSDL.");
         }
     }
 
-    /**
-     * Hàm 1: Lấy thông tin chi tiết của 1 IMEI (unit)
-     */
+    // Hàm 1: Lấy thông tin chi tiết của 1 IMEI (unit)
     public Product_units getUnitById(int unitId) throws Exception {
         Product_units unit = null;
         String query = "SELECT * FROM Product_units WHERE unit_id = ?";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             ps.setInt(1, unitId);
             rs = ps.executeQuery();
@@ -40,73 +38,100 @@ public class WarehouseUnitDAO extends DBContext {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-            } catch (Exception e) { e.printStackTrace(); }
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return unit;
     }
 
-    /**
-     * Hàm 2: (NÂNG CẤP) Cập nhật Status VÀ Ghi Log (Dùng Transaction)
-     */
+    // Hàm 2: (NÂNG CẤP) Cập nhật Status VÀ Ghi Log (Dùng Transaction)
     public boolean updateUnitStatus(int unitId, String oldStatus, String newStatus, int employeeId) throws Exception {
-        Connection conn = this.connection;
         PreparedStatement psUpdateUnit = null;
         PreparedStatement psLog = null;
-        
         String sqlUpdateUnit = "UPDATE Product_units SET status = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ? AND status = ?";
         String sqlLog = "INSERT INTO Stock_adjustments (unit_id, reason, created_by) VALUES (?, ?, ?)";
         String reason = "Status changed: " + oldStatus + " -> " + newStatus;
-
         try {
+            Connection conn = this.connection;
             conn.setAutoCommit(false); // Bắt đầu Transaction
 
             // 1. Cập nhật Status
             psUpdateUnit = conn.prepareStatement(sqlUpdateUnit);
             psUpdateUnit.setString(1, newStatus);
             psUpdateUnit.setInt(2, unitId);
-            psUpdateUnit.setString(3, oldStatus); // Đảm bảo status chưa bị thay đổi
-            
+            psUpdateUnit.setString(3, oldStatus);
             int affectedRows = psUpdateUnit.executeUpdate();
             if (affectedRows == 0) {
-                 throw new Exception("Cập nhật thất bại. Status có thể đã bị thay đổi bởi người khác.");
+                throw new Exception("Cập nhật thất bại. Status có thể đã bị thay đổi.");
             }
-            
-            // 2. Ghi Log vào Stock_adjustments
+            // 2. Ghi Log
             psLog = conn.prepareStatement(sqlLog);
             psLog.setInt(1, unitId);
             psLog.setString(2, reason);
             psLog.setInt(3, employeeId);
             psLog.executeUpdate();
 
-            conn.commit(); // Lưu thay đổi
+            this.connection.commit(); // Lưu thay đổi
             return true;
-
         } catch (Exception e) {
             e.printStackTrace();
-            if (conn != null) conn.rollback(); // Hoàn tác
+            if (this.connection != null) {
+                this.connection.rollback(); // Hoàn tác
+            }
             throw e;
         } finally {
             try {
-                if (psUpdateUnit != null) psUpdateUnit.close();
-                if (psLog != null) psLog.close();
-            } catch (Exception e) { e.printStackTrace(); }
+                if (psUpdateUnit != null) {
+                    psUpdateUnit.close();
+                }
+                if (psLog != null) {
+                    psLog.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-    
-    /**
-     * Hàm 3: Lấy tên sản phẩm (để hiển thị)
-     */
+
+    // Hàm 3: Lấy tên sản phẩm
     public String getProductNameById(int productId) throws Exception {
-        // (Code hàm này giữ nguyên như cũ)
-        // ...
-        return "Tên Sản phẩm"; // (Code cũ của bạn)
+        String productName = "";
+        String query = "SELECT name FROM Products WHERE product_id = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = this.connection;
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                productName = rs.getString("name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return productName;
     }
 
-    /**
-     * Hàm 4: Hàm để đóng kết nối thủ công
-     */
+    // Hàm 4: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

@@ -4,24 +4,21 @@
  */
 package dto;
 
-/**
- *
- * @author Ha Trung KI
- */
 import java.util.Date;
 
 public class AdjustmentHistoryDTO {
 
-    private int adjustmentId; // 1. Mã Điều chỉnh
-    private Date createdAt; // 2. Ngày giờ
-    private String employeeName; // 3. Nhân viên thực hiện
-    private String imei; // 4. IMEI
-    private String productName; // 5. Tên sản phẩm
-    private String reason; // 6. Chi tiết/Lý do
-    private String currentLocation; // 7. Vị trí (Hiện tại)
-    private String currentStatus; // 8. Tình trạng (Hiện tại)
+    private int adjustmentId;
+    private Date createdAt;
+    private String employeeName;
+    private String imei;
+    private String productName;
+    private String reason;
+    private String currentLocation;
+    private String currentStatus;
 
-    public AdjustmentHistoryDTO() {}
+    public AdjustmentHistoryDTO() {
+    }
 
     public int getAdjustmentId() {
         return adjustmentId;
@@ -87,5 +84,4 @@ public class AdjustmentHistoryDTO {
         this.currentStatus = currentStatus;
     }
 
-    
 }
