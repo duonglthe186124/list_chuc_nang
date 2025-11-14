@@ -72,7 +72,6 @@
             }
             .line-items-table th,
             .line-items-table td {
-                /* Giảm padding từ 10px 12px xuống 8px 10px */
                 padding: 8px 10px;
                 text-align: left;
                 border-bottom: 1px solid #e5e7eb;
@@ -772,7 +771,7 @@
                 // Định dạng tiền tệ VND
                 const currencyFormatter = new Intl.NumberFormat("vi-VN", {
                     style: "currency",
-                    currency: "VND",
+                    currency: "VND"
                 });
 
                 function formatVND(n) {

@@ -364,5 +364,23 @@ public class PurchaseOrderDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public void update_status(int po_id, String status) {
+        String sql = "UPDATE Purchase_orders SET status = ? WHERE po_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, po_id);
 
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Cập nhật trạng thái thành công cho PO ID: " + po_id);
+            } else {
+                System.out.println("Không tìm thấy PO ID: " + po_id + " để cập nhật.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

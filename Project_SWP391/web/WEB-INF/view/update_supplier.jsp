@@ -1,17 +1,16 @@
 <%-- 
-    Document   : create_prurchase_order
-    Created on : Oct 21, 2025, 9:58:47 AM
+    Document   : create_supplier
+    Created on : Nov 12, 2025, 9:42:35 PM
     Author     : ASUS
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tạo Phiếu Mua Hàng - WMS PHONE</title>
+        <title>Tạo Nhà Cung Cấp Mới - WMS Pro</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,11 +22,7 @@
             body {
                 font-family: "Inter", sans-serif;
             }
-
-            form{
-                display: contents;
-            }
-
+            /* (Các CSS tùy chỉnh cho Sidebar và Main Content giữ nguyên như test.html) */
             #admin-sidebar::-webkit-scrollbar {
                 display: none;
             }
@@ -62,35 +57,6 @@
             }
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
-            }
-
-            .line-items-table {
-                width: 100%;
-                border-collapse: collapse;
-                table-layout: fixed;
-                min-width: 600px;
-            }
-            .line-items-table th,
-            .line-items-table td {
-                padding: 8px 10px;
-                text-align: left;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            .line-items-table th {
-                background-color: #f9fafb;
-                font-weight: 600;
-                color: #374151;
-                text-transform: uppercase;
-                font-size: 0.72rem;
-                letter-spacing: 0.05em;
-            }
-            .line-items-table tbody tr:hover {
-                background-color: #f3f4f6;
-                transition: background-color 0.2s;
-            }
-            .line-items-table .action-cell {
-                width: 70px;
-                text-align: center;
             }
         </style>
     </head>
@@ -139,19 +105,12 @@
                             id="user-menu-button"
                             class="flex items-center gap-2 rounded-full p-1 pr-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
                             >
-                            <c:choose>
-                                <c:when test="${not empty sessionScope.account.avatar_url}">
-                                    <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
-                                        <c:param name="v" value="${date.time}" />
-                                    </c:url>
-                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
-                                </c:when>
-                                <c:otherwise>
-                                    <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
-                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
-                                </c:otherwise>
-                            </c:choose>
-                            <span>${sessionScope.account.fullname}</span>
+                            <img
+                                class="h-8 w-8 rounded-full object-cover"
+                                src="https://placehold.co/40x40/e2e8f0/64748b?text=User"
+                                alt="Avatar"
+                                />
+                            <span>Admin</span>
                             <svg
                                 class="h-4 w-4 text-gray-500"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +130,7 @@
                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-50 hidden transition ease-out duration-100 transform opacity-0 scale-95"
                             >
                             <a
-                                href="${pageContext.request.contextPath}/PersonalProfile"
+                                href="#"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >Thông tin cá nhân</a
                             >
@@ -222,7 +181,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -254,7 +213,7 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/purchase-orders"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
@@ -263,7 +222,7 @@
                             </a>
                             <a
                                 href="${pageContext.request.contextPath}/inbound/createpo"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu mua mới</span>
                             </a>
@@ -364,7 +323,7 @@
                                 <span class="sidebar-text">Danh sách phiếu xuất kho</span>
                             </a>
                             <a
-                                href="${pageContext.request.contextPath}/create-shipment"
+                                href="${pageContext.request.contextPath}/inbound/create-shipment"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu xuất mới</span>
@@ -375,7 +334,7 @@
                     <div>
                         <button
                             type="button"
-                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors sidebar-item-button"
+                            class="flex items-center justify-between w-full gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold bg-indigo-100 text-indigo-700 sidebar-item-button"
                             >
                             <div class="flex items-center gap-3">
                                 <svg
@@ -395,7 +354,7 @@
                                 <span class="sidebar-text">Nhà cung cấp</span>
                             </div>
                             <svg
-                                class="h-4 w-4 sidebar-arrow transition-transform"
+                                class="h-4 w-4 sidebar-arrow rotate-90 transition-transform"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
@@ -407,7 +366,7 @@
                                 />
                             </svg>
                         </button>
-                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu hidden">
+                        <div class="mt-1.5 space-y-1 pl-7 sidebar-submenu">
                             <a
                                 href="${pageContext.request.contextPath}/inbound/suppliers"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
@@ -416,7 +375,7 @@
                             </a>
                             <a
                                 href="${pageContext.request.contextPath}/inbound/create-supplier"
-                                class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                                class="block px-3 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-indigo-50"
                                 >
                                 <span class="sidebar-text">Tạo nhà cung cấp mới</span>
                             </a>
@@ -461,200 +420,219 @@
                     </button>
                 </div>
             </aside>
-
+                                
             <main
                 id="main-content"
-                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                class="flex-1 ml-64 bg-gray-100 p-6 lg:p-8 transition-all duration-300 ease-in-out"
                 >
-                <div
-                    class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
-                    >
-                    <h1 class="text-3xl font-bold text-gray-900">
-                        Tạo Phiếu mua hàng
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-6">
+                        Chỉnh sửa thông tin Nhà Cung Cấp
                     </h1>
-                </div>
 
-                <form action="${pageContext.request.contextPath}/inbound/createpo" method="post">
-                    <div class="bg-white p-4 rounded-lg shadow-sm">
-
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-                            <div class="lg:col-span-2 space-y-4">
-                                <div class="border border-gray-200 rounded-lg p-4">
-                                    <h3 class="text-lg font-semibold mb-4 border-b pb-2 text-gray-800">
-                                        Thông tin chung
-                                    </h3>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div class="form-group">
-                                            <label for="po-code" class="block mb-1 text-sm font-medium text-gray-700">Mã PO</label>
-                                            <input
-                                                type="text"
-                                                id="po-code"
-                                                name="po_code"
-                                                value="${not empty poHeader? poHeader.po_code : po_code}"
-                                                readonly
-                                                class="w-full py-2 px-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                                                />
+                    <div class="bg-white shadow-xl rounded-xl p-6 lg:p-8">
+                        <form
+                            action="${pageContext.request.contextPath}/inbound/suppliers/update"
+                            method="post"
+                            >
+                            <div class="space-y-6">
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin cơ bản
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="supplier_name"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Tên nhà cung cấp
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="supplier_name"
+                                                    id="supplier_name"
+                                                    value="${not empty supplier? supplier_name : ''}"
+                                                    autocomplete="organization"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="supplier" class="block mb-1 text-sm font-medium text-gray-700">Nhà cung cấp</label>
-                                            <select 
-                                                id="supplier" 
-                                                name="supplier" 
-                                                class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white"
-                                                >
-                                                <option value="">Chọn nhà cung cấp</option>
-                                                <c:forEach var="sl" items="${sList}">
-                                                    <option value="${sl.supplier_id}" ${not empty poHeader and poHeader.supplier_name == sl.supplier_name? 'selected' : ''}>${sl.supplier_name}</option>
-                                                </c:forEach>
-                                            </select>
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="display_name"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Tên hiển thị <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="display_name"
+                                                    id="display_name"
+                                                    value="${not empty supplier? display_name : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group mt-4">
-                                        <label for="po-note" class="block mb-1 text-sm font-medium text-gray-700">Ghi chú</label>
-                                        <textarea
-                                            id="po-note"
-                                            name="note"
-                                            rows="3"
-                                            placeholder="Thêm ghi chú cho đơn đặt hàng này..."
-                                            class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-                                            >${not empty poHeader? poHeader.note : ''}</textarea>
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin liên hệ
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-6">
+                                            <label
+                                                for="address"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Địa chỉ <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="address"
+                                                    id="address"
+                                                    value="${not empty supplier? address : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="phone"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Số điện thoại
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    id="phone"
+                                                    value="${not empty supplier? phone : ''}"
+                                                    autocomplete="tel"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="email"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Email <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    id="email"
+                                                    value="${not empty supplier? email : ''}"
+                                                    autocomplete="email"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                                        Thông tin giao dịch
+                                    </h2>
+                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="representative"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Người đại diện
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <input
+                                                    type="text"
+                                                    name="representative"
+                                                    id="representative"
+                                                    value="${not empty supplier? representative : ''}"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    />
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-3">
+                                            <label
+                                                for="payment_method"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Phương thức TT
+                                                <span class="text-red-500">*</span></label
+                                            >
+                                            <div class="mt-1">
+                                                <select
+                                                    id="payment_method"
+                                                    name="payment_method"
+                                                    required
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border bg-white"
+                                                    >
+                                                    <option value="">Chọn phương thức</option>
+                                                    <option value="ChuyenKhoan" ${not empty supplier and supplier.payment_method == "ChuyenKhoan"? 'selected' : ''}>Chuyển khoản</option>
+                                                    <option value="TienMat" ${not empty supplier and supplier.payment_method == "TienMat"? 'selected' : ''}>Tiền mặt</option>
+                                                    <option value="CongNo" ${not empty supplier and supplier.payment_method == "CongNo"? 'selected' : ''}>Công nợ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-6"> 
+                                            <label
+                                                for="note"
+                                                class="block text-sm font-medium text-gray-700"
+                                                >Ghi chú</label
+                                            >
+                                            <div class="mt-1">
+                                                <textarea
+                                                    id="note"
+                                                    name="note"
+                                                    rows="3"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                                                    >${not empty supplier? supplier.note : ''}</textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div id="summary-card" class="lg:col-span-1 bg-gray-50 p-4 rounded-lg shadow-inner border border-gray-200 h-fit">
-                                <h3 class="text-lg font-semibold mb-4 border-b pb-2 text-gray-800">
-                                    Tóm tắt
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="flex justify-between items-center text-gray-700">
-                                        <span>Tổng phụ</span>
-                                        <span class="font-medium" id="summary-subtotal">0.00 VND</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-gray-700">
-                                        <span>Giảm giá</span>
-                                        <span class="font-medium" id="summary-discount">0.00 VND</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-gray-700" id="tax-line-container">
-                                        <span>Thuế (10%)</span>
-                                        <span class="font-medium" id="summary-tax">0.00 VND</span>
-                                    </div>
-                                    <hr class="my-2 border-t border-gray-300" />
-                                    <div class="flex justify-between items-center text-lg font-bold text-gray-900">
-                                        <span>Tổng cộng</span>
-                                        <span id="summary-total">0.00 VND</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 border border-gray-200 rounded-lg p-4">
-                            <h3 class="text-lg font-semibold mb-4 border-b pb-2 text-gray-800">
-                                Chi tiết sản phẩm
-                            </h3>
-
-                            <div class="table-container overflow-x-auto border rounded-lg">
-                                <table class="line-items-table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 40%">Sản phẩm / Item</th>
-                                            <th style="width: 15%">Số lượng</th>
-                                            <th style="width: 20%">Đơn giá</th>
-                                            <th style="width: 20%">Tổng</th>
-                                            <th class="action-cell">Xóa</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="line-items-body">
-                                        <tr>
-                                            <td>
-                                                <div class="form-group">
-                                                    <select 
-                                                        name="product" 
-                                                        class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white"
-                                                        >
-                                                        <option value="">Chọn sản phẩm</option>
-                                                        <c:forEach var="pl" items="${pList}">
-                                                            <option value="${pl.product_id}">${pl.sku_code}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <input 
-                                                    type="number" 
-                                                    value="1" 
-                                                    name="qty" 
-                                                    class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-right"
-                                                    />
-                                            </td>
-                                            <td>
-                                                <input 
-                                                    type="text" 
-                                                    value="0" 
-                                                    name="unit_price" 
-                                                    class="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-right"
-                                                    />
-                                            </td>
-                                            <td class="text-right font-medium">0.00 VND</td>
-                                            <td class="action-cell">
-                                                <button type="button" class="text-gray-400" disabled>✕</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <button 
-                                type="button" 
-                                class="btn-add-item mt-4 bg-indigo-100 text-indigo-700 p-2 px-4 rounded-lg hover:bg-indigo-200 font-medium text-sm"
+                            <div
+                                class="pt-5 border-t border-gray-200 mt-8 flex justify-end gap-x-3"
                                 >
-                                + Thêm sản phẩm
-                            </button>
-                        </div>
-
-                        <div class="flex justify-between items-center mt-4 pt-4 border-t">
-                            <div>
-                                <p style="color: red; margin: 0;">
-                                    ${not empty error? error : ""}
-                                </p>
-                            </div>
-                            <div class="flex space-x-3">
-                                <a  href="${pageContext.request.contextPath}/inbound/purchase-orders"
-                                    class="btn-cancel bg-gray-200 text-gray-800 py-2 px-5 rounded-lg hover:bg-gray-300 font-semibold"
+                                <a
+                                    href="${pageContext.request.contextPath}/inbound/suppliers"
+                                    class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 transition-colors"
                                     >
-                                    Hủy bỏ
+                                    Hủy
                                 </a>
-                                <button 
-                                    type="button" 
-                                    class="btn-cancel bg-gray-200 text-gray-800 py-2 px-5 rounded-lg hover:bg-gray-300 font-semibold"
+                                <button
+                                    type="submit"
+                                    class="inline-flex justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
                                     >
-                                    Lưu nháp
-                                </button>
-                                <button 
-                                    type="submit" 
-                                    class="btn-create-po bg-green-600 text-white py-2 px-5 rounded-lg hover:bg-green-700 font-semibold" 
-                                    id="create-po"
-                                    >
-                                    Tạo Phiếu Mua Hàng
+                                    Lưu Nhà Cung Cấp
                                 </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </main>
         </div>
 
         <script>
-            const pList = [
-            <c:forEach var="pl" items="${pList}" varStatus="status">
-            { id: '${pl.product_id}', sku: '${pl.sku_code}' }<c:if test="${not status.last}">,</c:if>
-            </c:forEach>
-            ];
-
             document.addEventListener("DOMContentLoaded", () => {
                 const sidebar = document.getElementById("admin-sidebar");
                 const mainContent = document.getElementById("main-content");
@@ -760,190 +738,6 @@
                     }
                 });
             });
-        </script>
-
-        <script>
-            (function () {
-                const tableBody = document.getElementById("line-items-body");
-                if (!tableBody)
-                    return;
-
-                // Định dạng tiền tệ VND
-                const currencyFormatter = new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                });
-
-                function formatVND(n) {
-                    return currencyFormatter.format(n);
-                }
-
-                // ĐIỀU CHỈNH TÍNH TOÁN: Sử dụng ID để chọn chính xác
-                const subtotalSpan = document.getElementById("summary-subtotal");
-                const discountSpan = document.getElementById("summary-discount");
-                const taxSpan = document.getElementById("summary-tax");
-                const totalSpan = document.getElementById("summary-total");
-                const taxLine = document.getElementById("tax-line-container"); // Vùng chứa text Thuế(%)
-
-                function parseNumber(s) {
-                    if (s === null || s === undefined)
-                        return 0;
-                    // Xóa tất cả trừ số, dấu chấm (cho số thập phân) và dấu trừ
-                    const cleaned = String(s).replace(/[^0-9.\-]+/g, "");
-                    const n = parseFloat(cleaned);
-                    return isNaN(n) ? 0 : n;
-                }
-
-                function formatNumber(n) {
-                    return formatVND(n);
-                }
-
-                function getTaxRate() {
-                    if (!taxLine)
-                        return 0;
-                    // Trích xuất số % từ text, ví dụ "Thuế (10%)"
-                    const m = taxLine.textContent.match(/\((\d+(\.\d+)?)\s*%\)/);
-                    return m ? parseFloat(m[1]) / 100 : 0; // Trả về 0.1
-                }
-
-                function computeRowTotal(row) {
-                    const qtyInp = row.querySelector('input[name="qty"]');
-                    const priceInp = row.querySelector('input[name="unit_price"]');
-                    const totalCell = row.querySelector('td:nth-child(4)');
-
-                    const q = parseNumber(qtyInp?.value) || 0;
-                    const p = parseNumber(priceInp?.value) || 0;
-                    const lineTotal = q * p;
-
-                    if (totalCell)
-                        totalCell.textContent = formatNumber(lineTotal);
-                    return lineTotal;
-                }
-
-                function recalcAll() {
-                    let subtotal = 0;
-                    Array.from(tableBody.querySelectorAll("tr")).forEach(
-                            (r) => (subtotal += computeRowTotal(r))
-                    );
-
-                    // Lấy giá trị giảm giá từ text (vì nó có thể được chỉnh sửa)
-                    const discount = parseNumber(discountSpan?.textContent || 0);
-
-                    const taxRate = getTaxRate(); // Ví dụ: 0.1
-                    // Thuế được tính trên giá trị sau khi giảm giá
-                    const tax = (subtotal - discount) * taxRate;
-
-                    const total = subtotal;
-
-                    if (subtotalSpan)
-                        subtotalSpan.textContent = formatNumber(subtotal);
-                    // Không ghi đè 'discountSpan' ở đây, chỉ cập nhật khi người dùng chỉnh sửa
-                    if (taxSpan)
-                        taxSpan.textContent = formatNumber(tax);
-                    if (totalSpan)
-                        totalSpan.textContent = formatNumber(total);
-                }
-
-                function attachRowListeners(row) {
-                    // Lắng nghe cả 'input' (khi gõ) và 'change'
-                    ["input", "change"].forEach((ev) => {
-                        row
-                                .querySelectorAll("input, select")
-                                .forEach((inp) => inp.addEventListener(ev, recalcAll));
-                    });
-
-                    const del = row.querySelector(".btn-delete-item");
-                    if (del) {
-                        del.addEventListener("click", () => {
-                            row.remove();
-                            recalcAll();
-                        });
-                    }
-                }
-
-                // Gắn listener cho hàng ban đầu
-                Array.from(tableBody.querySelectorAll("tr")).forEach(attachRowListeners);
-
-                // Nút thêm sản phẩm
-                const addBtn = document.querySelector(".btn-add-item");
-                if (addBtn) {
-                    addBtn.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        const newRow = document.createElement("tr");
-
-                        // Tạo các <option> từ mảng pList (an toàn, không xung đột EL)
-                        let optionsHtml = '<option value="">Chọn sản phẩm</option>';
-                        if (typeof pList !== 'undefined' && Array.isArray(pList)) {
-                            for (const product of pList) {
-                                optionsHtml += '<option value="' + product.id + '">' + product.sku + '</option>';
-                            }
-                        }
-
-                        // Lấy các lớp CSS từ input/select đã được thu nhỏ
-                        const formSelectClass = "w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white";
-                        const formInputClass = "w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-right";
-                        const deleteBtnClass = "text-red-500 hover:text-red-700 font-semibold btn-delete-item";
-
-                        newRow.innerHTML =
-                                "<td>" +
-                                '  <div class="form-group">' +
-                                '    <select name="product" class="' + formSelectClass + '">' + optionsHtml + "</select>" +
-                                "  </div>" +
-                                "</td>" +
-                                '<td><input type="number" value="1" name="qty" class="' + formInputClass + '"/></td>' +
-                                '<td><input type="text" value="0" name="unit_price" class="' + formInputClass + '"/></td>' +
-                                '<td class="text-right font-medium">0.00 VND</td>' +
-                                '<td class="action-cell"><button type="button" class="' + deleteBtnClass + '">✕</button></td>';
-
-                        tableBody.appendChild(newRow);
-                        attachRowListeners(newRow); // Gắn listener cho hàng mới
-                        recalcAll();
-                    });
-                }
-
-                // Cho phép chỉnh sửa giảm giá bằng cách nhấp đúp
-                if (discountSpan) {
-                    discountSpan.style.cursor = 'pointer'; // Thêm gợi ý
-                    discountSpan.title = 'Nhấp đúp để sửa';
-
-                    discountSpan.addEventListener('dblclick', () => {
-                        const cur = parseNumber(discountSpan.textContent).toString();
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.value = cur;
-                        input.className = 'w-24 text-right font-medium py-1 px-2 border rounded';
-                        discountSpan.replaceWith(input);
-                        input.focus();
-
-                        function commit() {
-                            const v = Math.abs(parseNumber(input.value));
-                            const newSpan = document.createElement('span');
-                            newSpan.className = 'font-medium';
-                            newSpan.id = 'summary-discount'; // Đặt lại ID
-                            newSpan.style.cursor = 'pointer';
-                            newSpan.title = 'Nhấp đúp để sửa';
-                            newSpan.textContent = formatNumber(v);
-
-                            input.replaceWith(newSpan);
-                            // Gắn lại sự kiện dblclick cho span mới
-                            newSpan.addEventListener('dblclick', discountSpan.dispatchEvent(new Event('dblclick')));
-
-                            recalcAll(); // Tính toán lại toàn bộ
-                        }
-
-                        input.addEventListener('blur', commit);
-                        input.addEventListener('keydown', ev => {
-                            if (ev.key === 'Enter')
-                                commit();
-                            if (ev.key === 'Escape')
-                                input.blur(); // Hủy bỏ
-                        });
-                    });
-                }
-
-                // Chạy tính toán lần đầu khi tải trang
-                recalcAll();
-            })();
         </script>
     </body>
 </html>

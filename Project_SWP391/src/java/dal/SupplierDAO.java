@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import model.Suppliers;
+import java.sql.Statement;
 
 /**
  *
@@ -155,5 +156,73 @@ public class SupplierDAO extends DBContext {
         }
 
         return supplier;
+    }
+
+    public int insert_supplier(Suppliers supplier) {
+        int generatedId = -1;
+        String sql = "INSERT INTO Suppliers (supplier_name, display_name, address, phone, email, representative, payment_method, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, supplier.getSupplier_name());
+            ps.setString(2, supplier.getDisplay_name());
+            ps.setString(3, supplier.getAddress());
+            ps.setString(4, supplier.getPhone());
+            ps.setString(5, supplier.getEmail());
+            ps.setString(6, supplier.getRepresentative());
+            ps.setString(7, supplier.getPayment_method());
+            ps.setString(8, supplier.getNote());
+
+            int rowAffected = ps.executeUpdate();
+
+            if (rowAffected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        generatedId = rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return generatedId;
+    }
+
+    public boolean update_supplier(Suppliers supplier) {
+        int rowAffected = 0;
+        String sql = "UPDATE Suppliers SET supplier_name = ?, display_name = ?, address = ?, phone = ?, email = ?, representative = ?, payment_method = ?, note = ? WHERE supplier_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, supplier.getSupplier_name());
+            ps.setString(2, supplier.getDisplay_name());
+            ps.setString(3, supplier.getAddress());
+            ps.setString(4, supplier.getPhone());
+            ps.setString(5, supplier.getEmail());
+            ps.setString(6, supplier.getRepresentative());
+            ps.setString(7, supplier.getPayment_method());
+            ps.setString(8, supplier.getNote());
+            ps.setInt(9, supplier.getSupplier_id());
+
+            rowAffected = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowAffected > 0;
+    }
+
+    public boolean delete_supplier(int supplierId) {
+        int rowAffected = 0;
+        String sql = "DELETE FROM Suppliers WHERE supplier_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, supplierId);
+            rowAffected = ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rowAffected > 0;
     }
 }

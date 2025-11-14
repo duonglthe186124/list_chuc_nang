@@ -154,7 +154,7 @@
     </servlet>
     <servlet>
         <servlet-name>ManageSupplierServlet</servlet-name>
-        <servlet-class>controller.ManageSupplierServlet</servlet-class>
+        <servlet-class>controller.receipt_good.ManageSupplierServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
@@ -227,6 +227,22 @@
     <servlet>
         <servlet-name>CancelPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.receipt_good.CancelPurchaseOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewSupplierServlet</servlet-name>
+        <servlet-class>controller.receipt_good.ViewSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateSupplierServlet</servlet-name>
+        <servlet-class>controller.receipt_good.CreateSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateSupplierServlet</servlet-name>
+        <servlet-class>controller.receipt_good.UpdateSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteSupplierServlet</servlet-name>
+        <servlet-class>controller.receipt_good.DeleteSupplierServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -447,6 +463,22 @@
     <servlet-mapping>
         <servlet-name>CancelPurchaseOrderServlet</servlet-name>
         <url-pattern>/inbound/purchase-orders/cancel</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateSupplierServlet</servlet-name>
+        <url-pattern>/inbound/create-supplier</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteSupplierServlet</servlet-name>
+        <url-pattern>/inbound/suppliers/delete</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>

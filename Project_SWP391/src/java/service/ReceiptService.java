@@ -3,6 +3,7 @@ package service;
 import dal.ContainerDAO;
 import dal.ProductDAO;
 import dal.ProductUnitDAO;
+import dal.PurchaseOrderDAO;
 import dal.ReceiptCacheDAO;
 import dal.ReceiptDAO;
 import dal.WarehouseLocationsDAO;
@@ -33,6 +34,7 @@ public class ReceiptService {
     private static final WarehouseLocationsDAO loc_dao = new WarehouseLocationsDAO();
     private static final ContainerDAO container_dao = new ContainerDAO();
     private static final ProductUnitDAO unit_dao = new ProductUnitDAO();
+    private static final PurchaseOrderDAO po_dao = new PurchaseOrderDAO();
 
     public List<Response_ReceiptOrderDTO> get_purchase_order_list() {
         return receipt_dao.PO_list();
@@ -88,14 +90,16 @@ public class ReceiptService {
     public void create_receipt(int po_id, String receipt_no, int received_by, int[] received_qty, String note,
             int[] location_id, String[] imei, String[] serial_number, Date[] warranty_start, Date[] warranty_end, String[] line_note) {
         String status = "RECEIVED";
+        String po_status = "COMPLETED";
         List<Response_ReceiptLineDTO> lists = get_po_line(po_id);
 
         for (int i = 0; i < lists.size(); i++) {
             if (lists.get(i).getQty() > received_qty[i]) {
-                status = "PARTIAL";
+                po_status = "PARTIAL";
             }
         }
 
+        po_dao.update_status(po_id, po_status);
         Receipts info = new Receipts(-1, receipt_no, po_id, received_by, status, note, null);
         update_receipt_code();
 
