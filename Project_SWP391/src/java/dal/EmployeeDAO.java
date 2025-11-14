@@ -96,6 +96,22 @@ public class EmployeeDAO extends DBContext {
         return 0;
     }
 
+    // Lấy employee_id từ user_id
+    public int getEmployeeIdByUserId(int user_id) {
+        String sql = "SELECT employee_id FROM Employees WHERE user_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, user_id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("employee_id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     // Lấy thông tin chi tiết 1 nhân viên theo ID
     public EmployeeInfoDTO getEmployeeById(int employee_id) {
         String sql = "SELECT "

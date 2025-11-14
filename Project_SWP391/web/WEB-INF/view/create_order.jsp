@@ -7,6 +7,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Create Order</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/layout.css"/>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/orderProduct.css"/>
         <style>
             .product-info img {
                 max-width: 150px;
@@ -75,31 +76,6 @@
         </script>
     </head>
     <body>
-        <nav class="nav">
-            <div class="brand">
-                <a href="home.html">
-                    <div class="logo" aria-hidden>
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="2" y="2" width="20" height="20" rx="4" fill="black" opacity="0.12"/>
-                        <path d="M6 16V8h4l4 4v4" stroke="#06121a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </a>
-                <div>
-                    <h1>StockPhone</h1>
-                    <p>Phone Stock Management System</p>
-                </div>
-            </div>
-
-            <div class="navlinks" role="navigation" aria-label="Primary">
-                <a href="${pageContext.request.contextPath}/home">Home</a>
-                <a href="${pageContext.request.contextPath}/products">Products</a>
-                <a href="${pageContext.request.contextPath}/about">About</a>
-                <a href="${pageContext.request.contextPath}/policy">Policy</a>
-                <a href="${pageContext.request.contextPath}/report">Reports</a>
-            </div>
-        </nav>
-
         <div class="layout">
             <main class="main">
                 <div class="main-header" id="main-header">
@@ -141,22 +117,22 @@
 
                         <div class="form-group">
                             <label for="fullname">Full Name:</label>
-                            <input type="text" id="fullname" name="fullname" required />
+                            <input type="text" id="fullname" name="fullname" value="${userFullname}" readonly />
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required />
+                            <input type="email" id="email" name="email" value="${userEmail}" readonly />
                         </div>
 
                         <div class="form-group">
                             <label for="phone">Phone:</label>
-                            <input type="text" id="phone" name="phone" required />
+                            <input type="text" id="phone" name="phone" value="${userPhone}" readonly />
                         </div>
 
                         <div class="form-group">
                             <label for="address">Address:</label>
-                            <input type="text" id="address" name="address" required />
+                            <input type="text" id="address" name="address" value="${userAddress}" readonly />
                         </div>
 
                         <div class="form-group">
@@ -179,42 +155,5 @@
                 </div>
             </main>
         </div>
-
-        <footer>
-            <div class="container" style="max-width: 1100px">
-                <div class="footer-grid">
-                    <div>
-                        <h4>StockPhone</h4>
-                        <p class="small">Hệ thống quản lý kho chuyên cho cửa hàng điện thoại. Quản lý tồn kho, đơn nhập/xuất, báo cáo và người dùng.</p>
-                    </div>
-
-                    <div>
-                        <h4>Quick links</h4>
-                        <a href="/home.html">Home</a>
-                        <a href="/products">Products</a>
-                        <a href="/reports">Reports</a>
-                        <a href="/login">Đăng nhập</a>
-                    </div>
-
-                    <div>
-                        <h4>Hỗ trợ & Policy</h4>
-                        <a href="/policy">Privacy & Policy</a>
-                        <a href="/terms">Terms of Service</a>
-                        <a href="/help">Help Center</a>
-                    </div>
-
-                    <div>
-                        <h4>Contact</h4>
-                        <div class="small">Email: support@stockphone.example</div>
-                        <div class="small" style="margin-top: 6px">SĐT: +84 912 345 678</div>
-                    </div>
-                </div>
-
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;flex-wrap:wrap;">
-                    <div class="small">© 2025 StockPhone. All rights reserved.</div>
-                    <div class="small">Designed for warehouse management by Group 2</div>
-                </div>
-            </div>
-        </footer>
     </body>
 </html>

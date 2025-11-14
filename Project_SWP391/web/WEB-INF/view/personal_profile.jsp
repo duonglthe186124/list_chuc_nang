@@ -85,9 +85,18 @@
                                     <button id="user-menu-button"
                                             class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
                                         
-                                        <img class="h-8 w-8 rounded-full object-cover"
-                                             src="${pageContext.request.contextPath}/${not empty sessionScope.account.avatar_url ? sessionScope.account.avatar_url : 'resources/img/default-avatar.png'}"
-                                             alt="User Avatar" />
+                                        <c:choose>
+                                            <c:when test="${not empty sessionScope.account.avatar_url}">
+                                                <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                                    <c:param name="v" value="${date.time}" />
+                                                </c:url>
+                                                <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                                <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                            </c:otherwise>
+                                        </c:choose>
                                         <span class="hidden md:inline text-sm font-medium text-gray-700">
                                             ${sessionScope.account.fullname}
                                         </span>
@@ -114,7 +123,7 @@
                                         >
                                         <div class="border-t border-gray-100 my-1"></div>
                                         <a
-                                            href="${pageContext.request.contextPath}/loginStaff"
+                                            href="${pageContext.request.contextPath}/logout"
                                             class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                             >Đăng xuất</a>                                   
                                     </div>
@@ -122,9 +131,6 @@
                             </c:otherwise>
                         </c:choose>
                     </nav>
-                    <div class="md:hidden">
-                        <%-- ... (Nút menu mobile của bạn) ... --%>
-                    </div>
                 </div>
             </div>
         </header>
@@ -139,9 +145,18 @@
                         <aside class="md:w-1/3 p-8 bg-gray-50 border-r border-gray-200">
                             <div class="text-center">
                                 <div class="w-36 h-36 mx-auto rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center mb-4 overflow-hidden">
-                                    <img id="avatar-preview" 
-                                         src="${pageContext.request.contextPath}/${not empty userProfile.avatar_url ? userProfile.avatar_url : 'resources/img/default-avatar.png'}"
-                                         alt="Avatar" class="w-full h-full object-cover">
+                                    <c:choose>
+                                        <c:when test="${not empty userProfile.avatar_url}">
+                                            <c:url value="/${userProfile.avatar_url}" var="avatarPreviewSrc">
+                                                <c:param name="v" value="${date.time}" />
+                                            </c:url>
+                                            <img id="avatar-preview" src="${avatarPreviewSrc}" alt="Avatar" class="w-full h-full object-cover">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarPreviewSrc" />
+                                            <img id="avatar-preview" src="${avatarPreviewSrc}" alt="Avatar" class="w-full h-full object-cover">
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                                 
                                 <input type="file" id="avatar-input" name="avatar_file" accept="image/*" class="hidden">

@@ -15,10 +15,12 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
             />
+
         <style>
             body {
                 font-family: "Inter", sans-serif;
@@ -110,12 +112,19 @@
                             id="user-menu-button"
                             class="flex items-center gap-2 rounded-full p-1 pr-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
                             >
-                            <img
-                                class="h-8 w-8 rounded-full object-cover"
-                                src="https://placehold.co/40x40/e2e8f0/64748b?text=User"
-                                alt="Avatar"
-                                />
-                            <span>Admin</span>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.account.avatar_url}">
+                                    <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                        <c:param name="v" value="${date.time}" />
+                                    </c:url>
+                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span>${sessionScope.account.fullname}</span>
                             <svg
                                 class="h-4 w-4 text-gray-500"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -135,7 +144,7 @@
                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-50 hidden transition ease-out duration-100 transform opacity-0 scale-95"
                             >
                             <a
-                                href="#"
+                                href="${pageContext.request.contextPath}/PersonalProfile"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >Thông tin cá nhân</a
                             >
@@ -328,7 +337,7 @@
                                 <span class="sidebar-text">Danh sách phiếu xuất kho</span>
                             </a>
                             <a
-                                href="${pageContext.request.contextPath}/inbound/create-shipment"
+                                href="${pageContext.request.contextPath}/create-shipment"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu xuất mới</span>
@@ -425,7 +434,7 @@
                     </button>
                 </div>
             </aside>
-                                
+
             <form id="form" action="${pageContext.request.contextPath}/inbound/purchase-orders">
                 <main
                     id="main-content"
@@ -505,7 +514,7 @@
                                     class="px-3 py-2 border border-gray-300 rounded-l-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     >
                                     <option value="" ${empty param.status or param.status == ""? 'selected' : ''}>Tất cả</option>
-                                    <option value="Draft" ${param.status == "Draft" ? 'selected' : ''}>Draft</option>
+                                    <option value="Confirm" ${param.status == "Confirm" ? 'selected' : ''}>Confirm</option>
                                     <option value="Pending" ${param.status == "Pending" ? 'selected' : ''}>Pending</option>
                                     <option value="Partial" ${param.status == "Partial" ? 'selected' : ''}>Partial</option>
                                     <option value="Completed" ${param.status == "Completed" ? 'selected' : ''}>Complete</option>
@@ -605,7 +614,7 @@
                                     class="w-16 px-3 py-2 border border-gray-300 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     />
                                 <button
-                                    type="submit"
+                                    type="button"
                                     id="go-to-button"
                                     class="px-3 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 border border-indigo-600 hover:bg-indigo-700 transition-colors focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     >
@@ -644,8 +653,8 @@
             function createStatusBadge(status) {
                 let colorClasses = "";
                 switch (status) {
-                    case "DRAFT":
-                        colorClasses = "bg-gray-100 text-gray-800";
+                    case "CONFIRM":
+                        colorClasses = "bg-green-50 text-green-800";
                         break;
                     case "PENDING":
                         colorClasses = "bg-yellow-100 text-yellow-800";
@@ -668,14 +677,15 @@
 
             function actionBadge(id, status) {
                 let badge = "";
-                if (status === 'DRAFT') {
-                    badge = '<a href="${pageContext.request.contextPath}/inbound/createpo?id=' + id + '" \n\
-                               class="inline-flex items-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">\n\
-                                    Sửa\n\
+                if (status === 'PENDING') {
+                    badge = '<a href="${pageContext.request.contextPath}/inbound/purchase-orders/view?id=' + id + '" \n\
+                               class="inline-flex items-center px-3 py-1 border border-indigo-300 text-xs font-medium rounded-md shadow-sm text-black-700 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">\n\
+                                    Chi tiết\n\
                             </a>\n'
-                            + '<a href="${pageContext.request.contextPath}/inbound/purchase-orders/delete?id=' + id + '" \n\
-                                class="inline-flex items-center px-3 py-1 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">\n\
-                                    Xoá\n\
+                            + '<a href="${pageContext.request.contextPath}/inbound/purchase-orders/cancel?id=' + id + '" \n\
+                                class="inline-flex items-center px-3 py-1 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" \n\
+                                onclick="return confirm(\'Bạn có chắc chắn muốn huỷ phiếu mua hàng này không?\')">\n\
+                                    Huỷ đơn\n\
                             </a>';
                 } else {
                     badge = '<a href="${pageContext.request.contextPath}/inbound/purchase-orders/view?id=' + id + '" \n\
@@ -850,13 +860,49 @@
                 }
             });
 
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-start',
+                showConfirmButton: false,
+                showCloseButton: true,
+                timer: 3000,
+                timerProgressBar: true,
+
+                customClass: {
+                    popup: 'font-inter text-sm shadow-lg',
+                    closeButton: 'text-current hover:text-opacity-80'
+                },
+
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
             goToButton.addEventListener('click', () => {
                 const pageValue = parseInt(pageInput.value.trim(), 10);
+                const isValid = !isNaN(pageValue) && pageValue >= 1 && pageValue <= totalPages;
 
-                if (isNaN(pageValue) || pageValue < 1 || pageValue > totalPages) {
-                    pageInput.value = currentPage;
-                } else {
+                if (isValid) {
                     changePage(pageValue);
+                } else {
+                    let errorMessage = 'Số trang không hợp lệ.';
+
+                    if (totalPages > 0) {
+                        errorMessage = 'Vui lòng nhập số trang từ 1 đến ' + totalPages + '.';
+                        pageInput.value = currentPage;
+                    } else {
+                        errorMessage = 'Không có dữ liệu để hiển thị.';
+                        pageInput.value = 1;
+                    }
+
+                    Toast.fire({
+                        icon: 'error',
+                        title: errorMessage,
+                        customClass: {
+                            popup: 'bg-red-50 text-red-800'
+                        }
+                    });
                 }
             });
 
@@ -873,6 +919,26 @@
                         );
                 const userMenuButton = document.getElementById("user-menu-button");
                 const userMenuDropdown = document.getElementById("user-menu-dropdown");
+
+            <c:if test="${not empty successMessage}">
+                Toast.fire({
+                    icon: 'success',
+                    title: '${successMessage}',
+                    customClass: {
+                        popup: 'bg-green-50 text-green-800'
+                    }
+                });
+            </c:if>
+
+            <c:if test="${not empty errorMessage}">
+                Toast.fire({
+                    icon: 'error',
+                    title: '${errorMessage}',
+                    customClass: {
+                        popup: 'bg-red-50 text-red-800'
+                    }
+                });
+            </c:if>
 
                 function setTransitions(enabled) {
                     const value = enabled ? "all 0.3s ease-in-out" : "none";

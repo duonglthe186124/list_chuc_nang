@@ -44,6 +44,12 @@ public class RegisterServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
             return;
         }
+        
+        if (userDAO.isPhoneTaken(phone)) {
+            request.setAttribute("errorMessage", "This phone number is already in use.");
+            request.getRequestDispatcher("WEB-INF/view/register.jsp").forward(request, response);
+            return; 
+        }
 
         // Create a new Users object
         Users newUser = new Users();
@@ -53,7 +59,7 @@ public class RegisterServlet extends HttpServlet {
         newUser.setPhone(phone);
         newUser.setPassword(password);
         newUser.setSec_address(null);
-        newUser.setRole_id(9);
+        newUser.setRole_id(2);
 
         // Add the user to the database
         boolean success = userDAO.addUser(newUser);

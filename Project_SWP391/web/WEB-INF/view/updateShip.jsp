@@ -77,10 +77,20 @@
 
                 <label>Ghi chú (Note):</label>
                 <textarea name="shipmentNote" rows="3">${shipmentNote}</textarea><br>
-               <div class="form-buttons">
-                <button type="reset">Cancel</button>
-                <input type="submit" value="Cập nhật Shipment" />
-               </div>
+                
+                <div class="form-buttons" style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="reset" 
+                            style="padding: 8px 16px; border: 1px solid #ccc; border-radius: 6px; background-color: #f3f3f3; color: #333; cursor: pointer; transition: 0.2s;"
+                            onmouseover="this.style.backgroundColor = '#e0e0e0'" 
+                            onmouseout="this.style.backgroundColor = '#f3f3f3'">
+                        Cancel
+                    </button>
+
+                    <input type="submit" value="Cập nhật Shipment" 
+                           style="padding: 8px 16px; border: none; border-radius: 6px; background-color: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; transition: 0.2s;"
+                           onmouseover="this.style.backgroundColor = '#4338ca'" 
+                           onmouseout="this.style.backgroundColor = '#4f46e5'"/>
+                </div>
             </form>
         </div>
 

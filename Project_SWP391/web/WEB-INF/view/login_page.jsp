@@ -49,7 +49,7 @@
                 <div class="flex h-16 items-center justify-between">
                     <!-- Logo -->
                     <a
-                        href="#"
+                        href="${pageContext.request.contextPath}/home"
                         class="flex items-center gap-2 text-2xl font-bold text-gray-900"
                         >
                         <!-- Icon SVG đơn giản -->
@@ -206,14 +206,14 @@
                 </form>
 
                 <%-- Dấu gạch ngang "OR" --%>
-                <div class="flex items-center my-6">
+               <%-- <div class="flex items-center my-6">
                     <hr class="flex-1 border-t border-gray-300">
                     <span class="px-4 text-sm font-medium text-gray-500">OR</span>
                     <hr class="flex-1 border-t border-gray-300">
                 </div>
 
                 <%-- Đăng nhập mạng xã hội --%>
-                <div class="flex flex-col gap-4">
+                <%--<div class="flex flex-col gap-4">
                     <a href="${pageContext.request.contextPath}/login-google" 
                        class="flex items-center justify-center gap-3 w-full py-3 px-4 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition duration-200">
                         <img src="${pageContext.request.contextPath}/resources/img/google.webp" alt="Google Icon" class="w-5 h-5">
@@ -227,7 +227,7 @@
                         
                         <span class="font-medium text-gray-700">Continue with GitHub</span>
                     </a>
-                </div>
+                </div>--%>
             </div>
         </main>
     </body>

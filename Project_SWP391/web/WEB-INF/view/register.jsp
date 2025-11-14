@@ -169,6 +169,9 @@
                             <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
                             <input type="tel" id="phone" name="phone" placeholder="+84912345678" required
                                    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <p id="phone-error" class="mt-1 text-xs text-red-600 hidden">
+                            Phone must be 10 digits (starting with 0) or start with +84 followed by 9 digits.
+                          </p>
                         </div>
                         <div>
                             <label for="address" class="block text-sm font-medium text-gray-700">Contact Address</label>
@@ -185,6 +188,9 @@
                             
                             <div class="password-strength-indicator"><div id="strength-bar"></div></div>
                             <div id="strength-text" class="strength-text"></div>
+                            <p class="mt-1 text-xs text-gray-500">
+                                Must be at least 8 characters, including an uppercase letter, a number, and a special character.
+                            </p>
                         </div>
                         <div>
                             <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm new password</label>
@@ -214,32 +220,84 @@
         <script src="${pageContext.request.contextPath}/resources/js/password-strength.js"></script>
         
         <script>
-            // JAVASCRIPT CHO HIỆU ỨNG CUỘN
             document.addEventListener('DOMContentLoaded', function () {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('is-visible');
-                        }
-                    });
-                }, {
-                    threshold: 0.1
+    
+            // JAVASCRIPT CHO HIỆU ỨNG CUỘN
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
                 });
-
-                const elements = document.querySelectorAll('.reveal-on-scroll');
-                elements.forEach(el => {
-                    observer.observe(el);
-                });
-                
-                // JAVASCRIPT CHO MENU MOBILE
-                const menuButton = document.getElementById('mobile-menu-button');
-                const mobileMenu = document.getElementById('mobile-menu');
-                if (menuButton) {
-                    menuButton.addEventListener('click', function() {
-                        mobileMenu.classList.toggle('hidden');
-                    });
-                }
+            }, {
+                threshold: 0.1
             });
+
+            const elements = document.querySelectorAll('.reveal-on-scroll');
+            elements.forEach(el => {
+                observer.observe(el);
+            });
+
+            // JAVASCRIPT CHO MENU MOBILE
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (menuButton) {
+                menuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // === BẮT ĐẦU CODE VALIDATE PHONE ===
+            const phoneInput = document.getElementById('phone');
+            const phoneError = document.getElementById('phone-error');
+            const registerForm = document.getElementById('registerForm'); 
+
+            //    Bắt đầu bằng +84 theo sau là 9 số, HOẶC bắt đầu bằng 0 theo sau là 9 số
+            const phoneRegex = /^(\+84\d{9}|0\d{9})$/;
+
+            // 3. Hàm kiểm tra SĐT
+            function validatePhone() {
+                const phoneNumber = phoneInput.value;
+                if (phoneNumber.length === 0) {
+                    phoneError.classList.add('hidden'); 
+                    phoneInput.classList.remove('border-red-500', 'focus:ring-red-500'); 
+                    phoneInput.classList.add('border-gray-300', 'focus:ring-indigo-500'); 
+                    return false;
+                }
+
+                if (phoneRegex.test(phoneNumber)) {
+                    // HỢP LỆ
+                    phoneError.classList.add('hidden'); 
+                    phoneInput.classList.remove('border-red-500', 'focus:ring-red-500');
+                    phoneInput.classList.add('border-gray-300', 'focus:ring-indigo-500');
+                    return true;
+                } else {
+                    // KHÔNG HỢP LỆ (Sai định dạng)
+                    phoneError.classList.remove('hidden');
+                    phoneInput.classList.remove('border-gray-300', 'focus:ring-indigo-500');
+                    phoneInput.classList.add('border-red-500', 'focus:ring-red-500'); 
+                    return false;
+                }
+            }
+
+            if (phoneInput) {
+                phoneInput.addEventListener('input', validatePhone);
+            }
+            if (registerForm) {
+                registerForm.addEventListener('submit', function (event) {
+
+                    const isPhoneValid = validatePhone();
+
+                    if (!isPhoneValid) {
+                        event.preventDefault(); 
+                        if (phoneInput.value.length > 0) {
+                             phoneInput.focus();
+                        }
+                    }
+                });
+            }
+
+        });
         </script>
     </body>
 </html>

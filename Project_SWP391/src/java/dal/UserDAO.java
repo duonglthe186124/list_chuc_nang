@@ -114,24 +114,44 @@ public class UserDAO extends DBContext {
         return null; 
     }
     
-    public Users findUserByEmailOrPhone(String credential) {
-        String sql = "SELECT * FROM Users WHERE (email = ? OR phone = ?) AND is_deleted = 0";
+    public Users findUserWithRoleByEmail(String email) {
+        // Sửa SQL: JOIN với bảng Roles để lấy role_name
+        String sql = "SELECT u.*, r.role_name " +
+                     "FROM Users u " +
+                     "LEFT JOIN Roles r ON u.role_id = r.role_id " +
+                     "WHERE u.email = ? AND u.is_deleted = 0";
         try {
+            // Giả sử 'connection' đã được khởi tạo từ DBContext
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, credential);
-            ps.setString(2, credential);
+
+            // Sửa tham số: Chỉ cần set email
+            ps.setString(1, email); 
+
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
                 Users user = new Users();
+                // Lấy tất cả thông tin user (quan trọng)
                 user.setUser_id(rs.getInt("user_id"));
                 user.setEmail(rs.getString("email"));
                 user.setFullname(rs.getString("fullname"));
+                user.setPhone(rs.getString("phone"));
+                user.setAddress(rs.getString("address"));
+                user.setRole_id(rs.getInt("role_id"));
+                user.setAvatar_url(rs.getString("avatar_url"));
+
+                // Đây là thông tin mới quan trọng
+                user.setRoleName(rs.getString("role_name")); 
+
                 return user;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        // Bạn nên có một khối 'finally' ở đây để đóng 'ps' và 'rs'
+        // (Giống như code tôi đã gửi ở tin nhắn trước)
+
+        return null; // Không tìm thấy
     }
     
     public Users findUserByResetToken(String token) {
@@ -348,66 +368,134 @@ public class UserDAO extends DBContext {
         return roleList;
     }
     
-    public List<Roles> getManageableRoles() {
-        List<Roles> roleList = new ArrayList<>();
-        // Lấy các vai trò bạn muốn admin có thể gán
-        String sql = "SELECT * FROM Roles WHERE role_name IN ('Admin', 'Employee', 'Guest')"; 
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Roles role = new Roles();
-                role.setRole_id(rs.getInt("role_id"));
-                role.setRole_name(rs.getString("role_name"));
-                roleList.add(role);
-            }
+    public boolean check_role(int role_id, int feature_id) {
+        boolean check = false;
+        String sql = "SELECT * FROM Feature_role WHERE role_id = ? and feature_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, role_id);
+            ps.setInt(2, feature_id);
+
+            int rowAffected = ps.executeUpdate();
+            check = (rowAffected > 0)? true : false;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return roleList;
+        return check;
     }
     
-    public Users findUserByGithubId(String githubId) {
-        String sql = "SELECT * FROM Users WHERE github_id = ? AND is_deleted = 0";
+//    public List<Roles> getManageableRoles() {
+//        List<Roles> roleList = new ArrayList<>();
+//        // Lấy các vai trò bạn muốn admin có thể gán
+//        String sql = "SELECT * FROM Roles WHERE role_name IN ('Admin', 'Employee', 'Guest')"; 
+//        try {
+//            PreparedStatement ps = connection.prepareStatement(sql);
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                Roles role = new Roles();
+//                role.setRole_id(rs.getInt("role_id"));
+//                role.setRole_name(rs.getString("role_name"));
+//                roleList.add(role);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return roleList;
+//    }
+    
+    
+    public boolean isPhoneTaken(String phone) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE phone = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, githubId);
+            ps.setString(1, phone);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Users user = new Users();
-                // (Tải đầy đủ thông tin user như trong hàm checkLogin)
-                user.setUser_id(rs.getInt("user_id"));
-                user.setEmail(rs.getString("email"));
-                user.setFullname(rs.getString("fullname"));
-                user.setRole_id(rs.getInt("role_id"));
-                user.setAvatar_url(rs.getString("avatar_url"));
-                user.setGithubId(rs.getString("github_id"));
-                return user;
+                return rs.getInt(1) > 0; // Trả về true nếu (COUNT(*) > 0)
             }
-        } catch (SQLException e) { e.printStackTrace(); }
-        return null;
+        } catch (SQLException e) {
+            System.out.println("Error checking phone: " + e.getMessage());
+        }
+        return false;
     }
+    
+    public boolean verifyResetCode(String email, String resetCode) {
+        // SỬA SQL: Đổi GETDATE() thành ?
+        String sql = "SELECT COUNT(*) FROM Users WHERE email = ? AND reset_token = ? AND token_expiry > ?";
 
-    // TẠO USER MỚI TỪ GITHUB
-    public boolean createGithubUser(Users user) {
-        String randomPassword = java.util.UUID.randomUUID().toString();
-        String hashedPassword = hashPassword(randomPassword); // Dùng hàm hash 
+        java.sql.PreparedStatement ps = null;
+        java.sql.ResultSet rs = null;
 
-        String sql = "INSERT INTO [Users] (email, password, fullname, phone, address, role_id, is_actived, is_deleted, github_id) VALUES (?, ?, ?, ?, ?, ?, 1, 0, ?)";
         try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, user.getEmail());
-            ps.setString(2, hashedPassword);
-            ps.setString(3, user.getFullname());
-            ps.setString(4, "N/A"); // Phone
-            ps.setString(5, "N/A"); // Address
-            ps.setInt(6, 10); 
-            ps.setString(7, user.getGithubId());
+            // Dùng 'connection' được kế thừa
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, resetCode);
+
+            // SỬA LOGIC: Gửi thời gian HIỆN TẠI của Java vào câu SQL
+            ps.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Trả về true nếu (COUNT(*) > 0)
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Chỉ đóng ps và rs
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false; // Mặc định là false
+    }
+    
+    public boolean createStaffAccount(String fullname, String email, int roleId) {
+
+        // 1. Mật khẩu mặc định
+        String defaultPassword = "@Abcde12345";
+
+        // 2. Hash mật khẩu 
+        String hashedPassword = hashPassword(defaultPassword);
+        if (hashedPassword == null) {
+            System.out.println("Error: Hashing default password failed.");
+            return false; 
+        }
+
+        // 3. Câu lệnh SQL
+        String sql = "INSERT INTO [Users] " +
+                     "(email, password, fullname, phone, address, role_id, is_actived, is_deleted) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, 1, 0)"; // Mặc định: is_actived=1, is_deleted=0
+
+        java.sql.PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, hashedPassword); // Mật khẩu đã hash
+            ps.setString(3, fullname);
+
+            // Cung cấp giá trị mặc định cho các cột NOT NULL
+            ps.setString(4, "N/A"); // Default Phone
+            ps.setString(5, "N/A"); // Default Address
+
+            ps.setInt(6, roleId);
 
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Error creating staff account: " + e.getMessage());
             return false;
+        } finally {
+            // Chỉ đóng ps (không đóng connection)
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

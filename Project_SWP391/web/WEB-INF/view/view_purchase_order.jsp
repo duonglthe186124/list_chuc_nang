@@ -105,12 +105,19 @@
                             id="user-menu-button"
                             class="flex items-center gap-2 rounded-full p-1 pr-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
                             >
-                            <img
-                                class="h-8 w-8 rounded-full object-cover"
-                                src="https://placehold.co/40x40/e2e8f0/64748b?text=User"
-                                alt="Avatar"
-                                />
-                            <span>Admin</span>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.account.avatar_url}">
+                                    <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                        <c:param name="v" value="${date.time}" />
+                                    </c:url>
+                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span>${sessionScope.account.fullname}</span>
                             <svg
                                 class="h-4 w-4 text-gray-500"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +137,7 @@
                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-50 hidden transition ease-out duration-100 transform opacity-0 scale-95"
                             >
                             <a
-                                href="#"
+                                href="${pageContext.request.contextPath}/PersonalProfile"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >Thông tin cá nhân</a
                             >
@@ -323,7 +330,7 @@
                                 <span class="sidebar-text">Danh sách phiếu xuất kho</span>
                             </a>
                             <a
-                                href="${pageContext.request.contextPath}/inbound/create-shipment"
+                                href="${pageContext.request.contextPath}/create-shipment"
                                 class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                                 >
                                 <span class="sidebar-text">Tạo phiếu xuất mới</span>
@@ -606,59 +613,14 @@
                         </button>
                         <button
                             type="button"
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                            Chỉnh sửa
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            >
-                            Từ chối
-                        </button>
-                        <button
-                            type="button"
                             class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                             Huỷ phiếu
-                        </button>
-
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                            >
-                            <svg
-                                class="-ml-1 mr-2 h-5 w-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                >
-                            <path
-                                fill-rule="evenodd"
-                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075L4.152 11.02a.75.75 0 111.054-1.066l2.97 2.97 7.525-9.897a.75.75 0 011.052-.143z"
-                                clip-rule="evenodd"
-                                />
-                            </svg>
-                            Duyệt phiếu
                         </button>
                         <button
                             type="button"
                             class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
-                            <svg
-                                class="-ml-1 mr-2 h-5 w-5"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 11.25h3M12 15V7.5m-6.75 4.5l.625 10.632a2.25 2.25 0 00 2.247 2.118h11.25a2.25 2.25 0 00 2.247-2.118l.625-10.632M3.75 7.5h16.5"
-                                />
-                            </svg>
                             Tạo phiếu nhập kho
                         </button>
                     </div>

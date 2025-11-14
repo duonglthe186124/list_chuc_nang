@@ -192,9 +192,9 @@
                                     Mã nhân viên *
                                 </label>
                                 <input type="text" id="employee_code" name="employee_code" required 
-                                       value="${nextEmployeeCode}" placeholder="EMP001" 
-                                       pattern="EMP\d{3}" title="Format: EMP###">
-                                <small class="helper-text">Format: EMP### (ví dụ: EMP001)</small>
+                                       value="${nextEmployeeCode}" placeholder="HRMA001" 
+                                       pattern="[A-Z]{2,4}\d{3}" title="Format: Prefix + 3 số (ví dụ: HRMA001, IS003, ES001)">
+                                <small class="helper-text">Format: Prefix (2-4 chữ cái) + 3 số (ví dụ: HRMA001, IS003, ES001, AD002)</small>
                             </div>
 
                             <div class="form-group">
@@ -279,6 +279,36 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const today = new Date().toISOString().split('T')[0];
                 document.getElementById('hire_date').value = today;
+                
+                // Auto-generate employee code when role is selected
+                const roleSelect = document.getElementById('role_id');
+                const employeeCodeInput = document.getElementById('employee_code');
+                
+                if (roleSelect && employeeCodeInput) {
+                    // Convert input to uppercase automatically
+                    employeeCodeInput.addEventListener('input', function() {
+                        this.value = this.value.toUpperCase();
+                    });
+                    
+                    roleSelect.addEventListener('change', function() {
+                        const roleId = this.value;
+                        if (roleId && roleId !== '') {
+                            // Fetch new employee code from server
+                            fetch('${pageContext.request.contextPath}/employees?action=generateCode&role_id=' + roleId)
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.code) {
+                                        employeeCodeInput.value = data.code.toUpperCase();
+                                    } else if (data.error) {
+                                        console.error('Error generating code:', data.error);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        }
+                    });
+                }
             });
         </script>
     </body>

@@ -1,4 +1,4 @@
-package controller;
+package controller.receipt_good;
 
 import dto.Response_TransactionDTO;
 import java.io.IOException;
@@ -32,38 +32,39 @@ public class transactionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String raw_search = request.getParameter("searchInput");
+        String raw_search = request.getParameter("search");
         String raw_status = request.getParameter("status");
         String raw_page_size = request.getParameter("pageSize");
-        String raw_page_no = request.getParameter("pageNo");
         String raw_page_input = request.getParameter("pageInput");
 
         String search, status;
-        int page_size, page_no = 1, total_lines;
+        int page_size, page_no = 1, total_items = 0;
 
         search = validate_string_input(raw_search);
         status = validate_option_string_input(raw_status);
         page_size = validate_option_integer_input(raw_page_size, 10);
 
-        total_lines = service.get_total_lines(search, status);
+        try {
+            total_items = service.get_total_lines(search, status);
+        } catch (IllegalArgumentException e) {
+            request.getSession().setAttribute("errorMessage", e.getMessage());
+        }
 
         if (raw_page_input != null && !raw_page_input.trim().isEmpty()) {
-            page_no = Integer.parseInt(raw_page_input);
-            if (page_no > (int) Math.ceil((double) total_lines / page_size) || page_no < 1) {
-                page_no = 1;
-                request.setAttribute("errorPageInput", "Page does not exists");
+            try {
+                page_no = Integer.parseInt(raw_page_input);
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/404");
+                return;
             }
-        } else if ((raw_page_input == null || raw_page_input.trim().isEmpty()) && raw_page_no != null) {
-            page_no = Integer.parseInt(raw_page_no);
         }
 
         tx_list = service.get_transactions(search, status, page_no, page_size);
         request.setAttribute("tx_list", tx_list);
-        request.setAttribute("searchInput", search);
+        request.setAttribute("search", search);
         request.setAttribute("status", status);
-        request.setAttribute("pageSize", page_size);
-        request.setAttribute("pageNo", page_no);
-        request.setAttribute("totalLines", total_lines);
+        request.setAttribute("pageInput", page_no);
+        request.setAttribute("totalItems", total_items);
         request.getRequestDispatcher("/WEB-INF/view/transaction_history.jsp").forward(request, response);
     }
 

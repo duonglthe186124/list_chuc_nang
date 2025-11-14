@@ -97,9 +97,18 @@
                                     <button id="user-menu-button"
                                             class="flex items-center space-x-2 rounded-full p-1 hover:bg-gray-100 focus:outline-none">
                                         
-                                        <img class="h-8 w-8 rounded-full object-cover"
-                                             src="${pageContext.request.contextPath}/${not empty sessionScope.account.avatar_url ? sessionScope.account.avatar_url : 'resources/img/default-avatar.png'}"
-                                             alt="User Avatar" />
+                                        <c:choose>
+                                            <c:when test="${not empty sessionScope.account.avatar_url}">
+                                                <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                                    <c:param name="v" value="${date.time}" />
+                                                </c:url>
+                                                <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                            </c:otherwise>
+                                        </c:choose>
                                         <span class="hidden md:inline text-sm font-medium text-gray-700">
                                             ${sessionScope.account.fullname}
                                         </span>
@@ -119,6 +128,24 @@
                                                 Account Management
                                             </a>
                                         </c:if>
+                                        <c:if test="${sessionScope.account.role_id == 8}">
+                                            <a href="${pageContext.request.contextPath}/inbound/dashboard"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Quản lý nhập/xuất
+                                            </a>
+                                        </c:if>   
+                                        <c:if test="${sessionScope.account.role_id == 9}">
+                                            <a href="${pageContext.request.contextPath}/inbound/transactions"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Quản lý nhập hàng
+                                            </a>
+                                        </c:if>     
+                                        <c:if test="${sessionScope.account.role_id == 10}">
+                                            <a href="${pageContext.request.contextPath}/inbound/shipments"
+                                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                Quản lý xuất hàng
+                                            </a>
+                                        </c:if>    
                                         
                                         <div class="border-t border-gray-100 my-1"></div>
                                         <a href="${pageContext.request.contextPath}/logout"

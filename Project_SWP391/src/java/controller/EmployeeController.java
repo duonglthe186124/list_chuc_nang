@@ -56,6 +56,9 @@ public class EmployeeController extends HttpServlet {
                 case "view":
                     viewEmployee(req, resp);
                     break;
+                case "generateCode":
+                    generateEmployeeCode(req, resp);
+                    break;
                 default:
                     listEmployees(req, resp);
             }
@@ -351,6 +354,29 @@ public class EmployeeController extends HttpServlet {
         }
         
         return null;
+    }
+    
+    // Generate employee code by role (AJAX endpoint)
+    private void generateEmployeeCode(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        
+        try {
+            String roleIdParam = req.getParameter("role_id");
+            if (roleIdParam == null || roleIdParam.isEmpty()) {
+                resp.getWriter().write("{\"error\": \"Role ID is required\"}");
+                return;
+            }
+            
+            int role_id = Integer.parseInt(roleIdParam);
+            String employeeCode = employeeService.generateNextEmployeeCodeByRoleId(role_id);
+            
+            resp.getWriter().write("{\"code\": \"" + employeeCode + "\"}");
+        } catch (Exception e) {
+            Logger.getLogger(EmployeeController.class.getName()).log(Level.SEVERE, null, e);
+            resp.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 }
 

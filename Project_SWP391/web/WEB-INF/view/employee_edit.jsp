@@ -200,8 +200,9 @@
                                     Mã nhân viên *
                                 </label>
                                 <input type="text" id="employee_code" name="employee_code" required 
-                                       value="${employee.employee_code}" pattern="EMP\d{3}" 
-                                       title="Format: EMP###">
+                                       value="${employee.employee_code}" pattern="[A-Z]{2,4}\d{3}" 
+                                       title="Format: Prefix + 3 số (ví dụ: HRMA001, IS003, ES001)">
+                                <small class="helper-text">Format: Prefix (2-4 chữ cái) + 3 số (ví dụ: HRMA001, IS003, ES001, AD002)</small>
                             </div>
 
                             <div class="form-group">
@@ -288,5 +289,47 @@
                 </form>
             </div>
         </main>
+
+        <script>
+            // Auto-generate employee code when role is changed
+            document.addEventListener('DOMContentLoaded', function() {
+                const roleSelect = document.getElementById('role_id');
+                const employeeCodeInput = document.getElementById('employee_code');
+                
+                if (roleSelect && employeeCodeInput) {
+                    // Convert input to uppercase automatically
+                    employeeCodeInput.addEventListener('input', function() {
+                        this.value = this.value.toUpperCase();
+                    });
+                    
+                    // Store original code
+                    const originalCode = employeeCodeInput.value;
+                    
+                    roleSelect.addEventListener('change', function() {
+                        const roleId = this.value;
+                        if (roleId && roleId !== '') {
+                            // Ask user if they want to change the employee code
+                            if (confirm('Bạn có muốn tự động tạo mã nhân viên mới dựa trên vai trò đã chọn không?')) {
+                                // Fetch new employee code from server
+                                fetch('${pageContext.request.contextPath}/employees?action=generateCode&role_id=' + roleId)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.code) {
+                                            employeeCodeInput.value = data.code.toUpperCase();
+                                        } else if (data.error) {
+                                            console.error('Error generating code:', data.error);
+                                            alert('Không thể tạo mã nhân viên tự động. Vui lòng nhập thủ công.');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Có lỗi xảy ra khi tạo mã nhân viên. Vui lòng thử lại.');
+                                    });
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
     </body>
 </html>
