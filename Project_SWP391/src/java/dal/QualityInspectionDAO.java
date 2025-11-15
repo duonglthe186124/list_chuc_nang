@@ -12,11 +12,9 @@ import java.util.List;
 import dto.InspectionFormDTO; 
 import model.Quality_inspections; 
 import model.Warehouse_locations; 
-import util.DBContext; 
+import util.DBContext;
 
 public class QualityInspectionDAO extends DBContext {
-
-    // Constructor (giữ nguyên)
     public QualityInspectionDAO() throws Exception {
         super();
         if (this.connection == null) {
@@ -24,7 +22,7 @@ public class QualityInspectionDAO extends DBContext {
         }
     }
     
-    // HÀM MỚI: JOIN 7 BẢNG ĐỂ LẤY THÔNG TIN CHO FORM
+    // Hàm 1: JOIN 7 BẢNG ĐỂ LẤY THÔNG TIN CHO FORM
     public InspectionFormDTO getUnitDetailsForInspection(String imei) throws Exception {
         InspectionFormDTO details = null;
         String query = "SELECT " +
@@ -39,11 +37,10 @@ public class QualityInspectionDAO extends DBContext {
             "LEFT JOIN Purchase_orders po ON r.po_id = po.po_id " +
             "LEFT JOIN Suppliers s ON po.supplier_id = s.supplier_id " +
             "WHERE pu.imei = ?";
-        
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             ps.setString(1, imei);
             rs = ps.executeQuery();
@@ -62,7 +59,6 @@ public class QualityInspectionDAO extends DBContext {
             e.printStackTrace();
             throw e;
         } finally {
-            // KHÔNG đóng conn
             try {
                 if (rs != null) rs.close();
                 if (ps != null) ps.close();
@@ -71,23 +67,22 @@ public class QualityInspectionDAO extends DBContext {
         return details;
     }
 
-    // Hàm 2: Thêm một phiếu kiểm định mới (Giữ nguyên)
+    // Hàm 2: Thêm một phiếu kiểm định mới (Đã sửa lỗi CSDL)
     public boolean addInspection(Quality_inspections inspection) throws Exception {
         String query = "INSERT INTO Quality_Inspections (inspection_no, unit_id, location_id, inspected_by, inspected_at, status, result, note) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             ps.setString(1, inspection.getInspection_no());
             ps.setInt(2, inspection.getUnit_id());
             ps.setInt(3, inspection.getLocation_id());
             ps.setInt(4, inspection.getInspected_by());
-            ps.setTimestamp(5, new java.sql.Timestamp(inspection.getInspected_date().getTime())); // Dùng Timestamp
+            ps.setTimestamp(5, new java.sql.Timestamp(inspection.getInspected_date().getTime())); 
             ps.setString(6, inspection.getStatus());
             ps.setString(7, inspection.getResult());
             ps.setString(8, inspection.getNote());
-            
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,15 +93,15 @@ public class QualityInspectionDAO extends DBContext {
             } catch (Exception e) { e.printStackTrace(); }
         }
     }
-    
-    // Hàm 3: Lấy danh sách vị trí kho (Giữ nguyên)
+
+    // Hàm 3: Lấy danh sách vị trí kho
     public List<Warehouse_locations> getAllLocations() throws Exception {
         List<Warehouse_locations> list = new ArrayList<>();
         String query = "SELECT location_id, code FROM Warehouse_locations";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -126,7 +121,7 @@ public class QualityInspectionDAO extends DBContext {
         return list;
     }
 
-    // Hàm 4: Đóng kết nối (Giữ nguyên)
+    // Hàm 4: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {
@@ -136,5 +131,4 @@ public class QualityInspectionDAO extends DBContext {
             e.printStackTrace();
         }
     }
-    
 }
