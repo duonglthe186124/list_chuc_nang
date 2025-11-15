@@ -45,7 +45,10 @@ public class EditUnitServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/editUnit.jsp").forward(request, response);
     }
 
-    @Override
+    /**
+     * doPost: Xử lý Cập nhật (ĐÃ NÂNG CẤP)
+     */
+@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -53,25 +56,35 @@ public class EditUnitServlet extends HttpServlet {
         try {
             int unitId = Integer.parseInt(request.getParameter("unitId"));
             String newStatus = request.getParameter("status");
-            String oldStatus = request.getParameter("oldStatus");
-
-            // SỬA LỖI: Lấy Employee ID
+            String oldStatus = request.getParameter("oldStatus"); 
+            
+            // NÂNG CẤP: Lấy lý do
+            String reason = request.getParameter("reason");
+            
+            // NÂNG CẤP: Kiểm tra (Validate) lý do
+            if (reason == null || reason.trim().isEmpty()) {
+                throw new Exception("Bạn phải nhập Lý do (Note) để thay đổi tình trạng.");
+            }
+            
             Employees currentEmployee = (Employees) request.getSession().getAttribute("employee");
             if (currentEmployee == null) {
                 throw new Exception("Lỗi phiên đăng nhập. Không tìm thấy thông tin Employee.");
             }
-            int employeeId = currentEmployee.getEmployee_id(); 
-
+            int employeeId = currentEmployee.getEmployee_id();
+            
             dao = new WarehouseUnitDAO();
-            boolean success = dao.updateUnitStatus(unitId, oldStatus, newStatus, employeeId);
+            // NÂNG CẤP: Truyền lý do vào DAO
+            boolean success = dao.updateUnitStatus(unitId, oldStatus, newStatus, employeeId, reason.trim()); 
+
             if (!success) {
                 throw new Exception("Cập nhật thất bại. Dữ liệu không đổi.");
             }
+            
             response.sendRedirect(request.getContextPath() + "/warehouse/inventory");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi cập nhật: " + e.getMessage());
-            doGet(request, response);
+            doGet(request, response); // Tải lại form khi có lỗi
         } finally {
             if (dao != null) {
                 dao.closeConnection();

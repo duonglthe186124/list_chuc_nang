@@ -51,30 +51,37 @@ public class WarehouseUnitDAO extends DBContext {
         return unit;
     }
 
-    // Hàm 2: (NÂNG CẤP) Cập nhật Status VÀ Ghi Log (Dùng Transaction)
-    public boolean updateUnitStatus(int unitId, String oldStatus, String newStatus, int employeeId) throws Exception {
+    /**
+     * Hàm 2: (NÂNG CẤP) Cập nhật Status VÀ Ghi Log (Dùng Transaction)
+     */
+    public boolean updateUnitStatus(int unitId, String oldStatus, String newStatus, int employeeId, String userReason) throws Exception {
         PreparedStatement psUpdateUnit = null;
         PreparedStatement psLog = null;
+
         String sqlUpdateUnit = "UPDATE Product_units SET status = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ? AND status = ?";
         String sqlLog = "INSERT INTO Stock_adjustments (unit_id, reason, created_by) VALUES (?, ?, ?)";
-        String reason = "Status changed: " + oldStatus + " -> " + newStatus;
+
+        // NÂNG CẤP: Tạo lý do chi tiết
+        String logReason = "Status changed: " + oldStatus + " -> " + newStatus + ". Reason: " + userReason;
+
         try {
-            Connection conn = this.connection;
-            conn.setAutoCommit(false); // Bắt đầu Transaction
+            this.connection.setAutoCommit(false); // Bắt đầu Transaction
 
             // 1. Cập nhật Status
-            psUpdateUnit = conn.prepareStatement(sqlUpdateUnit);
+            psUpdateUnit = this.connection.prepareStatement(sqlUpdateUnit);
             psUpdateUnit.setString(1, newStatus);
             psUpdateUnit.setInt(2, unitId);
-            psUpdateUnit.setString(3, oldStatus);
+            psUpdateUnit.setString(3, oldStatus); // Đảm bảo status chưa bị thay đổi
+
             int affectedRows = psUpdateUnit.executeUpdate();
             if (affectedRows == 0) {
-                throw new Exception("Cập nhật thất bại. Status có thể đã bị thay đổi.");
+                throw new Exception("Cập nhật thất bại. Status có thể đã bị thay đổi bởi người khác.");
             }
-            // 2. Ghi Log
-            psLog = conn.prepareStatement(sqlLog);
+
+            // 2. Ghi Log (với lý do chi tiết)
+            psLog = this.connection.prepareStatement(sqlLog);
             psLog.setInt(1, unitId);
-            psLog.setString(2, reason);
+            psLog.setString(2, logReason); // NÂNG CẤP: Dùng lý do mới
             psLog.setInt(3, employeeId);
             psLog.executeUpdate();
 
@@ -100,7 +107,9 @@ public class WarehouseUnitDAO extends DBContext {
         }
     }
 
-    // Hàm 3: Lấy tên sản phẩm
+    /**
+     * Hàm 3: Lấy tên sản phẩm (để hiển thị)
+     */
     public String getProductNameById(int productId) throws Exception {
         String productName = "";
         String query = "SELECT name FROM Products WHERE product_id = ?";

@@ -59,6 +59,50 @@
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
             }
+            .filter-form {
+                padding: 20px;
+                background: #f9f9f9;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+            .filter-form form {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            .form-group {
+                flex: 1;
+            }
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-group input, .form-group select {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .pagination {
+                margin-top: 20px;
+            }
+            .pagination a, .pagination span {
+                display: inline-block;
+                padding: 8px 12px;
+                margin: 0 2px;
+                border: 1px solid #ccc;
+                color: #337ab7;
+                text-decoration: none;
+            }
+            .pagination span.current {
+                background-color: #337ab7;
+                color: white;
+                border-color: #337ab7;
+            }
+            .pagination a:hover {
+                background-color: #eee;
+            }
         </style>
     </head>
     <body class="bg-gray-100 text-gray-800">
@@ -304,7 +348,7 @@
             <main
                 id="main-content"
                 class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
-                ><div class="content-header">
+                ><div class="flex justify-between items-center mb-4">
                     <h2 class="text-2xl font-bold">Lịch sử Hàng trả về</h2>
                     <div>
                         <a href="${pageContext.request.contextPath}/warehouse/returns" class="btn btn-primary">
@@ -313,9 +357,39 @@
                     </div>
                 </div>
                 <hr class="mb-4">
+
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
+
+                <div class="filter-form">
+                    <form action="${pageContext.request.contextPath}/warehouse/returnsList" method="GET">
+                        <div class="form-group">
+                            <label>Lọc theo Trạng thái:</label>
+                            <select name="status">
+                                <option value="" ${empty selectedStatus ? 'selected' : ''}>-- Tất cả Trạng thái --</option>
+                                <option value="OPEN" ${selectedStatus == 'OPEN' ? 'selected' : ''}>Mở (OPEN)</option>
+                                <option value="RECEIVED" ${selectedStatus == 'RECEIVED' ? 'selected' : ''}>Đã nhận (RECEIVED)</option>
+                                <option value="INSPECTED" ${selectedStatus == 'INSPECTED' ? 'selected' : ''}>Đã kiểm (INSPECTED)</option>
+                                <option value="RESOLVED" ${selectedStatus == 'RESOLVED' ? 'selected' : ''}>Đã xử lý (RESOLVED)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Từ ngày:</label>
+                            <input type="date" name="dateStart" value="${selectedDateStart}">
+                        </div>
+                        <div class="form-group">
+                            <label>Đến ngày:</label>
+                            <input type="date" name="dateEnd" value="${selectedDateEnd}">
+                        </div>
+
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="btn btn-primary">Lọc</button>
+                            <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary" style="margin-left: 10px;">Reset</a>
+                        </div>
+                    </form>
+                </div>
+
                 <table class="data-table bg-white">
                     <thead>
                         <tr>
@@ -335,10 +409,25 @@
                             </tr>
                         </c:forEach>
                         <c:if test="${empty requestScope.historyList}">
-                            <tr><td colspan="6" style="text-align: center;">Chưa có lịch sử trả hàng.</td></tr>
+                            <tr><td colspan="6" style="text-align: center;">Không tìm thấy phiếu trả hàng nào.</td></tr>
                         </c:if>
                     </tbody>
-                </table></main>
+                </table>
+
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <a href="${pageContext.request.contextPath}/warehouse/returnsList?page=${currentPage - 1}&status=${selectedStatus}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">&laquo;</a>
+                    </c:if>
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <c:choose>
+                            <c:when test="${i == currentPage}"><span class="current">${i}</span></c:when>
+                            <c:otherwise><a href="${pageContext.request.contextPath}/warehouse/returnsList?page=${i}&status=${selectedStatus}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">${i}</a></c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <c:if test="${currentPage < totalPages}">
+                        <a href="${pageContext.request.contextPath}/warehouse/returnsList?page=${currentPage + 1}&status=${selectedStatus}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">&raquo;</a>
+                    </c:if>
+                </div></main>
         </div>
 
         <!-- 

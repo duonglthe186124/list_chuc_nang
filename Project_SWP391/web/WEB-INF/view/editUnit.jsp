@@ -78,7 +78,7 @@
                 margin-bottom: 5px;
                 font-weight: bold;
             }
-            .form-group input, .form-group select {
+            .form-group input, .form-group select, .form-group textarea {
                 width: 100%;
                 padding: 8px;
                 border: 1px solid #ccc;
@@ -359,6 +359,13 @@
                                         <option value="DAMAGED" ${currentStatus == 'DAMAGED' ? 'selected' : ''}>Hỏng (DAMAGED)</option>
                                         <option value="RETURNED" ${currentStatus == 'RETURNED' ? 'selected' : ''}>Trả hàng (RETURNED)</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="reason">Lý do thay đổi (Bắt buộc):</label>
+                                    <textarea name="reason" id="reason" rows="3" required placeholder="VD: Rơi vỡ khi kiểm kê, Lỗi pin, ..."></textarea>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Lưu thay đổi</button>

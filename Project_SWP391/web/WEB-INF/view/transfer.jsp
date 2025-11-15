@@ -382,8 +382,12 @@
                                     <select name="newContainerId" required>
                                         <option value="">-- Chọn container mới --</option>
                                         <c:forEach items="${requestScope.containerList}" var="c">
-                                            <c:if test="${c.container_id != unitDetails.currentContainerId}">
-                                                <option value="${c.container_id}">(${c.description}) - ${c.container_code}</option>
+                                            <c:if test="${c.containerId != unitDetails.currentContainerId}"> 
+
+                                                <option value="${c.containerId}">
+                                                    (${c.locationCode}) - ${c.containerCode}
+                                                </option>
+
                                             </c:if>
                                         </c:forEach>
                                     </select>
