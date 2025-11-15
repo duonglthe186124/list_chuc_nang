@@ -689,13 +689,6 @@
                                class="inline-flex items-center px-3 py-1 border border-indigo-300 text-xs font-medium rounded-md shadow-sm text-black-700 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">\n\
                                     Chi tiết\n\
                             </a>\n';
-                if (status === 'PENDING') {
-                    badge += '<a href="${pageContext.request.contextPath}/inbound/shipments/cancel?id=' + id + '" \n\
-                                class="inline-flex items-center px-3 py-1 border border-red-300 text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" \n\
-                                onclick="return confirm(\'Bạn có chắc chắn muốn huỷ phiếu xuất kho này không?\')">\n\
-                                    Huỷ đơn\n\
-                            </a>';
-                }
                 return badge;
             }
 

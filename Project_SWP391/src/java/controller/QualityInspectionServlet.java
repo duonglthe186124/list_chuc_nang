@@ -1,7 +1,8 @@
 package controller;
 
 import dal.QualityInspectionDAO;
-import dto.InspectionFormDTO;
+import dal.UserDAO;
+import dto.InspectionFormDTO; 
 import model.Quality_inspections;
 import model.Users;
 import model.Employees; 
@@ -14,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "QualityInspectionServlet", urlPatterns = {"/warehouse/inspections"})
 public class QualityInspectionServlet extends HttpServlet {
@@ -21,6 +23,21 @@ public class QualityInspectionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 22)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
+        
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String imei = request.getParameter("imei");

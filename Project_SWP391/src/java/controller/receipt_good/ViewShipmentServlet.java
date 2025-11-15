@@ -2,19 +2,22 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.receipt_good;
 
-import dal.UserDAO;
-import model.Users;
+import dto.ShipmentDTO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.Set;
+import service.ShipmentService;
 
-public class LoginServlet extends HttpServlet {
+/**
+ *
+ * @author ASUS
+ */
+public class ViewShipmentServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -27,9 +30,21 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ViewShipmentServlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ViewShipmentServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -41,7 +56,18 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/view/login_page.jsp").forward(request, response);
+        int shipmentId = Integer.parseInt(request.getParameter("id"));
+        ShipmentService shipmentService = new ShipmentService();
+        
+        ShipmentDTO shipment = shipmentService.getShipmentById(shipmentId);
+        double totalValue = shipmentService.getTotalShipmentValue(shipmentId);
+        
+        request.setAttribute("shipment", shipment);
+        request.setAttribute("lines", shipmentService.getShipmentLines(shipmentId));
+        request.setAttribute("units", shipmentService.getShipmentUnits(shipmentId));
+        request.setAttribute("totalValue", String.format("%,.2f", totalValue));
+        
+        request.getRequestDispatcher("/WEB-INF/view/suppliers.jsp").forward(request, response);
     }
 
     /**
@@ -55,38 +81,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("email").trim();
-        String password = request.getParameter("password").trim();
-        
-        UserDAO userDAO = new UserDAO();
-        Users user = userDAO.checkLogin(email, password); 
-        
-        if (user == null) {
-            request.setAttribute("errorMessage", "Incorrect email or password.");
-            request.getRequestDispatcher("WEB-INF/view/login_page.jsp").forward(request, response);
-        } else {
-            HttpSession session = request.getSession();
-            session.setAttribute("account", user); 
-            Set<Integer> activeUserSet = (Set<Integer>) getServletContext().getAttribute("activeUserSet");
-            if (activeUserSet != null) {
-                activeUserSet.add(user.getUser_id());
-            }
-            if (user.getRole_id() == 8) {
-                response.sendRedirect(request.getContextPath() + "/inbound/dashboard"); 
-            }
-            else if(user.getRole_id() == 6)
-            {
-                response.sendRedirect(request.getContextPath() + "/employees");
-            }
-            else if(user.getRole_id() == 3)
-            {
-                response.sendRedirect(request.getContextPath() + "/warehouse/inventory");
-            }
-            else{
-                response.sendRedirect(request.getContextPath() + "/home");    
-            }
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -96,7 +91,7 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Handles user login";
-    }// </editor-fold>
+        return "Short description";
+    }
 
 }

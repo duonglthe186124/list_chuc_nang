@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
@@ -428,100 +429,110 @@
                 </div>
             </aside>
 
-            <main
-                id="main-content"
-                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
-                >
-                
+            <main id="main-content" class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out">
+
+                <!-- PAGE TITLE -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Shipment Export Detail</h1>
+                    <p class="text-gray-500 mt-1">Thông tin chi tiết phiếu xuất kho</p>
+                </div>
+
+                <!-- CARD: GENERAL INFO -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">General Info</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <span class="text-gray-500 text-sm">Shipment No</span>
+                            <span class="font-medium text-gray-900">${shipment.shipmentNo}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-500 text-sm">Status</span>
+                            <span class="font-medium text-gray-900">${shipment.status}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-500 text-sm">Request Time</span>
+                            <span class="font-medium text-gray-900">${shipment.requestedAt}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-gray-500 text-sm">Note</span>
+                            <span class="font-medium text-gray-900">${shipment.note}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD: LINES (dòng hàng) -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Shipment Lines</h2>
+                        <span class="text-sm text-gray-500">Số dòng: <strong>${fn:length(lines)}</strong></span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Line ID</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Product</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Qty</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="bg-white divide-y divide-gray-100">
+                                <c:forEach var="line" items="${lines}">
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="px-4 py-3 text-sm text-gray-800">${line.lineId}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-800">
+                                            <div class="font-medium">${line.productName}</div>
+                                            <div class="text-xs text-gray-500">Product ID: ${line.productId}</div>
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-gray-800">${line.qty}</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CARD: TOTAL VALUE -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Total Export Value</h2>
+                    <p class="text-3xl font-bold text-indigo-600">
+                        ${totalValue}
+                    </p>
+                </div>
+
+                <!-- CARD: EXPORTED UNITS -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Exported Units (IMEI)</h2>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Unit ID</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">IMEI</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">Serial</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="bg-white divide-y divide-gray-100">
+                                <c:forEach var="u" items="${units}">
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="px-4 py-3 text-sm text-gray-800">${u.unitId}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-800">${u.imei}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-800">${u.serial}</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </main>
+
         </div>
 
         <script>
-            const poStatus = document.getElementById("po-status");
-            const headstatus = document.getElementById("status");
-            let status = "${poheader.status}";
-
-            function poBadge(status) {
-                let colorClasses = '';
-                switch (status) {
-                    case "DRAFT":
-                        colorClasses = "bg-gray-100 text-gray-800";
-                        break;
-                    case "PENDING":
-                        colorClasses = "bg-yellow-100 text-yellow-800";
-                        break;
-                    case "PARTIAL":
-                        colorClasses = "bg-blue-100 text-blue-800";
-                        break;
-                    case "COMPLETED":
-                        colorClasses = "bg-green-100 text-green-800";
-                        break;
-                    case "CANCELLED":
-                        colorClasses = "bg-red-50 text-red-800";
-                        break;
-                    default:
-                        colorClasses = "bg-gray-100 text-gray-800";
-                }
-
-                poStatus.innerHTML = '<span class="px-4 py-1.5 text-sm font-semibold rounded-full ' + colorClasses + '">' + status + '</span>';
-                headstatus.innerHTML = '<span class="px-2.5 py-0.5 text-xs font-medium rounded-full ' + colorClasses + '">' + status + '</span>';
-            }
-
-            const order_lines = [];
-            <c:forEach var="l" items="${poLines}">
-            order_lines.push({
-                product_name: "${l.product_name}",
-                sku_code: "${l.sku_code}",
-                unit_price: ${l.unit_price},
-                qty_ordered: ${l.qty_ordered},
-                qty_received: ${l.qty_received},
-                qty_remaining: ${l.qty_remaining},
-                total_line: ${l.total_line}
-            });
-            </c:forEach>
-
-            function formatCurrency(amount) {
-                return new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                }).format(amount);
-            }
-            
-            function createPOLineBadge(remaining) {
-                let badge = "";
-                
-            }
-            
-            function renderTableLine() {
-                const tableBody = document.getElementById("table-body");
-                const data = order_lines;
-                let rowsHTML = "";
-                
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach((row, index) => {
-                        const rowNumber = index + 1;
-
-                        rowsHTML += '\n<tr>\n' +
-                                '<td class="pl-6 pr-3 py-4 whitespace-nowrap text-sm text-gray-500">' + rowNumber + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap">' +
-                                '<div class="text-sm font-medium text-gray-900">' + row.product_name + '</div>' +
-                                '<div class="text-xs text-gray-500">' + row.sku_code + '</div>' +
-                                '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">' + row.qty_ordered + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 text-right">' + row.qty_received +'</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 text-right font-semibold">' + row.qty_remaining + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">' + formatCurrency(row.unit_price) + '</td>\n' +
-                                '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium text-right">' + formatCurrency(row.total_line) + '</td>\n' +
-                                
-                                '</tr>';
-                    });
-                } else {
-                    rowsHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">No records found</td></tr>';
-                }
-                
-                tableBody.innerHTML = rowsHTML;
-            }
-            
             document.addEventListener("DOMContentLoaded", () => {
                 poBadge(status);
                 renderTableLine();

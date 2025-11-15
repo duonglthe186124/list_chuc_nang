@@ -59,6 +59,22 @@
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
             }
+
+            @media print {
+                body > *:not(#printable-content) {
+                    display: none;
+                }
+                #printable-content {
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    box-shadow: none !important;
+                }
+                #statusSelector,
+                .no-print {
+                    display: none !important;
+                }
+            }
         </style>
     </head>
     <body class="bg-gray-100 text-gray-800">
@@ -115,7 +131,7 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
-                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
                                 </c:otherwise>
                             </c:choose>
                             <span>${sessionScope.account.fullname}</span>
@@ -428,211 +444,189 @@
                     </button>
                 </div>
             </aside>
-
-            <main
-                id="main-content"
-                class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
-                >
-                <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">
-                            Phiếu mua hàng #${poheader.po_code}
-                        </h1>
-                        <p class="text-sm text-gray-500 mt-1">
-                            Quản lý chi tiết phiếu mua hàng và các hành động liên quan.
-                        </p>
-                    </div>
-                    <div id="po-status">
-                        <span
-                            class="px-4 py-1.5 text-sm font-semibold rounded-full bg-blue-100 text-blue-800"
-                            >${poheader.status}</span
-                        >
-                    </div>
-                </div>
-
-                <div class="space-y-8">
-                    <div class="border border-gray-200 rounded-lg shadow-sm">
-                        <div class="px-6 py-5 bg-gray-50 rounded-t-lg">
-                            <h2 class="text-lg font-semibold text-gray-900">
-                                Thông tin chung & Tổng hợp
-                            </h2>
+            <div id="printable-content" style="display: contents;">
+                <main
+                    id="main-content"
+                    class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
+                    >
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">
+                                Phiếu mua hàng #${poheader.po_code}
+                            </h1>
+                            <p class="text-sm text-gray-500 mt-1">
+                                Quản lý chi tiết phiếu mua hàng và các hành động liên quan.
+                            </p>
                         </div>
-                        <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-6">
-                            <dl class="space-y-4 col-span-1">
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">
-                                        Mã phiếu (PO No.)
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900">${poheader.po_code}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">
-                                        Trạng thái
-                                    </dt>
-                                    <dd id="status" class="mt-1">
-                                        <span
-                                            class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
-                                            >${poheader.status}</span
-                                        >
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">
-                                        Nhà cung cấp
-                                    </dt>
-                                    <dd
-                                        class="mt-1 text-sm font-medium text-indigo-600 hover:underline cursor-pointer"
-                                        >
-                                        ${poheader.supplier_name}
-                                    </dd>
-                                </div>
-                            </dl>
+                        <div id="po-status">
+                            <span
+                                class="px-4 py-1.5 text-sm font-semibold rounded-full bg-blue-100 text-blue-800"
+                                >${poheader.status}</span
+                            >
+                        </div>
+                    </div>
 
-                            <dl class="space-y-4 col-span-1">
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">Ngày tạo</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">${poheader.created_at}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">Người tạo</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        ${poheader.created_by}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-semibold text-gray-600">Ghi chú</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        ${poheader.note}
-                                    </dd>
-                                </div>
-                            </dl>
-
-                            <div
-                                class="col-span-1 lg:border-l lg:pl-8 border-gray-200 pt-4 lg:pt-0"
-                                >
-                                <h3 class="text-base font-semibold text-gray-900 mb-4">
-                                    Tổng hợp thanh toán
-                                </h3>
-                                <dl class="space-y-3">
-                                    <div class="flex justify-between items-center">
+                    <div class="space-y-8">
+                        <div class="border border-gray-200 rounded-lg shadow-sm">
+                            <div class="px-6 py-5 bg-gray-50 rounded-t-lg">
+                                <h2 class="text-lg font-semibold text-gray-900">
+                                    Thông tin chung & Tổng hợp
+                                </h2>
+                            </div>
+                            <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-6">
+                                <dl class="space-y-4 col-span-1">
+                                    <div>
                                         <dt class="text-sm font-semibold text-gray-600">
-                                            Tổng phụ (Subtotal)
+                                            Mã phiếu (PO No.)
                                         </dt>
-                                        <dd class="text-sm font-medium text-gray-900">
-                                            <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
+                                        <dd class="mt-1 text-sm text-gray-900">${poheader.po_code}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-semibold text-gray-600">
+                                            Trạng thái
+                                        </dt>
+                                        <dd id="status" class="mt-1">
+                                            <span
+                                                class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
+                                                >${poheader.status}</span
+                                            >
                                         </dd>
                                     </div>
-                                    <div class="flex justify-between items-center border-t pt-3">
-                                        <dt class="text-base font-semibold text-gray-900">
-                                            Tổng cộng (Grand Total)
+                                    <div>
+                                        <dt class="text-sm font-semibold text-gray-600">
+                                            Nhà cung cấp
                                         </dt>
-                                        <dd class="text-base font-semibold text-indigo-600">
-                                            <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
+                                        <dd
+                                            class="mt-1 text-sm font-medium text-indigo-600 hover:underline cursor-pointer"
+                                            >
+                                            ${poheader.supplier_name}
                                         </dd>
                                     </div>
                                 </dl>
+
+                                <dl class="space-y-4 col-span-1">
+                                    <div>
+                                        <dt class="text-sm font-semibold text-gray-600">Ngày tạo</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">${poheader.created_at}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-semibold text-gray-600">Người tạo</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            ${poheader.created_by}
+                                        </dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-semibold text-gray-600">Ghi chú</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            ${poheader.note}
+                                        </dd>
+                                    </div>
+                                </dl>
+
+                                <div
+                                    class="col-span-1 lg:border-l lg:pl-8 border-gray-200 pt-4 lg:pt-0"
+                                    >
+                                    <h3 class="text-base font-semibold text-gray-900 mb-4">
+                                        Tổng hợp thanh toán
+                                    </h3>
+                                    <dl class="space-y-3">
+                                        <div class="flex justify-between items-center">
+                                            <dt class="text-sm font-semibold text-gray-600">
+                                                Tổng phụ (Subtotal)
+                                            </dt>
+                                            <dd class="text-sm font-medium text-gray-900">
+                                                <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
+                                            </dd>
+                                        </div>
+                                        <div class="flex justify-between items-center border-t pt-3">
+                                            <dt class="text-base font-semibold text-gray-900">
+                                                Tổng cộng (Grand Total)
+                                            </dt>
+                                            <dd class="text-base font-semibold text-indigo-600">
+                                                <fmt:formatNumber value="${poheader.total_amount}" type="number" groupingUsed="true" /> VND
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="border border-gray-200 rounded-lg shadow-sm">
-                        <div class="px-6 py-5 bg-gray-50 rounded-t-lg">
-                            <h2 class="text-lg font-semibold text-gray-900">
-                                Danh sách hàng hoá
-                            </h2>
+                        <div class="border border-gray-200 rounded-lg shadow-sm">
+                            <div class="px-6 py-5 bg-gray-50 rounded-t-lg">
+                                <h2 class="text-lg font-semibold text-gray-900">
+                                    Danh sách hàng hoá
+                                </h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th
+                                                scope="col"
+                                                class="pl-6 pr-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12"
+                                                >
+                                                STT
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Sản phẩm
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Qty Đặt
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Qty Đã nhận
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Qty Còn lại
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Đơn giá
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Thành tiền
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                                                >
+                                                Trạng thái
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-body" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="pl-6 pr-3 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-12"
-                                            >
-                                            STT
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Sản phẩm
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Qty Đặt
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Qty Đã nhận
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Qty Còn lại
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Đơn giá
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Thành tiền
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                                            >
-                                            Trạng thái
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-body" class="bg-white divide-y divide-gray-200">
-                                </tbody>
-                            </table>
+                        <div id="nav-btn" class="pt-6 flex flex-wrap justify-end gap-3">
                         </div>
                     </div>
-                    <div id="nav-btn" class="pt-6 flex flex-wrap justify-end gap-3">
-                        <a
-                            href="${pageContext.request.contextPath}/inbound/purchase-orders"
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                            Quay lại
-                        </a>
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                            In/Export
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            >
-                            Huỷ phiếu
-                        </button>
-                        <button
-                            type="button"
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                            >
-                            Tạo phiếu nhập kho
-                        </button>
-                    </div>
-                </div>
-            </main>
+                </main>
+            </div>
         </div>
 
         <script>
             const poStatus = document.getElementById("po-status");
             const headstatus = document.getElementById("status");
             let status = "${poheader.status}";
+            let id = ${param.id};
 
             function poBadge(status) {
                 let colorClasses = '';
@@ -658,6 +652,37 @@
 
                 poStatus.innerHTML = '<span class="px-4 py-1.5 text-sm font-semibold rounded-full ' + colorClasses + '">' + status + '</span>';
                 headstatus.innerHTML = '<span class="px-2.5 py-0.5 text-xs font-medium rounded-full ' + colorClasses + '">' + status + '</span>';
+            }
+
+            function renderNav(orderStatus, id) {
+                const navBtnContainer = document.getElementById('nav-btn');
+                const backButton = `<a
+                href="${pageContext.request.contextPath}/inbound/purchase-orders"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    Quay lại
+                </a>`;
+
+                const cancelButton = '<a ' +
+                        'href="${pageContext.request.contextPath}/inbound/purchase-orders/cancel?id=' + id + '" ' +
+                        'onclick="return confirm(\'Bạn có chắc chắn muốn huỷ phiếu mua hàng này không?\')" ' +
+                        'class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"' +
+                        '>' +
+                        'Huỷ phiếu' +
+                        '</a>';
+
+                let buttonsHtml = '';
+                switch (orderStatus.toUpperCase()) {
+                    case 'PENDING':
+                        buttonsHtml = backButton + cancelButton;
+                        break;
+
+                    default:
+                        buttonsHtml = backButton;
+                        break;
+                }
+
+                navBtnContainer.innerHTML = buttonsHtml;
             }
 
             const order_lines = [];
@@ -725,6 +750,7 @@
             document.addEventListener("DOMContentLoaded", () => {
                 poBadge(status);
                 renderTableLine();
+                renderNav(status, ${param.id});
 
                 const sidebar = document.getElementById("admin-sidebar");
                 const mainContent = document.getElementById("main-content");

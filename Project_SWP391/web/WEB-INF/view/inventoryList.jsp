@@ -344,6 +344,7 @@
                             <span class="sidebar-text">Thu gọn</span>
                         </button>
                     </div>
+                </nav>
             </aside>
             <!-- 
                     ===== MAIN CONTENT (N?I DUNG CHÍNH) =====

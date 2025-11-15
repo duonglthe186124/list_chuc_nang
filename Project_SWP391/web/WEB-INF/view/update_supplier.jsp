@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
     <head>
@@ -105,12 +106,19 @@
                             id="user-menu-button"
                             class="flex items-center gap-2 rounded-full p-1 pr-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
                             >
-                            <img
-                                class="h-8 w-8 rounded-full object-cover"
-                                src="https://placehold.co/40x40/e2e8f0/64748b?text=User"
-                                alt="Avatar"
-                                />
-                            <span>Admin</span>
+                            <c:choose>
+                                <c:when test="${not empty sessionScope.account.avatar_url}">
+                                    <c:url value="/${sessionScope.account.avatar_url}" var="avatarHeaderSrc">
+                                        <c:param name="v" value="${date.time}" />
+                                    </c:url>
+                                    <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="https://i.postimg.cc/c6m04fpn/default-avatar-icon-of-social-media-user-vector.jpg" var="avatarHeaderSrc" />
+                                        <img class="h-8 w-8 rounded-full object-cover" src="${avatarHeaderSrc}" alt="User Avatar" />
+                                </c:otherwise>
+                            </c:choose>
+                            <span>${sessionScope.account.fullname}</span>
                             <svg
                                 class="h-4 w-4 text-gray-500"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -130,7 +138,7 @@
                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 z-50 hidden transition ease-out duration-100 transform opacity-0 scale-95"
                             >
                             <a
-                                href="#"
+                                href="${pageContext.request.contextPath}/PersonalProfile"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 >Thông tin cá nhân</a
                             >

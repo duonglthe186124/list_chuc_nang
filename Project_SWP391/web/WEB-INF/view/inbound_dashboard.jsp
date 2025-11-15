@@ -4,6 +4,7 @@
     Author     : ASUS
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -602,130 +603,6 @@
 
                     <div class="relative h-80">
                         <canvas id="nhapXuatChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 3. Bảng Phiếu đang chờ xử lý -->
-                <div class="bg-white p-6 rounded-xl shadow-md mt-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">
-                        Phiếu đang chờ xử lý (Draft/Chờ duyệt)
-                    </h3>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200">
-                        <table class="min-w-full table-fixed text-left text-sm">
-                            <thead class="bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th
-                                        class="w-1/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
-                                        >
-                                        Loại Phiếu
-                                    </th>
-                                    <th
-                                        class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
-                                        >
-                                        Mã Phiếu
-                                    </th>
-                                    <th
-                                        class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
-                                        >
-                                        Trạng thái
-                                    </th>
-                                    <th
-                                        class="w-4/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
-                                        >
-                                        Mô tả/Đối tác
-                                    </th>
-                                    <th
-                                        class="w-2/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider"
-                                        >
-                                        Ngày tạo
-                                    </th>
-                                    <th
-                                        class="w-1/12 py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider text-right"
-                                        >
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody
-                                class="divide-y divide-gray-100"
-                                id="pending-documents-table"
-                                >
-                                <!-- Dữ liệu mẫu sẽ được chèn ở đây -->
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-blue-600 font-semibold">PO</td>
-                                    <td class="py-3 px-4 font-medium text-gray-700 truncate">
-                                        #PO20251025-001
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <span
-                                            class="inline-flex items-center justify-center rounded-lg bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 min-w-[90px] text-center"
-                                            >Chờ duyệt</span
-                                        >
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600 truncate">
-                                        Mua 100 iPhone 16 từ FPT Trading
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600">25/10/2025</td>
-                                    <td class="py-3 px-4 text-right">
-                                        <button
-                                            class="text-indigo-600 hover:text-indigo-900 font-medium"
-                                            >
-                                            Chi tiết
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-green-600 font-semibold">
-                                        Nhập hàng
-                                    </td>
-                                    <td class="py-3 px-4 font-medium text-gray-700 truncate">
-                                        #PN20251030-003
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <span
-                                            class="inline-flex items-center justify-center rounded-lg bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800 min-w-[90px] text-center"
-                                            >Draft</span
-                                        >
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600 truncate">
-                                        Phiếu nhập linh kiện từ Nhà cung cấp A
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600">30/10/2025</td>
-                                    <td class="py-3 px-4 text-right">
-                                        <button
-                                            class="text-indigo-600 hover:text-indigo-900 font-medium"
-                                            >
-                                            Chi tiết
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 text-red-600 font-semibold">
-                                        Xuất hàng
-                                    </td>
-                                    <td class="py-3 px-4 font-medium text-gray-700 truncate">
-                                        #PX20251029-010
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <span
-                                            class="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-1 text-xs font-medium text-red-800 min-w-[90px] text-center"
-                                            >Chờ lấy hàng</span
-                                        >
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600 truncate">
-                                        Đơn hàng bán lẻ online (5 sản phẩm)
-                                    </td>
-                                    <td class="py-3 px-4 text-gray-600">29/10/2025</td>
-                                    <td class="py-3 px-4 text-right">
-                                        <button
-                                            class="text-indigo-600 hover:text-indigo-900 font-medium"
-                                            >
-                                            Chi tiết
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 

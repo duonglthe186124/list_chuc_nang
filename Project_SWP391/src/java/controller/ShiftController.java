@@ -3,6 +3,7 @@ package controller;
 import dal.EmployeeDAO;
 import dal.ShiftDAO;
 import dal.ShiftAssignmentDAO;
+import dal.UserDAO;
 import dal.WarehouseLocationDAO;
 import dto.EmployeeInfoDTO;
 import dto.ShiftAssignmentDTO;
@@ -10,12 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import service.ShiftService;
 import model.Shifts;
+import model.Users;
 
 public class ShiftController extends HttpServlet {
 
@@ -35,6 +38,20 @@ public class ShiftController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            resp.sendRedirect(req.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 16)) {
+            resp.sendRedirect(req.getContextPath() + "/404");
+            return;
+        }
+        
         String action = req.getParameter("action");
 
         if (action == null) {

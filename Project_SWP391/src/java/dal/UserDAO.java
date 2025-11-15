@@ -376,8 +376,11 @@ public class UserDAO extends DBContext {
             ps.setInt(1, role_id);
             ps.setInt(2, feature_id);
 
-            int rowAffected = ps.executeUpdate();
-            check = (rowAffected > 0)? true : false;
+            try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return true;
+            }
+        }
         } catch (SQLException e) {
             e.printStackTrace();
         }

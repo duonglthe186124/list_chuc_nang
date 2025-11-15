@@ -1,5 +1,6 @@
 package controller.receipt_good;
 
+import dal.UserDAO;
 import dto.Response_PODTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import model.Users;
 import service.ManagePOService;
 
 /**
@@ -23,6 +25,20 @@ public class PurchaseOrderServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 14)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
+        
         if (session != null) {
             if (session.getAttribute("successMessage") != null) {
                 request.setAttribute("successMessage", session.getAttribute("successMessage"));

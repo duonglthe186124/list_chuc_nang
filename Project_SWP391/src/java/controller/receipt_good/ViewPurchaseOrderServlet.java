@@ -1,5 +1,6 @@
 package controller.receipt_good;
 
+import dal.UserDAO;
 import dto.Response_POHeaderDTO;
 import dto.Response_POLineDTO;
 import java.io.IOException;
@@ -8,7 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.Users;
 import service.ManagePOService;
 
 /**
@@ -22,6 +25,20 @@ public class ViewPurchaseOrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        UserDAO user_dao = new UserDAO();
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 13)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
         String raw_po_id = request.getParameter("id");
 
         Response_POHeaderDTO poheader = null;
