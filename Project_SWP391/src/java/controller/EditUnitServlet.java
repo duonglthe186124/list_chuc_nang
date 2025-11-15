@@ -60,7 +60,7 @@ public class EditUnitServlet extends HttpServlet {
     /**
      * doPost: Xử lý Cập nhật (ĐÃ NÂNG CẤP)
      */
-    @Override
+@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -71,27 +71,36 @@ public class EditUnitServlet extends HttpServlet {
             // Lấy dữ liệu từ form
             int unitId = Integer.parseInt(request.getParameter("unitId"));
             String newStatus = request.getParameter("status");
-            String oldStatus = request.getParameter("oldStatus"); // Lấy status cũ
+            String oldStatus = request.getParameter("oldStatus"); 
             
-            // Lấy Employee ID (Bạn phải lưu employee trong session khi login)
+            // NÂNG CẤP: Lấy lý do
+            String reason = request.getParameter("reason");
+            
+            // NÂNG CẤP: Kiểm tra (Validate) lý do
+            if (reason == null || reason.trim().isEmpty()) {
+                throw new Exception("Bạn phải nhập Lý do (Note) để thay đổi tình trạng.");
+            }
+            
             Employees currentEmployee = (Employees) request.getSession().getAttribute("employee");
-            int employeeId = (currentEmployee != null) ? currentEmployee.getEmployee_id() : 1; // Tạm
+            if (currentEmployee == null) {
+                throw new Exception("Lỗi phiên đăng nhập. Không tìm thấy thông tin Employee.");
+            }
+            int employeeId = currentEmployee.getEmployee_id();
             
-            // Mở DAO và cập nhật (truyền cả status cũ và mới)
             dao = new WarehouseUnitDAO();
-            boolean success = dao.updateUnitStatus(unitId, oldStatus, newStatus, employeeId);
+            // NÂNG CẤP: Truyền lý do vào DAO
+            boolean success = dao.updateUnitStatus(unitId, oldStatus, newStatus, employeeId, reason.trim()); 
 
             if (!success) {
                 throw new Exception("Cập nhật thất bại. Dữ liệu không đổi.");
             }
             
-            // Thành công, quay lại trang Tồn kho
             response.sendRedirect(request.getContextPath() + "/warehouse/inventory");
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi cập nhật: " + e.getMessage());
-            doGet(request, response);
+            doGet(request, response); // Tải lại form khi có lỗi
         } finally {
             if (dao != null) dao.closeConnection();
         }

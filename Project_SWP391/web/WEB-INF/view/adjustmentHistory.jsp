@@ -59,6 +59,7 @@
             #main-content.sidebar-collapsed {
                 margin-left: 5rem;
             }
+            /* (CSS filter-form và detail-table giữ nguyên) */
             .filter-form {
                 padding: 20px;
                 background: #f9f9f9;
@@ -66,8 +67,8 @@
                 margin-bottom: 20px;
             }
             .filter-form form {
-                display: flex;
-                align-items: flex-end;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
                 gap: 15px;
             }
             .form-group {
@@ -89,6 +90,26 @@
             }
             .detail-table th, .detail-table td {
                 padding: 6px 8px;
+            }
+            /* (CSS pagination giữ nguyên) */
+            .pagination {
+                margin-top: 20px;
+            }
+            .pagination a, .pagination span {
+                display: inline-block;
+                padding: 8px 12px;
+                margin: 0 2px;
+                border: 1px solid #ccc;
+                color: #337ab7;
+                text-decoration: none;
+            }
+            .pagination span.current {
+                background-color: #337ab7;
+                color: white;
+                border-color: #337ab7;
+            }
+            .pagination a:hover {
+                background-color: #eee;
             }
         </style>
     </head>   
@@ -345,19 +366,43 @@
 
                 <div class="filter-form">
                     <form action="${pageContext.request.contextPath}/warehouse/history" method="GET">
+
                         <div class="form-group">
                             <label>Lọc theo Nhân viên:</label>
                             <select name="employeeId">
                                 <option value="0">-- Tất cả Nhân viên --</option>
                                 <c:forEach items="${employeeList}" var="emp">
                                     <option value="${emp.employee_id}" ${emp.employee_id == selectedEmployeeId ? 'selected' : ''}>
-                                        ${emp.bank_account} <%-- Lấy fullname từ trường bank_account (như đã lưu trong DAO) --%>
+                                        ${emp.bank_account} <%-- Lấy fullname --%>
                                     </option>
                                 </c:forEach>
                             </select>
                         </div>
-                        <%-- (Bạn có thể thêm bộ lọc Ngày ở đây) --%>
-                        <button type="submit" class="btn btn-primary">Lọc</button>
+
+                        <div class="form-group">
+                            <label>Lọc theo Loại thay đổi:</label>
+                            <select name="reasonType">
+                                <option value="" ${empty selectedReasonType ? 'selected' : ''}>-- Tất cả --</option>
+                                <option value="STATUS_CHANGE" ${selectedReasonType == 'STATUS_CHANGE' ? 'selected' : ''}>Thay đổi Tình trạng</option>
+                                <option value="TRANSFER" ${selectedReasonType == 'TRANSFER' ? 'selected' : ''}>Điều chuyển Vị trí</option>
+                            </select>
+                        </div>
+                        <div></div> <%-- Ô trống --%>
+
+                        <div class="form-group">
+                            <label>Từ ngày:</label>
+                            <input type="date" name="dateStart" value="${selectedDateStart}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Đến ngày:</label>
+                            <input type="date" name="dateEnd" value="${selectedDateEnd}">
+                        </div>
+
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="submit" class="btn btn-primary">Lọc</button>
+                            <a href="${pageContext.request.contextPath}/warehouse/history" class="btn btn-secondary" style="margin-left: 10px;">Reset</a>
+                        </div>
                     </form>
                 </div>
 
@@ -365,14 +410,8 @@
                 <table class="data-table detail-table">
                     <thead>
                         <tr>
-                            <th>Mã ĐC</th>
-                            <th>Ngày giờ</th>
-                            <th>Nhân viên</th>
-                            <th>Sản phẩm</th>
-                            <th>IMEI</th>
-                            <th>Chi tiết (Lý do)</th>
-                            <th>Vị trí (Hiện tại)</th>
-                            <th>Tình trạng (Hiện tại)</th>
+                            <th>Mã ĐC</th> <th>Ngày giờ</th> <th>Nhân viên</th> <th>Sản phẩm</th>
+                            <th>IMEI</th> <th>Chi tiết (Lý do)</th> <th>Vị trí (Hiện tại)</th> <th>Tình trạng (Hiện tại)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -392,7 +431,22 @@
                             <tr><td colspan="8" style="text-align: center;">Không tìm thấy lịch sử điều chỉnh nào.</td></tr>
                         </c:if>
                     </tbody>
-                </table></main>
+                </table>
+
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <a href="${pageContext.request.contextPath}/warehouse/history?page=${currentPage - 1}&employeeId=${selectedEmployeeId}&reasonType=${selectedReasonType}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">&laquo;</a>
+                    </c:if>
+                    <c:forEach begin="1" end="${totalPages}" var="i">
+                        <c:choose>
+                            <c:when test="${i == currentPage}"><span class="current">${i}</span></c:when>
+                            <c:otherwise><a href="${pageContext.request.contextPath}/warehouse/history?page=${i}&employeeId=${selectedEmployeeId}&reasonType=${selectedReasonType}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">${i}</a></c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <c:if test="${currentPage < totalPages}">
+                        <a href="${pageContext.request.contextPath}/warehouse/history?page=${currentPage + 1}&employeeId=${selectedEmployeeId}&reasonType=${selectedReasonType}&dateStart=${selectedDateStart}&dateEnd=${selectedDateEnd}">&raquo;</a>
+                    </c:if>
+                </div></main>
         </div>
 
         <!-- 

@@ -186,10 +186,59 @@ public class ReturnsDAO extends DBContext {
     }
 
     /**
-     * HÀM 3 (MỚI): Lấy Lịch sử Trả hàng
+     * HÀM 3 (MỚI): Đếm tổng số Phiếu Trả khớp với bộ lọc
      */
-    public List<ReturnHistoryDTO> getReturnHistory() throws Exception {
+    public int getReturnHistoryCount(String status, String dateStart, String dateEnd) throws Exception {
+        List<Object> params = new ArrayList<>();
+        int total = 0;
+
+        String query = "SELECT COUNT(r.return_id) "
+                + "FROM Returns r "
+                + "WHERE 1=1 ";
+
+        // Thêm các bộ lọc
+        addReturnFilterConditions(query, params, status, dateStart, dateEnd);
+
+        // Gắn query mới vào
+        String finalQuery = query;
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            ps = this.connection.prepareStatement(finalQuery);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Lỗi SQL khi đếm Returns: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * HÀM 4 (NÂNG CẤP): Lấy Lịch sử Trả hàng (CÓ LỌC và PHÂN TRANG)
+     */
+    public List<ReturnHistoryDTO> getReturnHistoryPaginated(String status, String dateStart, String dateEnd, int pageIndex, int pageSize) throws Exception {
         List<ReturnHistoryDTO> list = new ArrayList<>();
+        List<Object> params = new ArrayList<>();
+
+        // Câu truy vấn JOIN (giữ nguyên)
         String query = "SELECT "
                 + "    r.return_no, r.created_at AS returnDate, r.status, "
                 + "    u.fullname AS customerName, "
@@ -197,18 +246,30 @@ public class ReturnsDAO extends DBContext {
                 + "FROM Returns r "
                 + "JOIN Return_lines rl ON r.return_id = rl.return_id "
                 + "JOIN Orders o ON r.order_id = o.order_id "
-                + // Lấy đơn hàng
-                "JOIN Users u ON o.user_id = u.user_id "
-                + // Lấy khách hàng từ đơn hàng
-                "JOIN Product_units pu ON rl.unit_id = pu.unit_id "
+                + "JOIN Users u ON o.user_id = u.user_id "
+                + "JOIN Product_units pu ON rl.unit_id = pu.unit_id "
                 + "JOIN Products p ON pu.product_id = p.product_id "
-                + "ORDER BY r.created_at DESC";
+                + "WHERE 1=1 ";
 
-        Connection conn = this.connection;
+        // Thêm các bộ lọc
+        addReturnFilterConditions(query, params, status, dateStart, dateEnd);
+
+        // Gắn query mới vào
+        String finalQuery = query;
+
+        // Thêm Phân trang
+        finalQuery += " ORDER BY r.created_at DESC "
+                + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        params.add((pageIndex - 1) * pageSize);
+        params.add(pageSize);
+
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement(query);
+            ps = this.connection.prepareStatement(finalQuery);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
             rs = ps.executeQuery();
             while (rs.next()) {
                 ReturnHistoryDTO dto = new ReturnHistoryDTO();
@@ -222,7 +283,6 @@ public class ReturnsDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Lỗi SQL khi lấy lịch sử trả hàng: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -231,12 +291,34 @@ public class ReturnsDAO extends DBContext {
                 if (ps != null) {
                     ps.close();
                 }
-                // KHÔNG đóng conn, Servlet sẽ đóng
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return list;
+    }
+
+    /**
+     * HÀM PHỤ: Dùng chung để thêm điều kiện WHERE
+     */
+    private void addReturnFilterConditions(String query, List<Object> params, String status, String dateStart, String dateEnd) {
+        // Lọc theo Trạng thái
+        if (status != null && !status.isEmpty()) {
+            query += " AND r.status = ? ";
+            params.add(status);
+        }
+
+        // Lọc theo Ngày Bắt đầu
+        if (dateStart != null && !dateStart.isEmpty()) {
+            query += " AND r.created_at >= ? ";
+            params.add(dateStart);
+        }
+
+        // Lọc theo Ngày Kết thúc
+        if (dateEnd != null && !dateEnd.isEmpty()) {
+            query += " AND r.created_at <= ? ";
+            params.add(dateEnd + " 23:59:59"); // Lấy đến cuối ngày
+        }
     }
 
     /**
