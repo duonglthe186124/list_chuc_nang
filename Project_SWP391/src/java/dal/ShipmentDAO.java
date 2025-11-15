@@ -1,11 +1,15 @@
 package dal;
 
 import dto.Response_ShipmentDTO;
+import dto.ShipmentDTO;
+import dto.ShipmentLineDTO;
+import dto.ShipmentUnitDTO;
 import model.Shipments;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Shipment_lines;
+import model.Shipment_units;
 import util.DBContext;
 
 /**
@@ -192,5 +196,78 @@ public class ShipmentDAO extends DBContext {
         StringBuilder sql = new StringBuilder();
         sql.append("");
         return list;
+    }
+
+    public ShipmentDTO getShipment(int id) {
+        String sql = "SELECT * FROM Shipments WHERE shipment_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ShipmentDTO s = new ShipmentDTO();
+                s.setShipmentId(rs.getInt("shipment_id"));
+                s.setShipmentNo(rs.getString("shipment_no"));
+                s.setStatus(rs.getString("status"));
+                s.setNote(rs.getString("note"));
+                s.setRequestedAt(rs.getTimestamp("requested_at"));
+                return s;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<ShipmentLineDTO> getShipmentLines(int shipmentId) {
+        List<ShipmentLineDTO> list = new ArrayList<>();
+        String sql = "SELECT sl.*, p.name FROM Shipment_lines sl JOIN Products p ON sl.product_id = p.product_id WHERE shipment_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, shipmentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ShipmentLineDTO line = new ShipmentLineDTO();
+                line.setLineId(rs.getInt("line_id"));
+                line.setShipmentId(rs.getInt("shipment_id"));
+                line.setProductId(rs.getInt("product_id"));
+                line.setQty(rs.getInt("qty"));
+                line.setProductName(rs.getString("name"));
+                list.add(line);
+            }
+        } catch (Exception ex) {
+        }
+        return list;
+    }
+
+    public List<ShipmentUnitDTO> getShipmentUnits(int shipmentId) {
+        List<ShipmentUnitDTO> units = new ArrayList<>();
+        String sql = "SELECT su.*, pu.imei, pu.serial_number FROM Shipment_units su JOIN Product_units pu ON su.unit_id = pu.unit_id JOIN Shipment_lines sl ON su.line_id = sl.line_id WHERE sl.shipment_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, shipmentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ShipmentUnitDTO unit = new ShipmentUnitDTO();
+                unit.setId(rs.getInt("id"));
+                unit.setLineId(rs.getInt("line_id"));
+                unit.setUnitId(rs.getInt("unit_id"));
+                unit.setImei(rs.getString("imei"));
+                unit.setSerial(rs.getString("serial_number"));
+                units.add(unit);
+            }
+        } catch (Exception ex) {
+        }
+        return units;
+    }
+
+    public double calculateTotalValue(int shipmentId) {
+        String sql = "SELECT SUM(pu.purchase_price) AS total FROM Shipment_units su JOIN Product_units pu ON su.unit_id = pu.unit_id JOIN Shipment_lines sl ON su.line_id = sl.line_id WHERE sl.shipment_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, shipmentId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (Exception ignored) {
+        }
+        return 0;
     }
 }

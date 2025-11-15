@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.UserDAO;
 import dal.WarehouseDAO; 
 import dto.InventoryDetailDTO; 
 import model.Brands;
@@ -15,6 +16,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Users;
 
 @WebServlet(name = "InventoryListServlet", urlPatterns = {"/warehouse/inventory"})
 public class InventoryListServlet extends HttpServlet {
@@ -23,6 +26,21 @@ private static final int PAGE_SIZE = 15;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 23)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
         
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");

@@ -1,5 +1,6 @@
 package controller.receipt_good;
 
+import dal.UserDAO;
 import dto.Response_TransactionDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,7 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Arrays;
+import model.Users;
 import service.TransactionService;
 import static util.Validation.*;
 
@@ -32,6 +35,21 @@ public class transactionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        UserDAO user_dao = new UserDAO();
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 14)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
+
         String raw_search = request.getParameter("search");
         String raw_status = request.getParameter("status");
         String raw_page_size = request.getParameter("pageSize");

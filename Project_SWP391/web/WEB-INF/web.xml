@@ -211,7 +211,7 @@
     <servlet>
         <servlet-name>AdjustmentHistoryServlet</servlet-name>
         <servlet-class>controller.AdjustmentHistoryServlet</servlet-class>
-       </servlet>
+    </servlet>
     <servlet>
         <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.receipt_good.ConfirmPurchaseOrderServlet</servlet-class>
@@ -243,6 +243,10 @@
     <servlet>
         <servlet-name>DeleteSupplierServlet</servlet-name>
         <servlet-class>controller.receipt_good.DeleteSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewShipmentServlet</servlet-name>
+        <servlet-class>controller.receipt_good.ViewShipmentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -447,7 +451,7 @@
     <servlet-mapping>
         <servlet-name>AdjustmentHistoryServlet</servlet-name>
         <url-pattern>/warehouse/history</url-pattern>
-       </servlet-mapping>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
         <url-pattern>/confirm</url-pattern>
@@ -483,8 +487,11 @@
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
     </welcome-file-list>
-    
     <!-- Session Configuration -->
+    <servlet-mapping>
+        <servlet-name>ViewShipmentServlet</servlet-name>
+        <url-pattern>/inbound/shipments/view</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>120</session-timeout>
     </session-config>

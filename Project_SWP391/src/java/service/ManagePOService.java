@@ -113,13 +113,13 @@ public class ManagePOService {
         return "PO-" + date_code + "-" + no;
     }
 
-    public int add_purchase_order(String po_code, int supplier_id, String note, int[] product_id, int[] qty, float[] unit_price) {
+    public int add_purchase_order(String po_code, int supplier_id, String note,  int user_id, int[] product_id, int[] qty, float[] unit_price) {
         float total_po = 0;
         for (int i = 0; i < product_id.length; i++) {
             total_po += qty[i] * unit_price[i];
         }
 
-        int po_id = add_header(po_code, supplier_id, total_po, note);
+        int po_id = add_header(po_code, supplier_id, total_po, note, user_id);
 
         add_lines(po_id, product_id, qty, unit_price);
         update_po_code();
@@ -127,8 +127,8 @@ public class ManagePOService {
         return po_id;
     }
 
-    private int add_header(String po_code, int supplier_id, float total_po, String note) {
-        Purchase_orders order = new Purchase_orders(-1, po_code, supplier_id, 6, null, null, total_po, note);
+    private int add_header(String po_code, int supplier_id, float total_po, String note, int user_id) {
+        Purchase_orders order = new Purchase_orders(-1, po_code, supplier_id, user_id, null, null, total_po, note);
         return po_dao.add_purchase_order(order);
     }
 

@@ -456,24 +456,24 @@
 
                 <div class="main-header" id="main-header">
                     <h3>
-                        Transaction No
+                        Phiếu nhập kho #
                         <span class="receipt-no">${view.receipt_no}</span>
                     </h3>
                 </div>
 
                 <div class="header-info">
                     <section class="header-card card">
-                        <h4 class="block-title">Header Information</h4>
+                        <h4 class="block-title">Thông tin tổng quan</h4>
                         <div class="header-columns">
                             <div class="col">
                                 <dl>
-                                    <dt>PO No</dt>
-                                    <dd><a href="#" class="link">${view.po_code}</a></dd>
-                                    <dt>Received by</dt>
+                                    <dt>Phiếu mua#</dt>
+                                    <dd>${view.po_code}</dd>
+                                    <dt>Người tạo</dt>
                                     <dd>${view.fullname} — ${view.employee_code}</dd>
-                                    <dt>Supplier</dt>
+                                    <dt>Nhà cung cấp</dt>
                                     <dd>${view.supplier_name}</dd>
-                                    <dt>Note / Reason</dt>
+                                    <dt>Ghi chú / Reason</dt>
                                     <c:if test="${not empty view.note}">
                                         <dd>${view.note}</dd>
                                     </c:if>
@@ -484,11 +484,11 @@
                             </div>
                             <div class="col">
                                 <dl>
-                                    <dt>PO Date</dt>
+                                    <dt>Ngày tạo hoá đơn</dt>
                                     <dd>${view.po_date}</dd>
-                                    <dt>Received At</dt>
+                                    <dt>Được nhận ngày</dt>
                                     <dd>${view.received_at}</dd>
-                                    <dt>Status</dt>
+                                    <dt>Trạng thái</dt>
                                     <dd>
                                         <span class="status">${view.status}</span>
                                     </dd>
@@ -552,14 +552,14 @@
                                     </td>
                                     <td class="center qty-expected">${l.qty_expected}</td>
                                     <td class="center qty-received">${l.qty_received}</td>
-                                    <td class="right unit-price">${l.unit_price}</td>
+                                    <td class="right unit-price"><fmt:formatNumber value="${l.unit_price}" type="number" maxFractionDigits="2" /></td>
                                     <td class="right line-total"><fmt:formatNumber value="${l.qty_received * l.unit_price}" type="number" maxFractionDigits="2" /></td>
                                     <td class="center discrepancy">${l.qty_received - l.qty_expected}</td>
                                     <td class="center">${l.location}</td>
                                     <td class="small">${l.note}</td>
                                     <td class="center">
                                         <button class="btn small-btn toggle-serials">
-                                            Show Serials (${l.qty_received})
+                                            Xem đơn vị (${l.qty_received})
                                         </button>
                                     </td>
                                 </tr>
@@ -595,12 +595,7 @@
 
                 <section class="summary-bottom card">
                     <div class="actions-left">
-                        <a class="btn ghost" href="${pageContext.request.contextPath}/inbound/transactions">Go to previous page</a>
-                    </div>
-                    <div class="actions-right">
-                        <button class="btn">Print</button>
-                        <button class="btn">Export PDF</button>
-                        <button class="btn">Download CSV</button>
+                        <a class="btn ghost" href="${pageContext.request.contextPath}/inbound/transactions">Quay lại</a>
                     </div>
                 </section>
             </main>

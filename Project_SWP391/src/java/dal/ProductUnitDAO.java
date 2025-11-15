@@ -199,4 +199,42 @@ public class ProductUnitDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public boolean isUnitDetailExists(String imei, String serialNumber) {
+        String currentImei = imei != null ? imei.trim() : "";
+        String currentSerial = serialNumber != null ? serialNumber.trim() : "";
+
+        if (currentImei.isEmpty() && currentSerial.isEmpty()) {
+            return false;
+        }
+        
+        StringBuilder checkSql = new StringBuilder("SELECT 1 FROM Product_units WHERE 1=0 ");
+
+        boolean hasImei = !currentImei.isEmpty();
+        boolean hasSerial = !currentSerial.isEmpty();
+
+        if (hasImei) {
+            checkSql.append(" OR imei = ? ");
+        }
+        if (hasSerial) {
+            checkSql.append(" OR serial_number = ? "); 
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(checkSql.toString())) {
+            int index = 1;
+            if (hasImei) {
+                ps.setString(index++, currentImei);
+            }
+            if (hasSerial) {
+                ps.setString(index++, currentSerial);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
 }

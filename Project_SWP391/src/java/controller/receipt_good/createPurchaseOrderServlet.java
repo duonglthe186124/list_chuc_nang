@@ -1,5 +1,6 @@
 package controller.receipt_good;
 
+import dal.UserDAO;
 import dto.Response_POHeaderDTO;
 import dto.Response_POLineDTO;
 import dto.Response_ProductDTO;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import model.Users;
 import service.EmailService;
 import service.ManagePOService;
 import static util.Validation.*;
@@ -31,6 +33,20 @@ public class createPurchaseOrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 13)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
         String raw_po_id = request.getParameter("id");
 
         Response_POHeaderDTO poheader = null;
@@ -75,6 +91,18 @@ public class createPurchaseOrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 13)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
 
         String raw_po_id = request.getParameter("id");
 
@@ -178,7 +206,7 @@ public class createPurchaseOrderServlet extends HttpServlet {
             }
         }
 
-        int po_id = service.add_purchase_order(po_code, supplier_id, note, product_id, qty, unit_price);
+        int po_id = service.add_purchase_order(po_code, supplier_id, note, user.getUser_id(), product_id, qty, unit_price);
         try {
             String supplier_email = service.get_supplier_email_by_id(supplier_id);
 

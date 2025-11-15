@@ -3,16 +3,19 @@ package controller;
 import dal.EmployeeDAO;
 import dal.PositionDAO;
 import dal.RoleDAO;
+import dal.UserDAO;
 import dto.EmployeeInfoDTO;
 import dto.EmployeeFormDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Users;
 import service.EmployeeService;
 
 public class EmployeeController extends HttpServlet {
@@ -33,6 +36,20 @@ public class EmployeeController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            resp.sendRedirect(req.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 16)) {
+            resp.sendRedirect(req.getContextPath() + "/404");
+            return;
+        }
+        
         String action = req.getParameter("action");
 
         if (action == null) {

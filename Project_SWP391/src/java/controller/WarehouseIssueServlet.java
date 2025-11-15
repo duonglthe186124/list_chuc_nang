@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.UserDAO;
 import model.Users;
 import service.WarehouseIssueService; 
 
@@ -18,6 +19,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "WarehouseIssueServlet", urlPatterns = {"/warehouse/issue"})
 public class WarehouseIssueServlet extends HttpServlet {
@@ -25,6 +27,20 @@ public class WarehouseIssueServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 22)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
         // Chuyển đến trang JSP MỚI
         request.getRequestDispatcher("/WEB-INF/view/warehouseIssue.jsp").forward(request, response);
     }
