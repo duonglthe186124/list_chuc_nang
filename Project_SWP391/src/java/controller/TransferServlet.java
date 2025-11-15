@@ -21,9 +21,6 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "TransferServlet", urlPatterns = {"/warehouse/transfer"})
 public class TransferServlet extends HttpServlet {
 
-    /**
-     * doGet: Xử lý tìm kiếm IMEI
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -36,15 +33,12 @@ public class TransferServlet extends HttpServlet {
         TransferDAO containerDao = null;
 
         try {
-            // Luôn tải danh sách Containers (cho dropdown)
             containerDao = new TransferDAO();
 
             // SỬA: Nhận về List<ContainerDTO>
             List<ContainerDTO> containerList = containerDao.getAllContainersWithLocation();
             request.setAttribute("containerList", containerList);
-
             if (imei != null && !imei.trim().isEmpty()) {
-                // Tìm kiếm IMEI
                 dao = new TransferDAO();
                 TransferDTO unitDetails = dao.getUnitForTransfer(imei.trim());
 

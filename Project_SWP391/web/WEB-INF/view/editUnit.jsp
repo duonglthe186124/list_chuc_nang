@@ -336,21 +336,17 @@
                 <hr>
                 <a href="${pageContext.request.contextPath}/warehouse/inventory" class="btn btn-secondary">&larr; Quay lại Danh sách</a>
                 <br><br>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <c:if test="${not empty unit}">
                     <div class="form-container">
                         <form action="${pageContext.request.contextPath}/warehouse/editUnit" method="POST">
                             <input type="hidden" name="unitId" value="${unit.unit_id}">
                             <input type="hidden" name="oldStatus" value="${unit.status}">
-
                             <div class="form-row">
                                 <div class="form-group"><label>Sản phẩm:</label><div class="static-data">${productName}</div></div>
                             </div>
-
                             <div class="form-row">
                                 <div class="form-group"><label>IMEI:</label><div class="static-data">${unit.imei}</div></div>
                                 <div class="form-group">

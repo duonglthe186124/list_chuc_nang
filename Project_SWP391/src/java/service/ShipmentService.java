@@ -6,6 +6,9 @@ import dal.ProductUnitDAO;
 import dal.ShipmentDAO;
 import dto.Response_OrderInfoDTO;
 import dto.Response_OrderListDTO;
+import dto.ShipmentDTO;
+import dto.ShipmentLineDTO;
+import dto.ShipmentUnitDTO;
 import java.util.ArrayList;
 import java.util.List;
 import model.Shipment_lines;
@@ -57,5 +60,23 @@ public class ShipmentService {
             pu_dao.add_shipment_unit(line_id.get(i), unit_id);
 
         }
+    }
+
+    private ShipmentDAO shipmentDAO = new ShipmentDAO();
+
+    public ShipmentDTO getShipmentById(int id) {
+        return shipmentDAO.getShipment(id);
+    }
+
+    public List<ShipmentLineDTO> getShipmentLines(int shipmentId) {
+        return shipmentDAO.getShipmentLines(shipmentId);
+    }
+
+    public List<ShipmentUnitDTO> getShipmentUnits(int shipmentId) {
+        return shipmentDAO.getShipmentUnits(shipmentId);
+    }
+
+    public double getTotalShipmentValue(int shipmentId) {
+        return shipmentDAO.calculateTotalValue(shipmentId);
     }
 }

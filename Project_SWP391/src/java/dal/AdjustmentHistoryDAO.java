@@ -4,10 +4,6 @@
  */
 package dal;
 
-/**
- *
- * @author Ha Trung KI
- */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -190,6 +186,7 @@ public class AdjustmentHistoryDAO extends DBContext {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -201,7 +198,6 @@ public class AdjustmentHistoryDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
             try {
                 if (rs != null) {
@@ -217,9 +213,7 @@ public class AdjustmentHistoryDAO extends DBContext {
         return list;
     }
 
-    /**
-     * HÀM 3: Đóng kết nối
-     */
+    // Hàm 3: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

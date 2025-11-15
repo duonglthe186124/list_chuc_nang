@@ -12,20 +12,18 @@ public class WarehouseUnitDAO extends DBContext {
     public WarehouseUnitDAO() throws Exception {
         super();
         if (this.connection == null) {
-            throw new Exception("Lỗi nghiêm trọng: WarehouseUnitDAO không thể kết nối CSDL.");
+            throw new Exception("Lỗi WarehouseUnitDAO: Không thể kết nối CSDL.");
         }
     }
 
-    /**
-     * Hàm 1: Lấy thông tin chi tiết của 1 IMEI (unit)
-     */
+    // Hàm 1: Lấy thông tin chi tiết của 1 IMEI (unit)
     public Product_units getUnitById(int unitId) throws Exception {
         Product_units unit = null;
         String query = "SELECT * FROM Product_units WHERE unit_id = ?";
-        Connection conn = this.connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
+            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             ps.setInt(1, unitId);
             rs = ps.executeQuery();
@@ -89,7 +87,6 @@ public class WarehouseUnitDAO extends DBContext {
 
             this.connection.commit(); // Lưu thay đổi
             return true;
-
         } catch (Exception e) {
             e.printStackTrace();
             if (this.connection != null) {
@@ -114,14 +111,36 @@ public class WarehouseUnitDAO extends DBContext {
      * Hàm 3: Lấy tên sản phẩm (để hiển thị)
      */
     public String getProductNameById(int productId) throws Exception {
-        // (Code hàm này giữ nguyên như cũ)
-        // ...
-        return "Tên Sản phẩm"; // (Code cũ của bạn)
+        String productName = "";
+        String query = "SELECT name FROM Products WHERE product_id = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = this.connection;
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                productName = rs.getString("name");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return productName;
     }
 
-    /**
-     * Hàm 4: Hàm để đóng kết nối thủ công
-     */
+    // Hàm 4: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

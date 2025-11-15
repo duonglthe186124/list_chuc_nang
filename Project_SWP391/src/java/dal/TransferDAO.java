@@ -4,10 +4,6 @@
  */
 package dal;
 
-/**
- *
- * @author Ha Trung KI
- */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,9 +23,7 @@ public class TransferDAO extends DBContext {
         }
     }
 
-    /**
-     * Hàm 1: Tìm 1 IMEI (và vị trí hiện tại của nó)
-     */
+    // Hàm 1: Tìm 1 IMEI (và vị trí hiện tại của nó)
     public TransferDTO getUnitForTransfer(String imei) throws Exception {
         TransferDTO dto = null;
         String query = "SELECT "
@@ -43,6 +37,7 @@ public class TransferDAO extends DBContext {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection conn = this.connection;
         try {
             Connection conn = this.connection;
             ps = conn.prepareStatement(query);
@@ -59,7 +54,6 @@ public class TransferDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
             try {
                 if (rs != null) {
@@ -89,6 +83,7 @@ public class TransferDAO extends DBContext {
 
         PreparedStatement ps = null;
         ResultSet rs = null;
+        Connection conn = this.connection;
         try {
             Connection conn = this.connection;
             ps = conn.prepareStatement(query);
@@ -103,7 +98,6 @@ public class TransferDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
             try {
                 if (rs != null) {
@@ -119,22 +113,19 @@ public class TransferDAO extends DBContext {
         return list;
     }
 
-    /**
-     * Hàm 3: Xử lý Điều chuyển (Dùng Transaction)
-     */
+    // Hàm 3: Xử lý Điều chuyển (Dùng Transaction và Ghi Log)
     public boolean processTransfer(int unitId, int newContainerId, int employeeId, String reason) throws Exception {
         PreparedStatement psUpdateUnit = null;
         PreparedStatement psLogAdjustment = null;
-
+        Connection conn = this.connection;
         String sqlUpdateUnit = "UPDATE Product_units SET container_id = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ?";
         String sqlLog = "INSERT INTO Stock_adjustments (unit_id, reason, created_by) VALUES (?, ?, ?)";
-
         try {
             Connection conn = this.connection;
             conn.setAutoCommit(false); // Bắt đầu Transaction
 
             // 1. Cập nhật Vị trí (Container) mới cho IMEI
-            psUpdateUnit = conn.prepareStatement(sqlUpdateUnit);
+            psUpdateUnit = this.connection.prepareStatement(sqlUpdateUnit);
             psUpdateUnit.setInt(1, newContainerId);
             psUpdateUnit.setInt(2, unitId);
             int affectedRows = psUpdateUnit.executeUpdate();
@@ -144,15 +135,14 @@ public class TransferDAO extends DBContext {
             }
 
             // 2. Ghi log vào Stock_adjustments
-            psLogAdjustment = conn.prepareStatement(sqlLog);
+            psLogAdjustment = this.connection.prepareStatement(sqlLog);
             psLogAdjustment.setInt(1, unitId);
             psLogAdjustment.setString(2, reason);
             psLogAdjustment.setInt(3, employeeId);
             psLogAdjustment.executeUpdate();
 
-            conn.commit(); // Lưu tất cả thay đổi
+            this.connection.commit(); // Lưu
             return true;
-
         } catch (Exception e) {
             Connection conn = this.connection;
             e.printStackTrace();
@@ -179,9 +169,7 @@ public class TransferDAO extends DBContext {
         }
     }
 
-    /**
-     * Hàm 4: Hàm để đóng kết nối thủ công
-     */
+    // Hàm 4: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

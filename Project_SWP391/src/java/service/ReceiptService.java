@@ -134,4 +134,59 @@ public class ReceiptService {
             }
         }
     }
+    
+    public String validateReceiptData(String receipt_code, int receipt_creator, 
+                                    int[] received_qty, String receipt_note, 
+                                    int[] location_id, String[] imei, 
+                                    String[] serial_number, Date[] warranty_start, 
+                                    Date[] warranty_end) {
+
+        if (received_qty == null || location_id == null || received_qty.length == 0) {
+            return "Phiếu nhập phải có ít nhất một mặt hàng.";
+        }
+        
+        int totalReceivedUnits = 0;
+        for (int qty : received_qty) {
+            if (qty < 0) {
+                return "Số lượng nhận phải lớn hơn hoặc bằng 0.";
+            }
+            totalReceivedUnits += qty;
+        }
+        
+        if (imei == null || serial_number == null || totalReceivedUnits != imei.length) {
+             return "Lỗi cấu trúc: Tổng số đơn vị chi tiết (IMEI/Serial) không khớp với tổng số lượng nhận.";
+        }
+
+        for (int i = 0; i < imei.length; i++) {
+            String currentImei = imei[i] != null ? imei[i].trim() : "";
+            String currentSerial = serial_number[i] != null ? serial_number[i].trim() : "";
+            
+            if (currentImei.isEmpty() || currentSerial.isEmpty()) {
+                return "IMEI hoặc Serial Number không được để trống cho đơn vị thứ " + (i + 1) + ".";
+            }
+            
+            if (warranty_start != null && warranty_end != null 
+                    && i < warranty_start.length && i < warranty_end.length) {
+                 
+                Date start = warranty_start[i];
+                Date end = warranty_end[i];
+                 
+                if (start != null && end != null && start.after(end)) {
+                    return "Ngày bắt đầu bảo hành không thể sau ngày kết thúc bảo hành cho đơn vị thứ " + (i + 1) + ".";
+                }
+            }
+            else
+            {
+                return "Ngày bắt đầu bảo hành không thể trống cho đơn vị thứ " + (i + 1) + ".";
+            }
+            
+            if (!currentImei.isEmpty() || !currentSerial.isEmpty()) {
+                if (unit_dao.isUnitDetailExists(currentImei, currentSerial)) {
+                    return "IMEI/Serial Number đã tồn tại trong hệ thống cho đơn vị thứ " + (i + 1) + ".";
+                }
+            }
+        }
+        
+        return null;
+    }
 }

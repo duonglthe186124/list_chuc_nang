@@ -337,68 +337,44 @@
             <main
                 id="main-content"
                 class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
-                ><h2>Tạo Phiếu Trả Hàng</h2>
-                <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary">&larr; Quay lại Lịch sử</a>
-                <hr>
-
+                ><h2 class="text-2xl font-bold">Tạo Phiếu Trả Hàng</h2>
+                <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary mt-2">&larr; Quay lại Lịch sử</a>
+                <hr class="my-4">
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <div class="form-container">
                     <form action="${pageContext.request.contextPath}/warehouse/returns" method="GET">
                         <div class="form-group">
                             <label>Nhập IMEI sản phẩm bị trả lại (phải có status 'SOLD'):</label>
                             <input type="text" name="imei" value="${unitDetails.imei}" placeholder="Quét hoặc nhập IMEI..." required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Tìm kiếm sản phẩm</button>
+                        <button type="submit" class="btn btn-primary mt-2">Tìm kiếm sản phẩm</button>
                     </form>
                 </div>
-
                 <c:if test="${not empty unitDetails}">
                     <hr>
-                    <h2>Xác nhận Trả hàng cho IMEI: ${unitDetails.imei}</h2>
+                    <h2 class="text-xl font-bold mt-4">Xác nhận Trả hàng cho IMEI: ${unitDetails.imei}</h2>
                     <div class="form-container">
                         <form action="${pageContext.request.contextPath}/warehouse/returns" method="POST">
                             <input type="hidden" name="unitId" value="${unitDetails.unitId}">
                             <input type="hidden" name="orderId" value="${unitDetails.orderId}">
                             <input type="hidden" name="imei" value="${unitDetails.imei}">
-
-                            <h3>B. Thông tin Sản phẩm & Khách hàng </h3>
+                            <h3 class="font-bold mb-2">B. Thông tin Sản phẩm & Khách hàng (6 trường)</h3>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Mã sản phẩm (SKU):</label>
-                                    <div class="static-info">${unitDetails.skuCode}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Tên sản phẩm:</label>
-                                    <div class="static-info">${unitDetails.productName}</div>
-                                </div>
+                                <div class="form-group"><label>Mã sản phẩm (SKU):</label><div class="static-info">${unitDetails.skuCode}</div></div>
+                                <div class="form-group"><label>Tên sản phẩm:</label><div class="static-info">${unitDetails.productName}</div></div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Tình trạng hiện tại:</label>
-                                    <div class="static-info">${unitDetails.currentStatus}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Từ Đơn hàng gốc (ID):</label>
-                                    <div class="static-info">${unitDetails.orderId}</div>
-                                </div>
+                                <div class="form-group"><label>Tình trạng hiện tại:</label><div class="static-info">${unitDetails.currentStatus}</div></div>
+                                <div class="form-group"><label>Từ Đơn hàng gốc (ID):</label><div class="static-info">${unitDetails.orderId}</div></div>
                             </div>
                             <div class="form-row">
-                                <div class="form-group">
-                                    <label>Tên Khách hàng:</label>
-                                    <div class="static-info">${unitDetails.customerName}</div>
-                                </div>
-                                <div class="form-group">
-                                    <label>SĐT Khách hàng:</label>
-                                    <div class="static-info">${unitDetails.customerPhone}</div>
-                                </div>
+                                <div class="form-group"><label>Tên Khách hàng:</label><div class="static-info">${unitDetails.customerName}</div></div>
+                                <div class="form-group"><label>SĐT Khách hàng:</label><div class="static-info">${unitDetails.customerPhone}</div></div>
                             </div>
-
-                            <hr>
-
-                            <h3>C. Thông tin Trả hàng </h3>
+                            <hr class="my-4">
+                            <h3 class="font-bold mb-2">C. Thông tin Trả hàng (2 trường input)</h3>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>Lý do trả hàng (Dropdown):</label>
@@ -417,11 +393,9 @@
                                     <textarea name="note" rows="4" placeholder="Nhập ghi chú chi tiết..."></textarea>
                                 </div>
                             </div>
-
-                            <hr>
-
+                            <hr class="my-4">
                             <div class="supplier-info">
-                                <h3>Thông tin Nhà cung cấp (Để đổi trả nếu lỗi)</h3>
+                                <h3 class="font-bold mb-2">Thông tin Nhà cung cấp (3 trường)</h3>
                                 <div class="form-row">
                                     <div class="form-group"><label>Tên NCC:</label><div class="static-info">${unitDetails.supplierName}</div></div>
                                     <div class="form-group"><label>SĐT NCC:</label><div class="static-info">${unitDetails.supplierPhone}</div></div>
@@ -430,9 +404,7 @@
                                     <div class="form-group"><label>Email NCC:</label><div class="static-info">${unitDetails.supplierEmail}</div></div>
                                 </div>
                             </div>
-
-                            <br>
-                            <button type="submit" class="btn btn-primary">Xác nhận Trả hàng (Đổi status thành 'RETURNED')</button>
+                            <button type="submit" class="btn btn-primary mt-4">Xác nhận Trả hàng (Đổi status thành 'RETURNED')</button>
                         </form>
                     </div>
                 </c:if></main>

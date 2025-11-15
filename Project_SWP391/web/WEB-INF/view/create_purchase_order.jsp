@@ -535,14 +535,6 @@
                                         <span>Tổng phụ</span>
                                         <span class="font-medium" id="summary-subtotal">0.00 VND</span>
                                     </div>
-                                    <div class="flex justify-between items-center text-gray-700">
-                                        <span>Giảm giá</span>
-                                        <span class="font-medium" id="summary-discount">0.00 VND</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-gray-700" id="tax-line-container">
-                                        <span>Thuế (10%)</span>
-                                        <span class="font-medium" id="summary-tax">0.00 VND</span>
-                                    </div>
                                     <hr class="my-2 border-t border-gray-300" />
                                     <div class="flex justify-between items-center text-lg font-bold text-gray-900">
                                         <span>Tổng cộng</span>

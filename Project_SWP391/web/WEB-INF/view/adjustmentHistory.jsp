@@ -359,11 +359,9 @@
                 class="flex-1 ml-64 bg-white p-6 lg:p-8 transition-all duration-300 ease-in-out"
                 ><h2>Lịch sử Điều chỉnh Kho</h2>
                 <hr>
-
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
-
                 <div class="filter-form">
                     <form action="${pageContext.request.contextPath}/warehouse/history" method="GET">
 
@@ -405,7 +403,6 @@
                         </div>
                     </form>
                 </div>
-
                 <h2>Kết quả</h2>
                 <table class="data-table detail-table">
                     <thead>

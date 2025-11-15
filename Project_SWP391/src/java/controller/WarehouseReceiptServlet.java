@@ -5,6 +5,7 @@
 
 package controller;
 
+import dal.UserDAO;
 import model.Users;
 import service.WarehouseImportService;
 
@@ -18,6 +19,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "WarehouseReceiptServlet", urlPatterns = {"/warehouse/receipt"})
 public class WarehouseReceiptServlet extends HttpServlet {
@@ -25,6 +27,19 @@ public class WarehouseReceiptServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 22)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
         // (Sẽ load NCC, Sản phẩm ở đây sau)
         request.getRequestDispatcher("/WEB-INF/view/warehouseReceipt.jsp").forward(request, response);
     }

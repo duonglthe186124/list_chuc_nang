@@ -4,12 +4,15 @@
  */
 package controller.receipt_good;
 
+import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Users;
 
 /**
  *
@@ -20,6 +23,20 @@ public class InboundDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        UserDAO user_dao = new UserDAO();
+
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+
+        Users user = (Users) session.getAttribute("account");
+        if (user == null || !user_dao.check_role(user.getRole_id(), 23)) {
+            response.sendRedirect(request.getContextPath() + "/404");
+            return;
+        }
+        
         request.getRequestDispatcher("/WEB-INF/view/inbound_dashboard.jsp").forward(request, response);
     }
 

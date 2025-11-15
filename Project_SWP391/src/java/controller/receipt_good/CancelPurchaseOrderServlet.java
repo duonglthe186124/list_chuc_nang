@@ -21,6 +21,7 @@ public class CancelPurchaseOrderServlet extends HttpServlet {
             throws ServletException, IOException {
         String raw_po_id = request.getParameter("id");
 
+        System.out.println(raw_po_id);
         int po_id;
         try {
             po_id = Integer.parseInt(raw_po_id);

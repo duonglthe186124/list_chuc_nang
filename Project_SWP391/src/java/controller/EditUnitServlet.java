@@ -1,9 +1,8 @@
 package controller;
 
-import dal.WarehouseUnitDAO; 
+import dal.WarehouseUnitDAO;
 import model.Product_units;
-import model.Employees;
-
+import model.Employees; 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,46 +13,35 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "EditUnitServlet", urlPatterns = {"/warehouse/editUnit"})
 public class EditUnitServlet extends HttpServlet {
 
-    /**
-     * doGet: Hiển thị Form Sửa
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
-        
         WarehouseUnitDAO dao = null;
-        WarehouseUnitDAO nameDao = null; 
-        
+        WarehouseUnitDAO nameDao = null;
         try {
             int unitId = Integer.parseInt(request.getParameter("unitId"));
-            
-            // Mở DAO 1: Lấy chi tiết IMEI
             dao = new WarehouseUnitDAO();
             Product_units unitToEdit = dao.getUnitById(unitId);
-            
             if (unitToEdit == null) {
                 throw new Exception("Không tìm thấy IMEI với ID: " + unitId);
             }
-            
-            // Mở DAO 2: Lấy tên Sản phẩm
             nameDao = new WarehouseUnitDAO();
             String productName = nameDao.getProductNameById(unitToEdit.getProduct_id());
-
             request.setAttribute("unit", unitToEdit);
             request.setAttribute("productName", productName);
-
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi tải trang sửa: " + e.getMessage());
         } finally {
-            if (dao != null) dao.closeConnection();
-            if (nameDao != null) nameDao.closeConnection();
+            if (dao != null) {
+                dao.closeConnection();
+            }
+            if (nameDao != null) {
+                nameDao.closeConnection();
+            }
         }
-        
-        // Chú ý: Đây là file fragment
         request.getRequestDispatcher("/WEB-INF/view/editUnit.jsp").forward(request, response);
     }
 
@@ -63,12 +51,9 @@ public class EditUnitServlet extends HttpServlet {
 @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         request.setCharacterEncoding("UTF-8");
         WarehouseUnitDAO dao = null;
-        
         try {
-            // Lấy dữ liệu từ form
             int unitId = Integer.parseInt(request.getParameter("unitId"));
             String newStatus = request.getParameter("status");
             String oldStatus = request.getParameter("oldStatus"); 
@@ -96,13 +81,14 @@ public class EditUnitServlet extends HttpServlet {
             }
             
             response.sendRedirect(request.getContextPath() + "/warehouse/inventory");
-
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Lỗi cập nhật: " + e.getMessage());
             doGet(request, response); // Tải lại form khi có lỗi
         } finally {
-            if (dao != null) dao.closeConnection();
+            if (dao != null) {
+                dao.closeConnection();
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ package controller;
 
 import dal.ReturnsDAO;
 import dto.ReturnHistoryDTO;
-
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -14,6 +13,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Users;
 
 @WebServlet(name = "ReturnListServlet", urlPatterns = {"/warehouse/returnsList"})
 public class ReturnListServlet extends HttpServlet {
