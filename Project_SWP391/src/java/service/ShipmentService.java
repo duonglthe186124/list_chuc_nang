@@ -37,8 +37,8 @@ public class ShipmentService {
         return od_list_dao.get_order_details(order_id);
     }
 
-    public void add_shipment(int order_id, int[] out_qty, String note) {
-        Shipments head = new Shipments(-1, "asdsaw", order_id, 4, null, null, note);
+    public void add_shipment(int order_id, int user_id,int[] out_qty, String note) {
+        Shipments head = new Shipments(-1, "SHP" + String.valueOf((int)(Math.random() * 51) + 100), order_id, user_id, null, null, note);
 
         int shipment_id = ship_dao.add_shipment_head(head);
 

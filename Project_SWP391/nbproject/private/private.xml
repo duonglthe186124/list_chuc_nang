@@ -3,11 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/SWP391/list_chuc_nang_forvideo/Project_SWP391/src/java/controller/CreateReturnServlet.java</file>
-            <file>file:/D:/SWP391/list_chuc_nang_forvideo/Project_SWP391/web/WEB-INF/view/createReturn.jsp</file>
-            <file>file:/D:/SWP391/list_chuc_nang_forvideo/Project_SWP391/web/WEB-INF/view/returnList.jsp</file>
-            <file>file:/D:/SWP391/list_chuc_nang_forvideo/Project_SWP391/web/WEB-INF/view/inventoryList.jsp</file>
-            <file>file:/D:/SWP391/list_chuc_nang_forvideo/Project_SWP391/src/java/controller/ReturnListServlet.java</file>
+            <file>file:/D:/Project/list_chuc_nang_final/Project_SWP391/src/java/dal/ReceiptDAO.java</file>
         </group>
     </open-files>
 </project-private>

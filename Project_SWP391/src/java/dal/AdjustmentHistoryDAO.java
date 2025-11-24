@@ -186,7 +186,6 @@ public class AdjustmentHistoryDAO extends DBContext {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {

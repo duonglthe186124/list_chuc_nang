@@ -8,7 +8,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.Users;
 import service.ShipmentService;
 
 /**
@@ -64,8 +66,9 @@ public class CreateShipmentServlet extends HttpServlet {
         for (int i = 0; i < raw_out_qty.length; i++) {
             out_qty[i] = Integer.parseInt(raw_out_qty[i]);
         }
-        
-        service.add_shipment(selected_id, out_qty, note);
+        HttpSession session = request.getSession(false);
+        Users user = (Users) session.getAttribute("account");
+        service.add_shipment(selected_id, user.getRole_id(), out_qty, note);
         response.sendRedirect(request.getContextPath() + "/warehouse/locations");
     }
 

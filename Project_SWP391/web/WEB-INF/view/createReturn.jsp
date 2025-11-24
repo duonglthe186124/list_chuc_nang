@@ -94,6 +94,35 @@
                 padding: 10px;
                 background: #f0f7ff;
             }
+            .btn {
+                display: inline-block;
+                padding: 8px 12px;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .btn-primary {
+                background-color: #4f46e5;
+                color: white;
+            }
+            .btn-primary:hover {
+                background-color: #4338ca;
+            }
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+            }
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+            .error-message {
+                color: red;
+                background: #ffebee;
+                border: 1px solid #e57373;
+                padding: 10px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+            }
         </style>
     </head>
     <body class="bg-gray-100 text-gray-800">
@@ -340,9 +369,11 @@
                 ><h2 class="text-2xl font-bold">Tạo Phiếu Trả Hàng</h2>
                 <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary mt-2">&larr; Quay lại Lịch sử</a>
                 <hr class="my-4">
+
                 <c:if test="${not empty errorMessage}">
                     <div class="error-message">${errorMessage}</div>
                 </c:if>
+
                 <div class="form-container">
                     <form action="${pageContext.request.contextPath}/warehouse/returns" method="GET">
                         <div class="form-group">
@@ -352,6 +383,7 @@
                         <button type="submit" class="btn btn-primary mt-2">Tìm kiếm sản phẩm</button>
                     </form>
                 </div>
+
                 <c:if test="${not empty unitDetails}">
                     <hr>
                     <h2 class="text-xl font-bold mt-4">Xác nhận Trả hàng cho IMEI: ${unitDetails.imei}</h2>
@@ -360,6 +392,7 @@
                             <input type="hidden" name="unitId" value="${unitDetails.unitId}">
                             <input type="hidden" name="orderId" value="${unitDetails.orderId}">
                             <input type="hidden" name="imei" value="${unitDetails.imei}">
+
                             <h3 class="font-bold mb-2">B. Thông tin Sản phẩm & Khách hàng (6 trường)</h3>
                             <div class="form-row">
                                 <div class="form-group"><label>Mã sản phẩm (SKU):</label><div class="static-info">${unitDetails.skuCode}</div></div>
@@ -373,7 +406,9 @@
                                 <div class="form-group"><label>Tên Khách hàng:</label><div class="static-info">${unitDetails.customerName}</div></div>
                                 <div class="form-group"><label>SĐT Khách hàng:</label><div class="static-info">${unitDetails.customerPhone}</div></div>
                             </div>
+
                             <hr class="my-4">
+
                             <h3 class="font-bold mb-2">C. Thông tin Trả hàng (2 trường input)</h3>
                             <div class="form-row">
                                 <div class="form-group">
@@ -393,7 +428,9 @@
                                     <textarea name="note" rows="4" placeholder="Nhập ghi chú chi tiết..."></textarea>
                                 </div>
                             </div>
+
                             <hr class="my-4">
+
                             <div class="supplier-info">
                                 <h3 class="font-bold mb-2">Thông tin Nhà cung cấp (3 trường)</h3>
                                 <div class="form-row">
@@ -404,6 +441,7 @@
                                     <div class="form-group"><label>Email NCC:</label><div class="static-info">${unitDetails.supplierEmail}</div></div>
                                 </div>
                             </div>
+
                             <button type="submit" class="btn btn-primary mt-4">Xác nhận Trả hàng (Đổi status thành 'RETURNED')</button>
                         </form>
                     </div>

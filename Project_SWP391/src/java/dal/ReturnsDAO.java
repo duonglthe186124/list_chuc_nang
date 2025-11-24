@@ -84,12 +84,12 @@ public class ReturnsDAO extends DBContext {
     }
 
     // Hàm 2: Xử lý trả hàng (Dùng Transaction)
-    public boolean processReturn(int unitId, int orderId, int createdBy, String reason, String note) throws Exception {
+    public boolean processReturn(int unitId, int orderId, int createdBy, String reason) throws Exception {
         PreparedStatement psReturn = null;
         PreparedStatement psReturnLine = null;
         PreparedStatement psUpdateUnit = null;
         ResultSet rsReturn = null;
-        String sqlReturn = "INSERT INTO Returns (return_no, order_id, created_by, status, note) VALUES (?, ?, ?, 'OPEN', ?)";
+        String sqlReturn = "INSERT INTO Returns (return_no, order_id, created_by, status) VALUES (?, ?, ?, 'OPEN', ?)";
         String sqlReturnLine = "INSERT INTO Return_lines (return_id, unit_id, reason) VALUES (?, ?, ?)";
         String sqlUpdateUnit = "UPDATE Product_units SET status = 'RETURNED', updated_at = SYSUTCDATETIME() WHERE unit_id = ?";
         try {
@@ -100,7 +100,6 @@ public class ReturnsDAO extends DBContext {
             psReturn.setString(1, returnNo);
             psReturn.setInt(2, orderId);
             psReturn.setInt(3, createdBy);
-            psReturn.setString(4, note);
             psReturn.executeUpdate();
             rsReturn = psReturn.getGeneratedKeys();
             if (!rsReturn.next()) {
@@ -155,18 +154,22 @@ public class ReturnsDAO extends DBContext {
 
         String query = "SELECT COUNT(r.return_id) "
                 + "FROM Returns r "
-                + "WHERE 1=1 ";
+                + "JOIN Return_lines rl ON r.return_id = rl.return_id "
+                + // Thêm Join
+                "JOIN Users u ON r.created_by = u.user_id "
+                + // Thêm Join
+                "JOIN Product_units pu ON rl.unit_id = pu.unit_id "
+                + // Thêm Join
+                "JOIN Products p ON pu.product_id = p.product_id "
+                + // Thêm Join
+                "WHERE 1=1 ";
 
-        // Thêm các bộ lọc
         addReturnFilterConditions(query, params, status, dateStart, dateEnd);
-
-        // Gắn query mới vào
-        String finalQuery = query;
 
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = this.connection.prepareStatement(finalQuery);
+            ps = this.connection.prepareStatement(query);
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
@@ -176,7 +179,6 @@ public class ReturnsDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Lỗi SQL khi đếm Returns: " + e.getMessage());
         } finally {
             try {
                 if (rs != null) {
@@ -193,13 +195,12 @@ public class ReturnsDAO extends DBContext {
     }
 
     /**
-     * HÀM 4 (NÂNG CẤP): Lấy Lịch sử Trả hàng (CÓ LỌC và PHÂN TRANG)
+     * HÀM 4 (ĐÃ SỬA LỖI SQL): Lấy Lịch sử Trả hàng (Lọc + Phân trang)
      */
     public List<ReturnHistoryDTO> getReturnHistoryPaginated(String status, String dateStart, String dateEnd, int pageIndex, int pageSize) throws Exception {
         List<ReturnHistoryDTO> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
-        // Câu truy vấn JOIN (giữ nguyên)
         String query = "SELECT "
                 + "    r.return_no, r.created_at AS returnDate, r.status, "
                 + "    u.fullname AS customerName, "
@@ -207,19 +208,16 @@ public class ReturnsDAO extends DBContext {
                 + "FROM Returns r "
                 + "JOIN Return_lines rl ON r.return_id = rl.return_id "
                 + "JOIN Orders o ON r.order_id = o.order_id "
-                + "JOIN Users u ON o.user_id = u.user_id "
-                + "JOIN Product_units pu ON rl.unit_id = pu.unit_id "
+                + // Lấy đơn hàng
+                "JOIN Users u ON o.user_id = u.user_id "
+                + // Lấy khách hàng từ đơn hàng
+                "JOIN Product_units pu ON rl.unit_id = pu.unit_id "
                 + "JOIN Products p ON pu.product_id = p.product_id "
                 + "WHERE 1=1 ";
 
-        // Thêm các bộ lọc
         addReturnFilterConditions(query, params, status, dateStart, dateEnd);
 
-        // Gắn query mới vào
-        String finalQuery = query;
-
-        // Thêm Phân trang
-        finalQuery += " ORDER BY r.created_at DESC "
+        query += " ORDER BY r.created_at DESC "
                 + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         params.add((pageIndex - 1) * pageSize);
         params.add(pageSize);
@@ -227,7 +225,7 @@ public class ReturnsDAO extends DBContext {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = this.connection.prepareStatement(finalQuery);
+            ps = this.connection.prepareStatement(query);
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
             }
@@ -260,30 +258,25 @@ public class ReturnsDAO extends DBContext {
     }
 
     /**
-     * HÀM PHỤ: Dùng chung để thêm điều kiện WHERE
+     * HÀM PHỤ: Dùng chung để thêm điều kiện WHERE (Không đổi)
      */
     private void addReturnFilterConditions(String query, List<Object> params, String status, String dateStart, String dateEnd) {
-        // Lọc theo Trạng thái
         if (status != null && !status.isEmpty()) {
             query += " AND r.status = ? ";
             params.add(status);
         }
-
-        // Lọc theo Ngày Bắt đầu
         if (dateStart != null && !dateStart.isEmpty()) {
             query += " AND r.created_at >= ? ";
             params.add(dateStart);
         }
-
-        // Lọc theo Ngày Kết thúc
         if (dateEnd != null && !dateEnd.isEmpty()) {
             query += " AND r.created_at <= ? ";
-            params.add(dateEnd + " 23:59:59"); // Lấy đến cuối ngày
+            params.add(dateEnd + " 23:59:59");
         }
     }
 
     /**
-     * HÀM 4: Hàm để đóng kết nối thủ công
+     * HÀM 5: Hàm để đóng kết nối thủ công
      */
     public void closeConnection() {
         try {

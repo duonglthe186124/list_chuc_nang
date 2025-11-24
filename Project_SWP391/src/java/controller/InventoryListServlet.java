@@ -52,6 +52,7 @@ public class InventoryListServlet extends HttpServlet {
             if (brandIdParam != null && !brandIdParam.isEmpty()) {
                 brandId = Integer.parseInt(brandIdParam);
             }
+            String imei = request.getParameter("imei");
             int currentPage = 1;
             String pageParam = request.getParameter("page");
             if (pageParam != null) {
@@ -61,7 +62,7 @@ public class InventoryListServlet extends HttpServlet {
             int totalItems = countDao.getDetailedStockCount(productName, brandId);
             int totalPages = (int) Math.ceil((double) totalItems / PAGE_SIZE);
             dataDao = new WarehouseDAO();
-            List<InventoryDetailDTO> stockList = dataDao.getDetailedStockPaginated(productName, brandId, currentPage, PAGE_SIZE);
+            List<InventoryDetailDTO> stockList = dataDao.getDetailedStockPaginated(productName, imei, brandId, currentPage, PAGE_SIZE);
             brandDao = new WarehouseDAO();
             List<Brands> brandList = brandDao.getAllBrands();
             request.setAttribute("stockList", stockList); 

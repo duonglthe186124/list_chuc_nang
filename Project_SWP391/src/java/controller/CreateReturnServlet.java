@@ -51,14 +51,13 @@ public class CreateReturnServlet extends HttpServlet {
             int unitId = Integer.parseInt(request.getParameter("unitId"));
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             String reason = request.getParameter("reason");
-            String note = request.getParameter("note");
 
             // Bảng Returns liên kết với Users (người trả)
             Users currentUser = (Users) request.getSession().getAttribute("user");
             int createdBy = (currentUser != null) ? currentUser.getUser_id() : 1;
 
             dao = new ReturnsDAO();
-            boolean success = dao.processReturn(unitId, orderId, createdBy, reason, note);
+            boolean success = dao.processReturn(unitId, orderId, createdBy, reason);
             if (success) {
                 response.sendRedirect(request.getContextPath() + "/warehouse/returnsList");
             } else {

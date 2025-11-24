@@ -461,7 +461,7 @@
                                                     type="text"
                                                     name="supplier_name"
                                                     id="supplier_name"
-                                                    value="${not empty supplier? supplier_name : ''}"
+                                                    value="${not empty supplier? supplier.supplier_name : ''}"
                                                     autocomplete="organization"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
@@ -480,7 +480,7 @@
                                                     type="text"
                                                     name="display_name"
                                                     id="display_name"
-                                                    value="${not empty supplier? display_name : ''}"
+                                                    value="${not empty supplier? supplier.display_name : ''}"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                                                     />
@@ -505,7 +505,7 @@
                                                     type="text"
                                                     name="address"
                                                     id="address"
-                                                    value="${not empty supplier? address : ''}"
+                                                    value="${not empty supplier? supplier.address : ''}"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                                                     />
@@ -524,7 +524,7 @@
                                                     type="tel"
                                                     name="phone"
                                                     id="phone"
-                                                    value="${not empty supplier? phone : ''}"
+                                                    value="${not empty supplier? supplier.phone : '123'}"
                                                     autocomplete="tel"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
@@ -543,7 +543,7 @@
                                                     type="email"
                                                     name="email"
                                                     id="email"
-                                                    value="${not empty supplier? email : ''}"
+                                                    value="${not empty supplier? supplier.email : ''}"
                                                     autocomplete="email"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
@@ -570,7 +570,7 @@
                                                     type="text"
                                                     name="representative"
                                                     id="representative"
-                                                    value="${not empty supplier? representative : ''}"
+                                                    value="${not empty supplier? supplier.representative : ''}"
                                                     required
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                                                     />
@@ -627,6 +627,7 @@
                                     >
                                     Hủy
                                 </a>
+                                    <input type="hidden" name="id" value="${param.id}">
                                 <button
                                     type="submit"
                                     class="inline-flex justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"

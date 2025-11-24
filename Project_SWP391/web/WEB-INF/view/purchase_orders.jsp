@@ -515,7 +515,7 @@
                                     >
                                     <option value="" ${empty param.status or param.status == ""? 'selected' : ''}>Tất cả</option>
                                     <option value="Confirm" ${param.status == "Confirm" ? 'selected' : ''}>Confirm</option>
-                                    <option value="Pending" ${param.status == "Pending" ? 'selected' : ''}>Pending</option>
+                                    <option value="Pending" selected>Pending</option>
                                     <option value="Partial" ${param.status == "Partial" ? 'selected' : ''}>Partial</option>
                                     <option value="Completed" ${param.status == "Completed" ? 'selected' : ''}>Complete</option>
                                     <option value="Cancelled" ${param.status == "Cancelled" ? 'selected' : ''}>Cancelled</option>

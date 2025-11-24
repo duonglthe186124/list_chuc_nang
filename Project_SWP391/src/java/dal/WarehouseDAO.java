@@ -71,7 +71,7 @@ public class WarehouseDAO extends DBContext {
     }
 
     // Hàm 2: Lấy Tồn kho Chi tiết CÓ LỌC và PHÂN TRANG
-    public List<InventoryDetailDTO> getDetailedStockPaginated(String productName, int brandId, int pageIndex, int pageSize) throws Exception {
+    public List<InventoryDetailDTO> getDetailedStockPaginated(String productName, String imei, int brandId, int pageIndex, int pageSize) throws Exception {
         List<InventoryDetailDTO> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         String query = "SELECT "
@@ -107,6 +107,10 @@ public class WarehouseDAO extends DBContext {
         if (productName != null && !productName.trim().isEmpty()) {
             query += " AND p.name LIKE ? ";
             params.add("%" + productName + "%");
+        }
+        if (imei != null && !imei.trim().isEmpty()) {
+            query += " AND pu.imei LIKE ? ";
+            params.add("%" + imei + "%");
         }
         if (brandId > 0) {
             query += " AND p.brand_id = ? ";

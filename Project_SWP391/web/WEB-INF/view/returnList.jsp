@@ -103,6 +103,47 @@
             .pagination a:hover {
                 background-color: #eee;
             }
+            .data-table {
+                font-size: 0.9em;
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .data-table th, .data-table td {
+                padding: 8px 10px;
+                border: 1px solid #ddd;
+            }
+            .data-table th {
+                background-color: #f4f4f4;
+            }
+            .btn {
+                display: inline-block;
+                padding: 8px 12px;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .btn-primary {
+                background-color: #4f46e5;
+                color: white;
+            }
+            .btn-primary:hover {
+                background-color: #4338ca;
+            }
+            .btn-secondary {
+                background-color: #6c757d;
+                color: white;
+            }
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+            .error-message {
+                color: red;
+                background: #ffebee;
+                border: 1px solid #e57373;
+                padding: 10px;
+                margin-bottom: 15px;
+                border-radius: 4px;
+            }
         </style>
     </head>
     <body class="bg-gray-100 text-gray-800">
@@ -382,7 +423,6 @@
                             <label>Đến ngày:</label>
                             <input type="date" name="dateEnd" value="${selectedDateEnd}">
                         </div>
-
                         <div class="form-group" style="align-self: flex-end;">
                             <button type="submit" class="btn btn-primary">Lọc</button>
                             <a href="${pageContext.request.contextPath}/warehouse/returnsList" class="btn btn-secondary" style="margin-left: 10px;">Reset</a>
@@ -393,8 +433,12 @@
                 <table class="data-table bg-white">
                     <thead>
                         <tr>
-                            <th>Mã Phiếu Trả</th> <th>Ngày trả</th> <th>Trạng thái</th>
-                            <th>Sản phẩm</th> <th>IMEI</th> <th>Khách hàng</th>
+                            <th>Mã Phiếu Trả</th>
+                            <th>Ngày trả</th>
+                            <th>Trạng thái</th>
+                            <th>Sản phẩm</th>
+                            <th>IMEI</th>
+                            <th>Khách hàng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -409,7 +453,7 @@
                             </tr>
                         </c:forEach>
                         <c:if test="${empty requestScope.historyList}">
-                            <tr><td colspan="6" style="text-align: center;">Không tìm thấy phiếu trả hàng nào.</td></tr>
+                            <tr><td colspan="6" style="text-align: center;">Chưa có lịch sử trả hàng.</td></tr>
                         </c:if>
                     </tbody>
                 </table>

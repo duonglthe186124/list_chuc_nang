@@ -26,10 +26,10 @@ public class UpdateSupplierServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int supplier_id = Integer.parseInt(request.getParameter("id"));
-            Suppliers supplier = service.getSupplierDetails(supplier_id);
+            Suppliers supplier_name = service.getSupplierDetails(supplier_id);
 
-            if (supplier != null) {
-                request.setAttribute("supplier", supplier);
+            if (supplier_name != null) {
+                request.setAttribute("supplier", supplier_name);
                 request.getRequestDispatcher("/WEB-INF/view/update_supplier.jsp").forward(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy Nhà Cung Cấp");
@@ -44,7 +44,7 @@ public class UpdateSupplierServlet extends HttpServlet {
             throws ServletException, IOException {
         int supplierId = 0;
         try {
-            supplierId = Integer.parseInt(request.getParameter("supplier_id"));
+            supplierId = Integer.parseInt(request.getParameter("id"));
         } catch (NumberFormatException e) {
              response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID Nhà Cung Cấp không hợp lệ");
              return;

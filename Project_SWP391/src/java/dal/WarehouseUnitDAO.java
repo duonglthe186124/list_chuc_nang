@@ -58,7 +58,7 @@ public class WarehouseUnitDAO extends DBContext {
         PreparedStatement psUpdateUnit = null;
         PreparedStatement psLog = null;
 
-        String sqlUpdateUnit = "UPDATE Product_units SET status = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ? AND status = ?";
+        String sqlUpdateUnit = "UPDATE Product_units SET status = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ?";
         String sqlLog = "INSERT INTO Stock_adjustments (unit_id, reason, created_by) VALUES (?, ?, ?)";
 
         // NÂNG CẤP: Tạo lý do chi tiết
@@ -66,12 +66,10 @@ public class WarehouseUnitDAO extends DBContext {
 
         try {
             this.connection.setAutoCommit(false); // Bắt đầu Transaction
-
             // 1. Cập nhật Status
             psUpdateUnit = this.connection.prepareStatement(sqlUpdateUnit);
             psUpdateUnit.setString(1, newStatus);
             psUpdateUnit.setInt(2, unitId);
-            psUpdateUnit.setString(3, oldStatus); // Đảm bảo status chưa bị thay đổi
 
             int affectedRows = psUpdateUnit.executeUpdate();
             if (affectedRows == 0) {
@@ -140,7 +138,41 @@ public class WarehouseUnitDAO extends DBContext {
         return productName;
     }
 
-    // Hàm 4: Đóng kết nối
+    /**
+     * HÀM 4: Lấy employee_id từ user_id (Dùng để sửa lỗi login)
+     */
+    public int getEmployeeIdByUserId(int userId) throws Exception {
+        int employeeId = 0;
+        String query = "SELECT employee_id FROM Employees WHERE user_id = ?";
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            // Dùng connection đã được kế thừa
+            ps = this.connection.prepareStatement(query);
+            ps.setInt(1, userId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                employeeId = rs.getInt("employee_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // Chỉ đóng ps và rs, connection sẽ được đóng bởi Servlet
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return employeeId;
+    }
+
+    // Hàm 5: Đóng kết nối
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {

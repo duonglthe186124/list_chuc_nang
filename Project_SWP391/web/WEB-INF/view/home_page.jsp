@@ -297,7 +297,7 @@
                         </div>
                         <div class="reveal-on-scroll" style="transition-delay: 200ms">
                             <img
-                                src="https://placehold.co/600x450/e2e8f0/64748b?text=Giao+diện+Quản+lý+IMEI"
+                                src="https://gosmartlog.com/wp-content/uploads/2023/07/image.png"
                                 alt="Giao diện Dashboard WMS Pro"
                                 class="rounded-lg shadow-xl aspect-video object-cover"
                                 />

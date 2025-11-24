@@ -193,6 +193,26 @@
         <servlet-class>controller.TestOrderController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>EditUnitServlet</servlet-name>
+        <servlet-class>controller.EditUnitServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ReturnListServlet</servlet-name>
+        <servlet-class>controller.ReturnListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CreateReturnServlet</servlet-name>
+        <servlet-class>controller.CreateReturnServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TransferServlet</servlet-name>
+        <servlet-class>controller.TransferServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdjustmentHistoryServlet</servlet-name>
+        <servlet-class>controller.AdjustmentHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
         <servlet-class>controller.receipt_good.ConfirmPurchaseOrderServlet</servlet-class>
     </servlet>
@@ -223,6 +243,10 @@
     <servlet>
         <servlet-name>DeleteSupplierServlet</servlet-name>
         <servlet-class>controller.receipt_good.DeleteSupplierServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewShipmentServlet</servlet-name>
+        <servlet-class>controller.receipt_good.ViewShipmentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -409,6 +433,26 @@
         <url-pattern>/order/test</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>EditUnitServlet</servlet-name>
+        <url-pattern>/warehouse/editUnit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReturnListServlet</servlet-name>
+        <url-pattern>/warehouse/returnsList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CreateReturnServlet</servlet-name>
+        <url-pattern>/warehouse/returns</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TransferServlet</servlet-name>
+        <url-pattern>/warehouse/transfer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdjustmentHistoryServlet</servlet-name>
+        <url-pattern>/warehouse/history</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ConfirmPurchaseOrderServlet</servlet-name>
         <url-pattern>/confirm</url-pattern>
     </servlet-mapping>
@@ -443,8 +487,11 @@
     <welcome-file-list>
         <welcome-file>redirect.jsp</welcome-file>
     </welcome-file-list>
-    
     <!-- Session Configuration -->
+    <servlet-mapping>
+        <servlet-name>ViewShipmentServlet</servlet-name>
+        <url-pattern>/inbound/shipments/view</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>120</session-timeout>
     </session-config>

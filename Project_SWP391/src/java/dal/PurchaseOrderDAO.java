@@ -23,7 +23,6 @@ public class PurchaseOrderDAO extends DBContext {
         List<Response_PODTO> list = new ArrayList();
         List<Object> params = new ArrayList();
         StringBuilder sql = new StringBuilder();
-
         sql.append("SELECT\n"
                 + "    po.po_id,\n"
                 + "    po.po_code,\n"

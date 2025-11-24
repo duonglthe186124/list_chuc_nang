@@ -16,7 +16,7 @@ public class Users {
     public Users() {
     }
 
-    public Users(int user_id, String email, String password, String fullname, String phone, String address, String sec_address, int role_id, boolean is_actived, boolean is_deleted) {
+    public Users(int user_id, String email, String password, String fullname, String phone, String address,String office_address, String sec_address, int role_id, boolean is_actived, boolean is_deleted) {
         this.user_id = user_id;
         this.email = email;
         this.password = password;

@@ -39,7 +39,6 @@ public class TransferDAO extends DBContext {
         ResultSet rs = null;
         Connection conn = this.connection;
         try {
-            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             ps.setString(1, imei);
             rs = ps.executeQuery();
@@ -85,7 +84,6 @@ public class TransferDAO extends DBContext {
         ResultSet rs = null;
         Connection conn = this.connection;
         try {
-            Connection conn = this.connection;
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -121,7 +119,6 @@ public class TransferDAO extends DBContext {
         String sqlUpdateUnit = "UPDATE Product_units SET container_id = ?, updated_at = SYSUTCDATETIME() WHERE unit_id = ?";
         String sqlLog = "INSERT INTO Stock_adjustments (unit_id, reason, created_by) VALUES (?, ?, ?)";
         try {
-            Connection conn = this.connection;
             conn.setAutoCommit(false); // Bắt đầu Transaction
 
             // 1. Cập nhật Vị trí (Container) mới cho IMEI
@@ -144,14 +141,12 @@ public class TransferDAO extends DBContext {
             this.connection.commit(); // Lưu
             return true;
         } catch (Exception e) {
-            Connection conn = this.connection;
             e.printStackTrace();
             if (conn != null) {
                 conn.rollback(); // Hoàn tác nếu có lỗi
             }
             throw e;
         } finally {
-            Connection conn = this.connection;
             // Đóng tất cả
             try {
                 if (psUpdateUnit != null) {

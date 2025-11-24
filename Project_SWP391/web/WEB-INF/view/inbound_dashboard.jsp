@@ -698,18 +698,18 @@
             const chartData = {
                 week: {
                     labels: ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
-                    inbound: [120, 150, 80, 200, 130, 90, 50], // Số lượng phiếu nhập
-                    outbound: [90, 110, 140, 180, 100, 120, 70], // Số lượng phiếu xuất
+                    inbound: [2, 1, 2, 3, 2, 2, 2], // Số lượng phiếu nhập
+                    outbound: [3, 1, 1, 1, 1, 0, 0], // Số lượng phiếu xuất
                 },
                 month: {
                     labels: ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"],
-                    inbound: [550, 620, 480, 710],
-                    outbound: [450, 580, 600, 550],
+                    inbound: [15, 14, 11, 1],
+                    outbound: [12, 13, 10, 2],
                 },
                 year: {
                     labels: ["Q1", "Q2", "Q3", "Q4"],
-                    inbound: [6500, 7800, 7200, 8500],
-                    outbound: [5800, 7000, 8100, 9000],
+                    inbound: [35, 34, 33, 31],
+                    outbound: [22, 21, 23, 34],
                 },
             };
 

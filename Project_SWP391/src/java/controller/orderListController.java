@@ -73,7 +73,7 @@ public class orderListController extends HttpServlet {
         try {
             int totalOrders, totalPages;
 
-            if (currentUser.getRole_id() != 5) { // Không phải Manager
+            if (currentUser.getRole_id() != 5 || currentUser.getRole_id() !=4) { // Không phải Manager
                 orders = db.getOrdersByUserIdPageSorted(currentUser.getUser_id(), pageIndex, PAGE_SIZE, sortBy);
                 totalOrders = db.countOrdersByUserId(currentUser.getUser_id());
             } else { // Manager
@@ -84,7 +84,7 @@ public class orderListController extends HttpServlet {
 
             if (pageIndex > totalPages && totalPages > 0) {
                 pageIndex = totalPages;
-                if (currentUser.getRole_id() != 5) {
+                if (currentUser.getRole_id() != 5 || currentUser.getRole_id() !=4) {
                     orders = db.getOrdersByUserIdPageSorted(currentUser.getUser_id(), pageIndex, PAGE_SIZE, sortBy);
                 } else {
                     orders = db.getAllOrdersByPageSorted(pageIndex, PAGE_SIZE, sortBy);

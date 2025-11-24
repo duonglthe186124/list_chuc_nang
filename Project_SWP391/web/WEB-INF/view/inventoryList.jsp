@@ -362,6 +362,10 @@
                             <input type="text" name="productName" value="${selectedProductName}">
                         </div>
                         <div class="form-group">
+                            <label>Tìm theo IMEI:</label>
+                            <input type="text" name="imei" value="${selectedImei}">
+                        </div>
+                        <div class="form-group">
                             <label>Lọc theo Nhãn hàng:</label>
                             <select name="brandId">
                                 <option value="0">-- Tất cả Nhãn hàng --</option>

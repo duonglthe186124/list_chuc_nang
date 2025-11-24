@@ -693,7 +693,7 @@
                                 <div class="divider"></div>
                                 <div class="info-item">
                                     <h5>Nhân viên tạo:</h5>
-                                    <p>Trần Văn Hùng (NV003)</p>
+                                    <p>${sessionScope.account.fullname}</p>
                                 </div>
                                 <div class="info-item">
                                     <h5>Trạng thái phiếu:</h5>
